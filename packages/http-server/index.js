@@ -29,18 +29,16 @@ const server = http.createServer((req, res) => {
   req.on('data', data => {
     buffer += decoder.write(data);
   });
-
   req.on('end', () => {
+
     buffer += decoder.end();
     
     // log the request path
-    console.log(
-      `Request path: ${trimmedPath}\n`, 
-      `Method :${method}\n`,
-      `and query string ${JSON.stringify(queryStringObject, null, 2)}\n`,
-      `Headers: ${JSON.stringify(headers, null, 2)}\n`, 
-      `Payload: ${buffer}\n\n`
-    );
+    console.log('Request Path: ', trimmedPath);
+    console.log('Method: ', method);
+    console.log('Query: ', queryStringObject);
+    console.log('Headers: ', headers);
+    console.log('Payload: ', buffer);
 
     // choose handler by the pathname
     const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
@@ -54,16 +52,17 @@ const server = http.createServer((req, res) => {
       payload: buffer
     };
 
-    //Router the request to the handler to specifed router
+    // Router the request to the handler to specifed router
     chosenHandler(data, (status = 200, payload = {}) => {
       
+      // Return the response
+      res.setHeader('Content-Type', 'application/json');
       res.writeHead(status);
       res.end(JSON.stringify(payload));
 
-      // Log the request 
+      // Log the resposne 
       console.log('Returning', status, payload);
     });
-
 
     // send the response
     res.end('Hello World\n');
