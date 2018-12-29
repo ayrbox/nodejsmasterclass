@@ -6,11 +6,13 @@
 const environments = {
   staging: {
     envName: 'Staging environment',
-    port: 3000,
+    httpPort: 3000,
+    httpsPort: 3001,
   },
   production: {
     envName: 'Production environment',
-    port: 5000,
+    httpPort: 5000,
+    httpsPort: 5001,
   },
 };
 
