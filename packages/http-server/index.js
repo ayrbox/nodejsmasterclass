@@ -7,31 +7,23 @@ const fs = require('fs');
 const config = require('./config');
 
 // The server should response to all request with a string
-const httpServer = http.createServer((req, res) => {
+http.createServer((req, res) => {
   unifiedServer(req, res);
-});
-
-
-// Instance of http server
-httpServer.listen(config.httpPort, () => {
+}).listen(config.httpPort, () => {
   console.log(`The server is listenning on port ${config.httpPort} in ${config.envName} mode`);
 });
 
-// instance of https server
-const httpsServerOptions = {
+
+https.createServer({
   key: fs.readFileSync('./https/key.pem'),
   cert: fs.readFileSync('./https/cert.pem'), 
-};
-
-const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+}, (req, res) => {
   unifiedServer(req, res);
-});
-
-
-// start http server
-httpsServer.listen(config.httpsPort, () => {
+}).listen(config.httpsPort, () => {
   console.log(`The server is listenning on port ${config.httpsPort} in ${config.envName} mode`);
 });
+
+
 
 
 const unifiedServer = (req, res) => {
@@ -102,12 +94,8 @@ const unifiedServer = (req, res) => {
 };
 
 const handlers = {};
-handlers.sample = (data, cb) => {
-
-  // callback a http status code, and payload object
-  cb(406, {
-    name: 'Sample Handler',
-  });
+handlers.ping = (data, cb) => {
+  cb(200);
 };
 
 handlers.notFound = (data, cb) => {
@@ -117,6 +105,6 @@ handlers.notFound = (data, cb) => {
 
 // Define a request router
 const router = {
-  sample: handlers.sample
+  ping: handlers.ping
 }
 
