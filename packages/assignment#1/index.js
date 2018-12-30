@@ -1,7 +1,9 @@
 const http = require('http');
 const url = require('url');
 
+const PORT = 3000;
 
+// Define handlers functions
 const handlers = {
   notFound: (data, cb) => {
     cb(404); 
@@ -13,27 +15,31 @@ const handlers = {
   }
 };
 
-
+// Define router array with method, path and handler
 const routers = [{
   method: 'get',
   path: '/hello',
   handler: handlers.helloHandlers 
 }];
 
-
+// create http server that listen to specified port 
 http.createServer((req, res) => {
+
   const parsedUrl = url.parse(req.url, true); // prase url including query string
-  const path = parsedUrl.pathname.replace(/^\/+$/g, '');
-  const method = req.method.toLowerCase();
+  const path = parsedUrl.pathname.replace(/^\/+$/g, ''); // get path from url without / at the end
+  const method = req.method.toLowerCase(); // get http method in lowerchase
 
-  const route = routers.find(r => r.method === method && r.path === path) || { handler: handlers.notFound };
+  // Find router that matches pathname and method
+  // else fall back to not found router 
+  const route = routers.find(r => r.method === method && r.path === path) || { handler: handlers.notFound }; 
 
+  // Call router handler
   route.handler({}, (status = 200, payload = {}) => {
     res.setHeader('Content-Type', 'application/json');
     res.writeHead(status);
-    res.end(JSON.stringify(payload));
+    res.end(JSON.stringify(payload)); 
   });
   
-}).listen(3000, () => {
-  console.log(`Server listenning on port 3000`); 
+}).listen(PORT, () => {
+  console.log(`Server listenning on port ${PORT}`); 
 });
