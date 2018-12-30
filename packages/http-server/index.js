@@ -6,6 +6,8 @@ const fs = require('fs');
 
 const config = require('./config');
 
+
+
 // The server should response to all request with a string
 http.createServer((req, res) => {
   unifiedServer(req, res);
