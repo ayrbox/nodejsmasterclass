@@ -8,11 +8,13 @@ const environments = {
     envName: 'Staging environment',
     httpPort: 3000,
     httpsPort: 3001,
+    hashingSecret: 'thisissecr3at',
   },
   production: {
     envName: 'Production environment',
     httpPort: 5000,
     httpsPort: 5001,
+    hashingSecret: 'thisissecr3at',
   },
 };
 

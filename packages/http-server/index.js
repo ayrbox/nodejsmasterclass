@@ -5,7 +5,8 @@ const { StringDecoder } = require('string_decoder');
 const fs = require('fs');
 
 const config = require('./config');
-
+const handlers = require('./handlers');
+const helpers = require('./lib/helpers');
 
 
 // The server should response to all request with a string
@@ -73,7 +74,7 @@ const unifiedServer = (req, res) => {
       queryStringObject,
       method,
       headers,
-      payload: buffer
+      payload: helpers.parseJsonToObject(buffer)
     };
 
     // Router the request to the handler to specifed router
@@ -87,26 +88,14 @@ const unifiedServer = (req, res) => {
       // Log the resposne 
       console.log('Returning', status, payload);
     });
-
-    // send the response
-    res.end('Hello World\n');
-
   });
-
 };
 
-const handlers = {};
-handlers.ping = (data, cb) => {
-  cb(200);
-};
-
-handlers.notFound = (data, cb) => {
-  cb(404);
-};
 
 
 // Define a request router
 const router = {
-  ping: handlers.ping
+  ping: handlers.ping,
+  users: handlers.users,
 }
 

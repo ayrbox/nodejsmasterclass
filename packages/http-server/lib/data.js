@@ -3,6 +3,7 @@
 
 
 const fs = require('fs'); const path = require('path');
+const helpers = require('./helpers');
 
 // Base directory for data folder
 const BASE_DIR = path.join(__dirname, '../.data/');
@@ -35,7 +36,12 @@ const dataLib = {
   },
   read: (dir, file, callback) => {
     fs.readFile(path.join(BASE_DIR, dir, `${file}.json`), 'utf8', (err, data) => {
-      callback(err, data);
+      if(!err && data) {
+        const parsedData = helpers.parseJsonToObject(data);
+        callback(false, parsedData)
+      } else {
+        callback(err, data);
+      }
     });
   },
 
