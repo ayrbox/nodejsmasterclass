@@ -45,7 +45,13 @@ handlers._users = {
       });
     }
 
-    const { firstName, lastName, phone, password, tosAgreement } = rawData.reduce((o, item) => {
+    const {
+      firstName,
+      lastName,
+      phone,
+      password,
+      tosAgreement,
+    } = rawData.reduce((o, item) => {
       o[item.key] = item.value;
       return o; 
     }, {});
