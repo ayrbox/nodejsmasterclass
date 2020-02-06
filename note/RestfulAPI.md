@@ -49,11 +49,87 @@ server.listen(3000, function() {
 
 ## Parting HTTP Methods
 
+Get HTTP method from HTTP request.
+
+```js
+/* ...... */
+const trimmedPath = path.replace(/^\/+|\/+$/g, '');
+
+// Get HTTP method
+const method = req.method.toLowerCase();
+
+// Send reponse
+res.end('Request Received');
+
+console.log('Request received on this path: ' + trimmedPath + ' with method ' + method);
+
+/* ...... */
+```
+
 ## Parsing Query String
+
+Read query string parameters from HTTP request. `URL` module parse the query string.
+
+```js
+// Get query string to an object
+const queryString = parsedUrl.query;
+
+/* ..... */
+console.log(`
+  Request received on this path: ${trimmedPath} with method ${method}.
+  ${JSON.stringify(queryString, null, 2)}
+`);
+```
+
+```sh
+$ curl localhost:3000/foo/bar?fizz=buzz
+```
 
 ## Parsing Headers
 
+Parse request header for application to us it.
+```js
+/* .... */
+
+// Get the headers object from request
+const headers = req.headers;
+
+/* ..... */
+
+console.log('Request Headers', headers);
+```
+
+```sh
+$ curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://localhost:3000/foo/bar
+```
+
 ## Parsing Payloads
+
+Parsing payload from request object with help of StringDecoder.
+
+```js
+/* .... */
+
+const { StringDecoder}= require('string_decoder');
+
+// Get payload if exists
+const decoder = new StringDecoder('utf-8'); 
+
+var buffer = '';
+req.on('data', function(data) {
+  buffer += decoder.write(data);
+});
+
+req.on('end', function() {
+  buffer += decoder.end();
+
+  res.end('Request received');
+  
+  console.log('Requeste receved with payload', buffer);
+});
+
+```
+
 
 ## Routing Requests
 
