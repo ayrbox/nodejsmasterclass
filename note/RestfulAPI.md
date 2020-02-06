@@ -130,8 +130,66 @@ req.on('end', function() {
 
 ```
 
-
 ## Routing Requests
+
+Parse request and route to request handlers.
+
+
+```js
+
+/* ..... */
+
+
+req.on('end', function() { 
+  buffer += decode.end();
+
+  const routerHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath]: handlers.notFound;
+
+  const data = {
+    trimmedPath,
+    queryString, 
+    method,
+    headers,
+    payload: buffer,
+  };
+
+  // Route request to handler
+  rounterHander(data, function(statusCode, payload) {
+    // Default statuscode or specified
+    const responseStatusCode = statusCode || 200;
+
+    // Default payload or specified 
+    const responsePayload = payload || {};
+
+    // Return response
+    res.writeHead(responseStatusCode);
+    res.end(JSON.stringify(responsePayload));
+
+    console.log('Returning this resposne:', responseStatuscode, responsePayload);
+  });
+
+});
+
+
+// Define a request router handler
+const handlers = {};
+
+// Sample Handler
+handlers.sample = function (data, callback) {
+  // Callback a http status code, and payload object
+  callback(406, { name: 'Sample Handler' });
+};
+
+// Not found handlers
+handlers.notFound = function(data, callback) {
+  callback(404);
+};
+
+const router = {
+  'sample': handlers.sample,
+  'notFound': handlers.notFound
+}
+```
 
 ## Returning JSON
 
