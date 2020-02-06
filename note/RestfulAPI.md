@@ -224,8 +224,6 @@ const env = process.env.NODE_ENV || 'dev';
 module.exports = environments[env];
 ```
 
-## Adding HTTPS Configuration
-
 After configuration `config.js` is created. The configuration module can be use
 in applicaiton `index.js`. 
 
@@ -245,6 +243,100 @@ server.listen(port, function() {
 Usage to change environment
 ```sh
 $ NODE_ENV=production node index.js
+```
+
+## Adding HTTPS Configuration
+
+Add https to the sever.
+
+- Create SSL Certificate
+```sh
+$ mkdir https && cd ./https
+
+$ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+```
+
+Answer questions ask to generate key and you should have two file key.pem and cert.pem.
+
+```
+Generating a 2048 bit RSA private key
+..........................................+++
+.................+++
+writing new private key to 'key.pem'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) []:gb
+State or Province Name (full name) []:England
+Locality Name (eg, city) []:London
+Organization Name (eg, company) []:nodejs
+Organizational Unit Name (eg, section) []:Engineering
+Common Name (eg, fully qualified host name) []:localhost
+Email Address []:admin@nodejs.com
+```
+
+- Modify config to separate out where to run http and https server.
+```js
+/* config.js */
+
+const environments = {
+  dev: {
+    httpPort: 3000,
+    httpsPort: 3001,
+    name: 'Development',
+  },
+  staging: {
+    httpPort: 3000,
+    httpsPort: 3001,
+    name: 'Staging',
+  },
+  production: {
+    httpPort: 5000,
+    httpsPort: 5001,
+    name: 'Production',
+  },
+};
+```
+
+```js
+/* index.js */
+
+// ...
+const {
+  httpPort,
+  httpsPort,
+  name: environmentName,
+} = require('./config'); 
+const https = require('https'); 
+const fs = require('fs');
+
+// Unified logic for both http and https server
+const unifiedServer = function(req, res) {
+  /* ... all server logic ... */
+}
+
+// Http Server
+const httpServer = http.createServer(unifiedServer);
+httpServer.listen(httpPort, function() {
+  console.log(`Listening on port ${httpPort} in ${environmentName} mode`)
+});
+
+// Https Server
+const httpsServerOptions = {
+  key: fs.readFileSync('./https/key.pem'),
+  cert: fs.readFileSync('./https/cert.pem'), 
+ ;
+
+const httpsServer = https.createServer(httpsServerOptions, unifiedServer);
+
+httpsServer.listen(httpsPort, function() {
+  console.log(`Listening on port ${httpsPort} in ${environmentName} mode`);
+});
 ```
 
 ## Service 1: `/ping`
