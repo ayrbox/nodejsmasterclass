@@ -341,6 +341,23 @@ httpsServer.listen(httpsPort, function() {
 
 ## Service 1: `/ping`
 
+```js
+// index.js
+
+// ....
+
+const handlers = {
+  // ...,
+  ping: function(data, callback) {
+    callback(200);
+  },
+}
+```
+
+```bash
+$ curl localhost:3000/ping
+```
+
 ## Service 2: `/users` 
 
 ## Service 3: `/tokens`
