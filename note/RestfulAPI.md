@@ -410,7 +410,15 @@ const create = (dir, fileName, data, callback) => {
 
 const read = function(dir, fileName, callback) {
   const filePath = path.join(BASE_DIR, dir, `${fileName}.json`);
-  fs.readFile(filePath, callback);
+  fs.readFile(filePath, function(err, data) {
+    if (err || !data) {
+      callback(err, data);
+      return;
+    }
+
+    const parsedData = helpers.parseJsonToObject(data);
+    callback(false, parsedData);
+  });
 };
 
 const update = function(dir, fileName, data, callback) {
@@ -471,7 +479,7 @@ $ touch lib/handlers.js
 // handlers.js
 
 const _data = require('./data');
-const { hash } = require('./helpers')'
+const { hash } = require('./helpers');
 
 const ping = function(data, callback) { 
   callback(200);
@@ -483,11 +491,31 @@ const notFound = function(data, callback) {
 
 const _users = {
   get: function(data, callback) {
+    // @TODO only let authenticated user access data 
+    
+    // Validate phone number
+    const { phone } = data.queryString;
+
+    if(!phone) {
+      callback(400, new Error('Phone number is required'));
+      return;
+    } 
+
+    _data.read('users', phone, function(err, data) {
+      if (err || !data) {
+        callback(404);
+        return;
+      }
+
+      // omitting hashed password
+      const { firstName, lastName, phone, tosAgreement } = data;
+      callback(200, { firstName, lastName, phone, tosAgreement });
+    });
+
 
   },
   post: function(data, callback) {
     // Create user { firstName, lastName, phone, password, tosAgreement }
-
     const {
       firstName,
       lastName,
@@ -542,11 +570,67 @@ const _users = {
   },
   put: function(data, callback) {
     // Update user with new datak 
+    // TODO: Allow only authenticated user to update data
 
+    const { firstName, lastName, phone, password } = data.payload;
 
+    if (!phone) {
+      callback(400, new Error('Phone number is missing'));
+      return;
+    }
+
+    if (!(firstName || lastName || password)) {
+      callback(400, new Error('Require fields to update'));
+      return;
+    }
+
+    _data.read('users', phone, function(err, userData) {
+      if(err || !data) {
+        callback(404, new Error('User not found.'));
+      }
+
+      const dataToStore = {
+        firstName: firstName || userData.firstName,
+        lastName: lastName || userData.lastName,
+        password: (password && helpers.hash(password)) || userData.password,
+      };
+
+      _data.update('users', phone, dataToStore, function(err) {
+        if(err) {
+          callback(500, new Error('Unable to update user'));
+          return;
+        }
+        callback(200);
+      });
+    });
   },
   delete: function(data, callback) {
     // Delete user datak
+    // TODO: check authenciation and authorisation
+
+    // Validate phone number
+    const { phone } = data.queryString;
+
+    if(!phone) {
+      callback(400, new Error('Phone number is required'));
+      return;
+    } 
+
+    _data.read('users', phone, function(err, data) {
+      if (err || !data) {
+        callback(404);
+        return;
+      }
+
+      _data.delete('users', phone, function(err) {
+        if (!err) {
+          callback(500, new Error('Could not delete user'));
+          return;
+        }
+
+        callback(200);
+      });
+    });
 
   };
 }
