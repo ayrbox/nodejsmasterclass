@@ -193,6 +193,13 @@ const router = {
 
 ## Returning JSON
 
+Setting header that the content type is `application/json` so the consumer 
+understand the return payload is json.
+
+```js
+res.setheader('Content-Type', 'application/json');
+```
+
 ## Adding Configration 
 
 ## Adding HTTPS Configuration
