@@ -857,7 +857,259 @@ const createRandomString = function(length) {
 }
 ```
 
+## Check Authentication
+
+```js
+// handlers.js
+
+const _tokens = {
+  // ....,
+  verifyToken: function(id, phone, cb) {
+    _data.read('tokens', id, function(err, tokenData) {
+      if(err || !tokenData) {
+        cb(false);
+      }
+
+      if(tokenData.phone === phone & tokenData.expires > Data.now()) {
+        cb(true);
+      } else {
+        cb(false); 
+      }
+    });
+  },
+};
+
+```
+
+Verify users token in handlers.
+
+```js
+const { token } = data.headers;
+if(_verifytoken(token, phone, function(isValid) {
+  if(!isValid) {
+    callback(403, new Error('Error authentication'));
+    return;
+  }
+});
+```
+
 ## Service 4: `/checks`
+Checks is service for users to check if any given endpoint (url) is up or down. Allow user to keep up to 5 checks.
+
+
+```js
+// index.js
+const router = {
+  checks: handlers.checks,
+}
+```
+
+```js
+// handlers.js
+const checks = function(data, callback) {
+  const methodHandler = _tokens[data.method];
+  if (!methodHander) {
+    callback(405);
+    return;
+  }
+  methodHandler(data, callback);
+};
+
+const _checks = {
+  post: function (data, cb) {
+    // paylod: { protocol, url, method, successCodes, timeouts }
+
+    // Validate
+    const { protocol, url, method, successCodes, timeouts } = data.payload;
+    if(!['http', 'https'].includes(protocol)) {
+      cb(400, new Error('Invalid check protocol'));
+      return;
+    }
+
+    if(!['post','get', 'put', 'delete'].includes(method)) {
+      cb(400, new Error('Invalid check method'));
+      return;
+    }
+
+    const { token } = data.headers || false;
+    _data.read('tokens', token, function(err, tokenData) {
+      if(err || !tokenData) {
+        cb(403);
+        return;
+      }
+
+      const { phone } = tokenData;
+      _data.read('users', phone, function(err, userData) {
+        if(err || !userData) {
+          cb(403);
+          return;
+        }
+
+        const { checks } = userData;
+        if (checks.lenght >= config.maxChecks) {
+          cb(400, new Error('User already has maximum number of checks'));
+          return;
+        }
+
+        const checkId = helpers.createRandomString(20);
+        const checkObject = {
+          id: checkId,
+          phone,
+          protol,
+          url,
+          method,
+          successCodes,
+          timeout,
+        };
+        _data.creat('checks', checkId, checkObject, function(err) { 
+          if(err) {
+            cb(500, 'Unable to store check');
+            return;
+          }
+
+          userData.checks = checks || []; 
+          userData.checks.push(checkId);
+
+          _data.update('users', phone, userData, function(err) {
+            if(err) {
+              cb(500, 'Unable to update user with checks');
+              return;
+            }
+            cb(201, checkObject);
+          })
+
+        });
+      });
+    });
+  },
+  get: function(data, cb) {
+    const { id, token } = data.queryString;
+    if(!id) {
+      cb(400, new Error('Invalid fields'));
+      return;
+    }
+
+    // Lookup check
+    _data.read('checks', id, function(err, checkData) {
+      if(err && !checkData) {
+        cb(404);
+        return;
+      }
+
+      const { phone } = checkData;
+
+      _tokens.verifyToken(token, phone, function(isValid) {
+        if(!isValid) {
+          cb(403, new Error('Not authorised'));
+          return;
+        }
+        cb(200, checkData);
+      });
+    });
+  },
+  put: function(data, cb) {
+
+    // Validate
+    const { id, protocol, url, method, successCodes, timeouts } = data.payload;
+    if(!id) {
+      cb(400, new Error('Invaid request payloadd'));
+      return;
+    }
+
+    if(!['http', 'https'].includes(protocol)) {
+      cb(400, new Error('Invalid check protocol'));
+      return;
+    }
+
+    if(!['post','get', 'put', 'delete'].includes(method)) {
+      cb(400, new Error('Invalid check method'));
+      return;
+    }
+
+    _data.read('checks', id, function(err, checkData) {
+      if(err || !checkData) {
+        cb(400, new Error('Check ID did not exists.'));
+        return;
+      }
+
+      const { token } = data.headers;
+      _tokens.verifyToken(token, checkData.phone, function(isValid) {
+        if(!isValid) {
+          cb(403);
+          return;
+        }
+
+        const checkObject = {
+          id,
+          protocol: protocol || checkData.protocol,
+          url: url || checkData.url,
+          method: method || checkData.method,
+          successCodes: successCodes || checkData.successCode,
+          timeouts: timeouts || checkData.timeouts,
+        };
+
+        _data.update('checks', id, checkObject, function(err) {
+          if(err) {
+            cb(500, new Error('Could not update check'));
+            return;
+          }
+          cb(200);
+        });
+      });
+    });
+  },
+  delete: function(data, cb) {
+    const { id } = data.queryString;
+    if(!id) {
+      cb(400, new Error('Invalid request'));
+      return;
+    }
+    _data.read('checks', id, function(err, checkData) {
+      if(err || !checkData) {
+        cb(400, new Error('Invalid check'));
+        return;
+      }
+
+      const { token } = data.headers;
+      
+      _tokens.verifyToken(token, checkData.phone, function(isValid) {
+        if(!isValid) {
+          cb(403);
+          return;
+        }
+
+        // delete check data;
+        _data.delete('checks', id, function(err) {
+          if (err) {
+            cb(500, 'Unable to delete check');
+            return;
+          }
+
+          _data.read('users', checkData.phone, function(err, userData) {
+            if(err || !userData) {
+              cb(500, new Error('Check user not found'));
+              return;
+            }
+
+            const { checks } = userData;
+            const updatedCheks = checks.filter(c => c !== id); // filter out chek
+            _data.update('users', phone, function(err) {
+              if(err) {
+                cb(500, 'Unable to update check user');
+                return;
+              }
+
+              cb(200);
+
+            });
+
+          });
+        });
+      });
+    });
+  },
+}
+```
 
 ## Connecting to API
 
