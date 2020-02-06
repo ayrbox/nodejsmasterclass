@@ -461,6 +461,158 @@ module.exports = {
 ```
 
 ## Service 2: `/users` 
+Move handler to separate file.
+
+```sh
+$ touch lib/handlers.js
+```
+
+```js
+// handlers.js
+
+const _data = require('./data');
+const { hash } = require('./helpers')'
+
+const ping = function(data, callback) { 
+  callback(200);
+};
+
+const notFound = function(data, callback) {
+  callback(404);
+};
+
+const _users = {
+  get: function(data, callback) {
+
+  },
+  post: function(data, callback) {
+    // Create user { firstName, lastName, phone, password, tosAgreement }
+
+    const {
+      firstName,
+      lastName,
+      phone,
+      password,
+      tosAgreement,
+    } = data.payload;
+
+
+    if (
+      !firstName ||
+      !lastName ||
+      !phone ||
+      !passowrd ||
+      !tosAgreement
+    ) {
+      callback(400, new Error('Missing required fields'));
+      return;
+    }
+
+    // Make sure that the user does not already exists
+    _data.read('users', phone, function(err, data) {
+      if (!err) {
+        callback(403, new Error('User with phone number already exists'));
+        return;
+      };
+      // Hash the password
+      const hashedPassword = hash(password);
+      
+      if(!hashedPassword) {
+        callback(500, new Error('Unable to hash user password'));
+        return;
+      }
+
+      _data.create('users', phone, {
+        firstName,
+        lastName,
+        phone,
+        password: hashedPassword,
+        tosAgreement,
+      }, function(err) {
+        if (err) {
+          callback(500, new Error('Could not create new user'));
+          return;
+        }
+
+        callback(200);
+      });
+
+    });
+    
+  },
+  put: function(data, callback) {
+    // Update user with new datak 
+
+
+  },
+  delete: function(data, callback) {
+    // Delete user datak
+
+  };
+}
+
+const users = function(data, callback) {
+  const methodHandler = _users[data.method];
+  if (!methodHander) {
+    callback(405);
+    return;
+  }
+  methodHandler(data, callback);
+};
+
+module.exports = {
+  ping,
+  notFound,
+  users,
+}
+```
+
+```js
+// lib/helpers.js
+const crypto = require('crypto');
+
+const hash = function(stringToHash) {
+  if !(typeof(stringToHash) === 'string' && stringToHash.length) {
+    return false;
+  }
+
+  return crypto
+    .createHmac('sha256', config.hashingSecret)
+    .update(stringToHash)
+    .digest('hex');
+}
+
+// parse a json string to an object
+const parsedJsonToObject = function(stringToParse) {
+  try {
+    return JSON.parse(stringToParse);
+  } catch () {
+    return {};
+  }
+}
+
+module.exports = {
+  hash,
+  parsedJsonToObject,
+};
+```
+
+```js
+// index.js
+const handers = require('./lib/handlers');
+// ...
+
+
+const data = {
+  // ...
+  payload: helpers.parsedJsonToObject(buffer)
+}
+
+const router = {
+  // ...,
+  users: handlers.users,
+}
+```
 
 ## Service 3: `/tokens`
 
