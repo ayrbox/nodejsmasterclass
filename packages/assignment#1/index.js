@@ -35,8 +35,9 @@ http.createServer((req, res) => {
 
   // Call router handler
   route.handler({}, (status = 200, payload = {}) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.writeHead(status);
+    res.writeHead(status, {
+      'Content-Type': 'application/json',
+    });
     res.end(JSON.stringify(payload)); 
   });
   
