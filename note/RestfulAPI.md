@@ -488,7 +488,6 @@ const ping = function(data, callback) {
 const notFound = function(data, callback) {
   callback(404);
 };
-
 const _users = {
   get: function(data, callback) {
     // @TODO only let authenticated user access data 
@@ -699,6 +698,164 @@ const router = {
 ```
 
 ## Service 3: `/tokens`
+Create a token by authenticatin using phone and password. Then use the token to authenticate futher request.
+
+```js
+// index.js
+// ...
+const router = {
+  // ...,
+  tokens: handlers.tokens,
+}
+```
+
+```js
+// handlers.js
+
+_tokens = {
+  post: function(data, cb) {
+    const { phone, password } = data.payload;
+    if(!phone || !password) {
+      cb(400, new Error('Missing required fields'));
+      return;
+    }
+
+    // Look up user
+    _data.read('users', phone, function(err, userData) {
+      if (err && !userData) {
+        cb(400, new Error('Could not find user.'));
+        return;
+      }
+
+      const hashedPassword = helpers.hash(password);
+      const { hashedPassword: userPassword } = userData;
+
+      if (hashedPassword !== userPassword) {
+        cb(400, new Error('Invaid credential'));
+        return;
+      }
+
+      // Create new token with expiry
+      const tokenId = helpers.createRandomString(20);
+      const expires = Date.now() + 1000 * 60 * 60;
+
+      const tokenObject = {
+          phone,
+          id: tokenId,
+          expires,
+      };
+
+      _data.create('tokens', tokenId, tokenObject, function(err) {
+        if(err) {
+          cb(500, new Error('Unable to create token'));
+          return;
+        }
+        cb(200, tokenObject);
+      });
+    });
+  },
+  get: function(data, cb) {
+    const { id } = data.queryString;
+    if(!id) {
+      cb(400, new Error('Invalid id'));
+      return;
+    }
+
+    _data.read('tokens', id, function(err, tokenData) {
+      if (err || !tokenData) {
+        cb(404);
+        return;
+      }
+      cb(200, tokenData);
+
+    });
+
+  },
+  put: function(data, cb) {
+    const { id, extend } = data.payload;
+    if (!id && !extend)  {
+      cb(400, new Error('Invalid required fields'));
+      return;
+    }
+
+
+    _data.read('tokens', id, function(err, tokenData) {
+      if(err || !tokenData) {
+        cb(400, new Error('Invalid token'))
+        return;
+      }
+      
+      const { expires } = tokenData;
+      if (expires < Data.now()) {
+        cb(400, new Error('Token already expired.'));
+        return;
+      }
+
+      // Set  new expires
+      tokenData.expires = Data.now() + 1000 * 60 * 60;
+      _data.update('tokens', id, tokenData, function(err) {
+        if(err) {
+          cb(500, err);
+          return;
+        }
+
+        cb(200);
+      });
+    });
+  },
+  delete: function(data, cb) {
+    const { id } = data.queryString;
+    if (!id) {
+      cb(400, new Error('Inavlid fields'));
+      return;
+    }
+
+    _data.read('tokens', id, function(err) {
+      if(err || !data)  {
+        cb(400, new Error('Invalid token'));
+        return;
+      }
+
+      _data.delete('tokens', id, function(err) {
+        if(err) {
+          cb(500, new Error('Unable to delete'));
+          return;
+        }
+
+        cb(200);
+      });
+    });
+  },
+}
+
+const tokens = function(data, callback) {
+  const methodHandler = _tokens[data.method];
+  if (!methodHander) {
+    callback(405);
+    return;
+  }
+  methodHandler(data, callback);
+};
+
+```
+
+
+```js
+// helpers.js
+
+// ....
+const createRandomString = function(length) {
+  const size = typeof(length) === 'number' && length > 0 && length;
+  if (!size) {
+    return false;
+  }
+
+  const CHARACTERS = 'abcdefghijklmnopqrstuvwxyz1234567890';
+  return new Array(size).fill(
+    () => CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length))
+  ).map(f => f()).join('');
+}
+```
 
 ## Service 4: `/checks`
 
