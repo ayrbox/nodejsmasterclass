@@ -358,6 +358,108 @@ const handlers = {
 $ curl localhost:3000/ping
 ```
 
+## Storing Data
+Using JSON file to store data.
+
+- Create hidden folder named .data
+.data will be hidden and will store data (json) file. 
+```sh
+$ mkdir .data
+```
+
+- Create `lib` folder to contain library
+A data library or module that an app use interact with data file.
+```js
+$ mkdir lib
+$ touch lib/data.js
+```
+
+```js
+// data.js
+const fs = require('fs');
+const path = require('path');
+
+const BASE_DIR = path.join(__dirname, '../.data/');
+
+const create = (dir, fileName, data, callback) => {
+  const filePath = path.join(BASE_DIR, dir, `${fileName}.json`);
+
+  // Open file for writing 
+  fs.open(filePath, function(err, fileDescriptor) => {
+    if (err || !fileDescriptor) {
+      callback(new Error('Could not create new file, it may alrady exists.'));
+      return;
+    }
+
+    const fileData = JSON.stringify(data);
+    fs.writeFile(fileDescriptor, fileData, function(err) {
+      if (err) {
+        callback(new Error('Error writing to new file.'));
+        return;
+      }
+      fs.close(fileDescriptor, function(err) {
+        if(err) {
+          callback(new Error('Error closing file'));
+          return;
+        }
+        callback(false);
+      });
+    });
+  });
+};
+
+const read = function(dir, fileName, callback) {
+  const filePath = path.join(BASE_DIR, dir, `${fileName}.json`);
+  fs.readFile(filePath, callback);
+};
+
+const update = function(dir, fileName, data, callback) {
+  const filePath = path.join(BASE_DIR, dir, `${fileName}.json`);
+
+  fs.open(filePath, 'r+', function(err, fileDescriptor) => {
+    if (err || !fileDescriptor) {
+      callback(new Error('Could not read file for update'));
+      return;
+    }
+    const fileData = JSON.stringify(data);
+
+    fs.truncate(fileDescriptor, function(err) {
+      if (err) {
+        callback(new Error('Error trancating file.'));
+        return;
+      }
+
+      fs.writeFiel(fileDescriptor, fileData, function(err) {
+        if(err) {
+          callback(new Error('Error writing into file'));
+          return;
+        }
+
+        fs.close(fileDescriptor, function(err) {
+          if(err) {
+            callback(new Error('Error closing file'));
+            return;
+          }
+          callback(false);
+        });
+      });
+    });
+  });
+}
+
+const delete = function(dir, fileName, callback) {
+  const filePath = path.join(BASE_DIR, dir, `${fileName}.json`);
+  fs.unlink(filePath, callback);
+};
+
+module.exports = {
+  create,
+  read,
+  update,
+  delete,
+};
+```
+
 ## Service 2: `/users` 
 
 ## Service 3: `/tokens`
