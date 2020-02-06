@@ -200,9 +200,52 @@ understand the return payload is json.
 res.setheader('Content-Type', 'application/json');
 ```
 
-## Adding Configration 
+## Adding Configuration 
 
-## Adding HTTPS Configuration
+`config.js`
+```js
+const environments = {
+  dev: {
+    port: 3000,
+    name: 'Development',
+  },
+  staging: {
+    port: 3000,
+    name: 'Staging',
+  },
+  production: {
+    port: 5000,
+    name: 'Production',
+  },
+};
+
+const env = process.env.NODE_ENV || 'dev';
+
+module.exports = environments[env];
+```
+
+## Adding HTTPS Configuration
+
+After configuration `config.js` is created. The configuration module can be use
+in applicaiton `index.js`. 
+
+`index.js`
+```js
+const config = require('./config'); 
+
+/* ..... */
+
+const { port, name: environmentName } = config;
+server.listen(port, function() {
+  console.log(`Listening on port ${port} in ${environmentName} mode`)
+});
+
+```
+
+Usage to change environment
+```sh
+$ NODE_ENV=production node index.js
+```
 
 ## Service 1: `/ping`
 
