@@ -1098,11 +1098,8 @@ const _checks = {
                 cb(500, 'Unable to update check user');
                 return;
               }
-
               cb(200);
-
             });
-
           });
         });
       });
@@ -1112,6 +1109,48 @@ const _checks = {
 ```
 
 ## Connecting to API
+
+Create api client to connect to twillio api
+
+```js
+// helpers.js
+
+const https = require('https');
+const querystring = require('querystring');
+
+// ...
+
+const sendSMS = function(phone, msg, cb) {
+  // validate 
+  if (!phone || !msg) {
+    cb(new Error('Invalid paramaters'));
+    return;
+  }
+
+  // configure request payload
+  const payload = {
+    From: config.twilio.fromPhone,
+    To: phone,
+    Body: msg,
+  };
+
+  const requestDetails = {
+    protocol: 'https',
+    hostname: 'api.twilio.com',
+    method: 'POST',
+    path: `/2010-04-01/Accounts/${config.twilio.accountSID}/Message.json`,
+    auth: `${config.tiwilo.accountSID}:${config.tiwilo.authToken}`,
+  };
+
+}
+
+
+module.exports = {
+  // ...
+  sendSMS,
+}
+
+```
 
 ## Background Workers
 
