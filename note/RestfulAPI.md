@@ -1183,6 +1183,237 @@ twilio: {
 ```
 
 ## Background Workers
+Create background worker to run checks requests by users.
+- Move all api routers and server to `server.js`
+
+```js
+// index.js
+
+const server = require('./server');
+const workers = require('./workers');
+
+const app = {
+  init: function() {
+    server.init();
+    workers.init();
+  },
+};
+
+module.exports = app;
+```
+
+```js
+// server.js
+
+// ... all code from index.js 
+
+const server = {
+  httpServer,
+  init: function() {
+    // start http server
+    this.httpServer.listen(config.httpsPort, function() { }),
+    this.httpsServer.listen(config.httpPort, function() { }),
+  }
+}
+
+module.exports = server;
+```
+
+```js
+// helpers.js
+
+lib.list = function(dir, cb) {
+  fs.readdir(lib.baseDir, function(err, data) {
+    if(err) {
+      cb(err, data);
+      return;
+    }
+
+    const fileList = (data || []).map(fileName => fileName.replace('.json', ''));
+    cb(false, fileList);
+  });
+}
+```
+
+
+```js
+// worker.js
+
+const path = require('path');
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
+const url = require('url');
+
+const _data = require('./data');
+const helpers = require('./helpers');
+
+
+const alertUserToStatusChange = function({ phone, method, protocol, url, state }) {
+  const msg = `Alert: your check for ${method.toUpperCase()} ${protocol}://${url} is currently ${state}`;
+  helpers.sendSMS(phone, msg, function(err) {
+    if(!err) {
+      console.log('User is alerted');
+    } else {
+      console.log('Error sending SMS alert');
+    }
+  });
+}
+
+
+const processCheckoutcome = function(checkData, checkOutcome) {
+  const state = !checkoutOutcome.error && checkOutcome.responseCode && checkData.successCodes.indexOf(checkoutOutcome.responseCode) > -1 ? 
+    'up' : 'down';
+    
+  const alertWarranted = checkData.lastChecked && checkData.state !== state;
+  
+  // update the check
+
+  const updatedCheck = {
+    ...checkData,
+    status,
+    lastChecked: Date.now(),
+  };
+
+  _data.update('checks', checkData.id, updatedCheck, function(err) {
+    if(!err) {
+      if(alertWarranted) {
+        alertUserToStatusChange(updatedCheck);
+      } else {
+        console.log('Check outcome has not changed');
+      }
+    } else {
+      console.log('Error upading checks');
+    }
+  })
+}
+
+
+const performCheck = function({
+  protocol,
+  url,
+  method,
+  path,
+  timeout,
+}) {
+  const checkOutcome = {
+    error: false,
+    responseCode: false,
+  };
+
+  const outcomeSent = false;
+  
+  const { hostname, path }= url.parse(`${protocol}://${url}`, true);
+
+  const requestDetails = {
+    protocol: `${protocol}:`,
+    hostname,
+    method,
+    path,
+    timeout: timeout * 1000,
+  };
+
+  httpModule = protocol === 'http' ? http : https;
+
+  const req = httpModule.request(requestDetails, function(res) {
+    checkOutcome.responseCode = res.statusCode;
+    if(!outcomeSend) {
+      processCheckoutcome(checkData, checkOutcome);
+      outcomeSent = true;
+    }
+  });
+
+  req.on('error', function(e) {
+    checkoutcome.error = {
+      error: true,
+      value: e,
+    };
+
+    if(!outcomeSend) {
+      processCheckoutcome(checkData, checkoutOutcome);
+      outcomeSent = true;
+    }
+  });
+
+  req.on('timeout', function(e) {
+    checkoutcome.error = {
+      error: true,
+      value: 'Timeout',
+    };
+
+    if(!outcomeSend) {
+      processCheckoutcome(checkData, checkoutOutcome);
+      outcomeSent = true;
+    }
+  });
+
+  req.end();
+};
+
+
+const validateCheckData = function (checkData) {
+  const d = (typeof(checkData) === 'object' && checkData !== null) ? checkData : {};
+  const { id, phone, protocol, url, method, successCode, timeout, state, lastChecked }  = d;
+  // if (typeof(id) === 'string')
+
+  if(id && phone && protocol && url && method && successCode && timeout) {
+    performCheck({
+      id,
+      phone,
+      protocol,
+      url,
+      method,
+      successCode,
+      timeout,
+      state: state || 'down',
+      lastChecked: lastChecked || false,
+    })
+  } else {
+    console.log('Error in check data');
+  }
+}
+
+const gatherAllChecks = function() {
+  _data.list('checks', function(err, checks) {
+    if(err || !checks || !checks.length) {
+      console.log('Error: no checks');
+      return; 
+    }
+
+    checks.forEach(function(check) {
+      _data.read('checks', check, function(err, originalCheckData) {
+        if(err) {
+          console.log('Error reading checks' + check);
+          return;
+        }
+        validateCheckData(originalCheckData);
+      });
+    });
+  });
+}
+
+const loop = function() {
+  setInterval(function() {
+    gatherAllChecks();
+  }, 1000 * 60);
+}
+
+const workers = {
+  init: function() {
+    // execute all checks immediately
+    gatherAllChecks();
+
+
+    // call loop 
+    loop();
+
+  }
+}
+
+
+module.exports = workers;
+
+```
 
 ## Logging to Files
 
