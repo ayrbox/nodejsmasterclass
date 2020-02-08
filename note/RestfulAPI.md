@@ -1128,20 +1128,40 @@ const sendSMS = function(phone, msg, cb) {
   }
 
   // configure request payload
-  const payload = {
+  const payload = JSON.stringify({
     From: config.twilio.fromPhone,
     To: phone,
     Body: msg,
-  };
+  });
 
   const requestDetails = {
-    protocol: 'https',
+    protocol: 'https:',
     hostname: 'api.twilio.com',
     method: 'POST',
     path: `/2010-04-01/Accounts/${config.twilio.accountSID}/Message.json`,
     auth: `${config.tiwilo.accountSID}:${config.tiwilo.authToken}`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(payload),
+    }
   };
 
+  const req = https.request(requestDetails, function(res) {
+    const status = res.statusCode;
+
+    if (status === 200 || status === 201) {
+      cb(false);
+    } else {
+      cb(new Error(`Status code return was ${status}`));
+    }
+  });
+
+  req.on('error', function(err) {
+    cb(err);
+  });
+
+  req.write(payload);
+  req.end();
 }
 
 
@@ -1149,7 +1169,17 @@ module.exports = {
   // ...
   sendSMS,
 }
+```
 
+```js
+// config.js
+
+// ..
+twilio: {
+  accountSID: '',
+  authToken: '',
+  fromPhone: '',
+}
 ```
 
 ## Background Workers
