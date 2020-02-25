@@ -20,7 +20,4 @@ module.exports = {
   delete: delete_,
   read,
   update,
-}
-
-
-
+};
