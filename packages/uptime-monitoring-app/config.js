@@ -6,8 +6,8 @@
 const environments = {
   staging: {
     envName: 'Staging environment',
-    httpPort: 3000,
-    httpsPort: 3001,
+    httpPort: 3099,
+    httpsPort: 3091,
     hashingSecret: 'thisissecr3at',
   },
   production: {

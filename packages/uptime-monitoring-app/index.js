@@ -92,7 +92,6 @@ const unifiedServer = (req, res) => {
 };
 
 
-
 // Define a request router
 const router = {
   ping: handlers.ping,
