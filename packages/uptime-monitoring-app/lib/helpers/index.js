@@ -4,7 +4,8 @@
 
 const crypto = require('crypto');
 const { inspect } = require('util');
-const config = require('../config');
+const config = require('../../config');
+const createRandomString = require('./createRandomString');
 
 module.exports = {
   hash: (toHash) => {
@@ -27,4 +28,5 @@ module.exports = {
     }
   },
   validateStringRequired: value => (value || '').trim().length > 0 ? (value || '').trim() : false,
+  createRandomString,
 };

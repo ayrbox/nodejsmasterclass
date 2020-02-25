@@ -67,7 +67,7 @@ const makeServer = function(routers, helpers) {
         res.end(JSON.stringify(payload));
 
         // Log the resposne 
-        console.log('Returning', status, payload);
+        console.log('Return', status, payload);
       });
     });
   };
