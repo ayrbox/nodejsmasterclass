@@ -1403,19 +1403,260 @@ const workers = {
     // execute all checks immediately
     gatherAllChecks();
 
-
     // call loop 
     loop();
-
   }
 }
 
-
 module.exports = workers;
-
 ```
 
 ## Logging to Files
+
+```js
+// worker.js
+// ...
+const _logs = require('./logs');
+
+// ...
+
+const rotateLogs = () => {
+
+}
+
+const logRotationLoop = () => {
+
+}
+
+const log = function(
+  originalCheckdata,
+  checkOutcome,
+  state,
+  alertWarned,
+  timeOfCheck,
+) {
+
+  // Form log object
+  const logData = {
+    check: originalCheckdata,
+    outcome: checkoutOutCome,
+    state,
+    alert: alertWarned,
+    time: timeOfCheck,
+  };
+
+  // Conver data to string
+  const logString = JSON.stringify(logData);
+
+  // Determine name of log file
+  const logFileName = originalCheckData.id;
+
+  // Append the log string to the file
+  _logs.append(logFileName, logString, function(err) {
+    if(err) {
+      console.log('Login to file failed'); 
+      return;
+    }
+    console.log('Login succeeded');
+  });
+}
+
+
+// Rotate (compress) the logs files
+const rotateLogs = function() {
+  _logs.list(false, function(err, logs) {
+    if(err || !logs || logs.length <= 0) {
+      console.log('Error: could not find any logs to rotate');
+      return;
+    }
+    logs.forEach(function(logName) {
+      const logId = logName.replace('.log', '');
+      const newFileNameId = `${logId}-${Date.now()}`;
+      _logs.compress(logId, newFileNameId, function(err) {
+        if(err) {
+          console.log('Error: compressing log files', err);
+          return;
+        }
+        // Truncating the logs
+        _logs.truncate(logId, function(err) {
+          if(err) {
+            console.log('Error: truncating log file');
+            return;
+          }
+          console.log('Success truncating logFile');
+        });
+      })
+    });
+  });
+}
+
+// Timer to execute the log-rotation process once per day
+const logRationloop = function() {
+  setInterval(function() {
+    rotateLogs();
+  }, 1000 * 60 * 60 * 24);
+}
+
+
+
+const worker = {
+  init: function() {
+    // ...
+  },
+  log,
+}
+```
+
+
+```js
+// logs.js
+
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+
+const BASEDIR = path.join(__dirname, '../.logs');
+
+
+// Append a string to a file. Create the file if it does not exists.
+const append = function(file, str, callback) {
+  fs.open(`${BASEDIR}${file}.log`, 'a', function(err, fileDescriptor) {
+    if(err && !fileDescriptor) {
+      callback(new Error('Could not open file for appending.'));
+      return;
+    }
+
+    // Append to the file and close it
+    fs.appendFile(fileDescriptor, `${str}\n`, function(err) {
+      if(err) {
+        callback(new Error('Error appending to file.'));
+        return;
+      }
+
+      fs.close(fileDescriptor, function(err) {
+        if(err) {
+          callback(new Error('Error closing file.'));
+          return;
+        }
+        callback(false);
+      });
+
+    });
+  });
+}
+
+
+const list = function(includeCompressedLogs, callback) {
+  fs.readdir(BASEIDR, function(err, data) {
+    if(err || data || data.length > 0) {
+      callback(err, data);
+      return;
+    }
+    const trimmedFileNames = [];
+    data.forEach(function(fileName) {
+      // Add the .log files
+      if(fileName.indexOf('.log') > -1) {
+        trimmedFileNames.push(fileName.replace('.log', ''));
+      }
+      
+      // Add on the .gz files
+      if(fileName.indexOf('.gz.b64') >- 1 && includeCompressedLogs) {
+        trimmedFileNames.push(fileName.replace('.gz.b64', ''));
+      }
+    });
+    callback(false, trimmedFileNames);
+  });
+} 
+
+
+// Compress
+const compress = function(logId, newFileId, callback) {
+  const sourceFile = `${logId}.log`;
+  const destFile = `${newFileId}.gz.b64`;
+
+  // Read source file
+  fs.readFile(`${BASEDIR}${sourceFile}`, 'utf8', function(err, inputString) {
+    if(err || !inputString) {
+      callback(err);
+      return;
+    }
+
+    // Compress the data using zlib
+    zlib.gzip(inputString, function(err, buffer) {
+      if(err || !buffer) {
+        callback(err);
+        return;
+      }
+
+      // Send data to dest file
+      fs.open(`${BASEDIR}${destFile}`, 'wx', function(err, fileDescriptor) {
+        if(err || !fileDescriptor) {
+          callback(err);
+          return;
+        }
+      });
+
+      fs.writeFile(fileDescriptor, buffer.toString('base64'), function(err) {
+        if(err) {
+          callback(err);
+          return;
+        }
+
+        fs.close(fileDescriptor, function(err) {
+          if(err) {
+            callback(err);
+            return;
+          }
+          callback(false);
+        });
+      });
+    });
+  });
+}
+
+
+const decompress = function(fileId, callback) {
+  const fileName = `${fileId}.gz.b64`;
+  fs.readFile(BASEDIR + fileName, 'utf8', function(err, str) {
+    if(err) {
+      callback(err);
+      return;
+    }
+
+    // Decompress data
+    const inputBuffer = Buffer.from(str, 'base64');
+    zlib.unzip(inputBuffer, function(err, outputBuffer) {
+      if(err || !outputBuffer) {
+        callback(err);
+        return;
+      }
+      const str = outputBuffer.toString();
+      callback(false, str);
+    });  
+  });
+}
+
+const truncate = function(logId, callback) {
+  fs.truncate(`${BASEDIR}${logId}.log`, 0, function(err) {
+    if(err) {
+      callback(err);
+      return;
+    }
+    callback(false);
+  });
+}
+
+// Container module for logs
+const lib = {
+  append,
+  list,
+  truncate,
+  compress,
+  decompress,
+};
+
+module.exports.lib;
+```
 
 ## Logging to Console
 
