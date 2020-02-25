@@ -7,7 +7,7 @@ const makeDelete = require('./delete');
 const makeRead = require('./read');
 const makeUpdate = require('./update');
 
-const BASE_DIR = path.join(__dirname, '../.data');
+const BASE_DIR = path.join(process.cwd(), '.data');
 
 const create = makeCreate(BASE_DIR, fs, path);
 const delete_ = makeDelete(BASE_DIR, fs, path);

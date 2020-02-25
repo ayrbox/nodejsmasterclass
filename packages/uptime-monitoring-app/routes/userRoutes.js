@@ -1,12 +1,14 @@
 const makeUserHandler = require('../handlers/users');
 
+const db = require('../lib/data');
+
 // Making handlers
 const { 
   createHandler,
   deleteHandler,
   updateHandler,
   readHandler,
-} = makeUserHandler({}, null);
+} = makeUserHandler(db, null);
 
 module.exports = [{
   path: '/users',

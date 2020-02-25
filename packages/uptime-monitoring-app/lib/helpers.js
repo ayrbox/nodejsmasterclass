@@ -3,8 +3,8 @@
  */
 
 const crypto = require('crypto');
+const { inspect } = require('util');
 const config = require('../config');
-
 
 module.exports = {
   hash: (toHash) => {
@@ -22,7 +22,9 @@ module.exports = {
     try {
       return JSON.parse(toParse);
     } catch (err) {
+      console.log('Error parsing: ', err);
       return {};
     }
-  }
+  },
+  validateStringRequired: value => (value || '').trim().length > 0 ? (value || '').trim() : false,
 };

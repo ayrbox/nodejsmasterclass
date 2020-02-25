@@ -1,7 +1,8 @@
-const makeReadUser = function(db) {
+
+const makeReadUser = function(db, logger, helpers) {
   return function(data, callback) {
-    const { phone } = data.queryStringObject;
-    if(!validateStringRequired(phone)) {
+    const { phone } = data.query;
+    if(!helpers.validateStringRequired(phone)) {
       return callback(400, {
         error: 'Invalid phone number'
       });

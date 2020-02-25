@@ -4,6 +4,7 @@ const makeCreate = function (
   pathModule,
 ) {
   return function(dir, file, data, callback) {
+    console.log('PATH >>>>>', pathModule.join(baseDir, dir, `${file}.json`));
     fileSystemModule.open(pathModule.join(baseDir, dir, `${file}.json`), 'wx', (err, fileDescriptor) => {
       if (err && !fileDescriptor) {
         callback('Could not create new file, it may already exists');
