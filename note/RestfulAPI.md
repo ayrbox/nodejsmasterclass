@@ -1660,5 +1660,44 @@ module.exports.lib;
 
 ## Logging to Console
 
-## Summary  
-    
+```js
+// worker.js
+
+// Send to console in green
+console.log('\x1b[32m%s\x1b[0m', 'Background Workers are running.')
+
+// Send to console in yellow
+console.log('\x1b[33m%s\x1b[0m', 'Background Workers are running.')
+
+// Send to console in blue
+console.log('\x1b[36m%s\x1b[0m%s', `[${(new Date()).toUTCString()}] `, 'Normal Color')
+
+// Send to consle in purple
+console.log('\x1b[35m%s\x1b[0m', 'Background Workers are running.')
+```
+
+
+Debug node module.
+```sh
+$ NODE_DEBUG=http node index.js
+```
+
+
+```js
+// worker.js
+
+const util = require('util');
+const debug = util.debuglog('workers');
+
+debug('Successful log');
+```
+Above log is only triggered if app is started with `NODE_DEBUG='workers'`.
+
+
+```js
+if(statusCode === 200) {
+  debug('\x1b[32m%s\x1b[0m', method.toUpperCase() + '/' + statusCode);
+} else {
+  debug('\x1b[31m%s\x1b[0m', method.toUpperCase() + '/' + statusCode);
+}
+```
