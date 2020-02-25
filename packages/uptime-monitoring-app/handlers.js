@@ -30,110 +30,15 @@ handlers.users = (data, callback) => {
 };
 
 
-handlers._users = {
-  post: (data, callback) => {
-    // validate required fields
-    const { payload } = data;
+// handlers._users = {
+//   post: (data, callback) => ,
+//   // @TODO Only access for owner
+//   get: ,
 
-    const rawData = ['firstName', 'lastName', 'phone', 'password', 'tosAgreement']
-      .map(key => ({key, value: validateStringRequired(payload[key])}))
+//   put: ,
 
-    const invalidData = rawData.find(d => !d.value);
-    if (invalidData) {
-      callback(400, {
-        error: 'Missing required fields'
-      });
-    }
+//   delete: ,
 
-    const {
-      firstName,
-      lastName,
-      phone,
-      password,
-      tosAgreement,
-    } = rawData.reduce((o, item) => {
-      o[item.key] = item.value;
-      return o; 
-    }, {});
-      
-    //data make sure user does not exists
-    db.read('users', phone, (err, data) => {
-      if (!err) {
-        return callback(400, { error: 'User with phone number already exists' });
-      }
-
-      // hash password
-      const hashedPassword = helpers.hash(password);
-      if (!hashedPassword) {
-        return callback(500, {
-          message: 'Could not hash the users password'
-        });
-      }
-
-      db.create('users', phone, {
-        firstName,
-        lastName,
-        phone,
-        hashedPassword,
-        tosAgreement
-      }, (err) => {
-
-        if (err) {
-          console.log(err);
-          return callback(500, {
-            message: 'Could not create user', 
-            err,
-          });
-        }
-
-        callback(201);
-      });
-      
-    })
-  },
-  // @TODO Only access for owner
-  get: (data, callback) => {
-    const { phone } = data.queryStringObject;
-    if(!validateStringRequired(phone)) {
-      return callback(400, {
-        error: 'Invalid phone number'
-      });
-    }
-    
-    db.read('users', phone, (err, data) => {
-      if (err) {
-        return callback(404);
-      } else if(!err && data) {
-        const {
-          firstName,
-          lastName,
-          tosAgreement,
-        } = data;
-
-        callback(200, {
-          firstName,
-          lastName,
-          phone,
-          tosAgreement,
-        });
-
-      }
-    });
-  },
-
-  put: (data, callback) => {
-    const { phone } = data.queryStringObject;
-    if(!validateStringRequired(phone)) {
-      return callback(400, {
-        error: 'Invalid phone number'
-      });
-    }
-
-  },
-
-  delete: (data, callback) => {
-  },
-
-}
+// }
 
 module.exports = handlers;

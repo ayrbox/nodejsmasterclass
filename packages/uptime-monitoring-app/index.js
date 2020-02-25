@@ -6,16 +6,18 @@ const config = require('./config');
 const helpers = require('./lib/helpers');
 const makeServer = require('./server');
 
+// const handlers = require('./handlers');
+// // Define a request router
+// const routers = {
+//   ping: handlers.ping,
+//   users: handlers.users,
+// }
 
-const handlers = require('./handlers');
-// Define a request router
-const routers = {
-  ping: handlers.ping,
-  users: handlers.users,
-}
+const routes = require('./routes');
+console.log('Routes', JSON.stringify(routes));
 
 // Make instance of webserver
-const server = makeServer(routers, helpers);
+const server = makeServer(routes, helpers);
 
 // The server should response to all request with a string
 http.createServer(server).listen(config.httpPort, () => {

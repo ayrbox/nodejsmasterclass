@@ -1,5 +1,6 @@
 const url = require('url');
 const { StringDecoder } = require('string_decoder');
+const { inspect } = require('util');
 
 const parseRequestUrl = function(httpRequest) {
   const parsedUrl = url.parse(httpRequest.url, true);
@@ -17,11 +18,15 @@ const parseRequestUrl = function(httpRequest) {
   };
 }
 
+const defaultHandler = (_, callback) => {
+  callback(404);
+};
+
 
 const makeServer = function(routers, helpers) {
   return function(req, res) {
     const {
-      path,
+      requestPath,
       query,
       method,
       headers,
@@ -37,21 +42,17 @@ const makeServer = function(routers, helpers) {
 
     req.on('end', () => {
       buffer += decoder.end();
-      // log the request path
-      console.log('Request Path: ', path);
-      console.log('Method: ', method);
-      console.log('Query: ', query);
-      console.log('Headers: ', headers);
-      console.log('Payload: ', buffer);
 
       // choose handler by the pathname
-      const chosenHandler = typeof(routers[path]) !== 'undefined' ? routers[path] : (_, callback) => {
-        callback(404);
-      }; // handlers.notFound;
-
+      const { handler }= routers.find(({ path: routePath, method: routeMethod }) => {
+        return routePath.replace(/^\/+|\/+$/g, '') === requestPath && method === routeMethod;
+      }) || {
+        handler: defaultHandler,
+      };
+      
       // construct data object to send to hander
       const data = {
-        path,
+        path: requestPath,
         query,
         method,
         headers,
@@ -59,7 +60,7 @@ const makeServer = function(routers, helpers) {
       };
 
       // Router the request to the handler to specifed router
-      chosenHandler(data, (status = 200, payload = {}) => {
+      handler(data, (status = 200, payload = {}) => {
         // Return the response
         res.setHeader('Content-Type', 'application/json');
         res.writeHead(status);
