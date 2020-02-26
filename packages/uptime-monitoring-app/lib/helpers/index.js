@@ -1,9 +1,8 @@
 /**
- * Helper filesi
+ * Helper files
  */
 
 const crypto = require('crypto');
-const { inspect } = require('util');
 const config = require('../../config');
 const createRandomString = require('./createRandomString');
 
