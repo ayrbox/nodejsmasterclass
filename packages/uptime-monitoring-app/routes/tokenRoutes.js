@@ -6,6 +6,8 @@ const makeTokenHandlers = require('../handlers/tokens');
 const {
   createHandler,
   readHandler,
+  updateHandler,
+  deleteHandler,
 } = makeTokenHandlers({db, helpers });
 
 
@@ -17,6 +19,12 @@ module.exports = [{
   path: '/tokens',
   method: 'GET',
   handler: readHandler,
+}, {
+  path: '/tokens',
+  method: 'PUT',
+  handler: updateHandler,
+}, {
+  path: '/tokens',
+  method: 'DELETE',
+  handler: deleteHandler,
 }];
-
-

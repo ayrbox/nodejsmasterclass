@@ -8,7 +8,7 @@ const makeUpdate = function(baseDir, fileSystemModule, pathModule) {
       }
 
       // truncate file
-      fileSystemModule.truncate(fileDescriptor, err => {
+      fileSystemModule.ftruncate(fileDescriptor, err => {
         if (err) {
           callback('Error truncating file');
         }
