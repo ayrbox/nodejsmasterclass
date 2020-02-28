@@ -9,12 +9,14 @@ const environments = {
     httpPort: 3099,
     httpsPort: 3091,
     hashingSecret: 'thisissecr3at',
+    maxChecks: 10,
   },
   production: {
     envName: 'Production environment',
     httpPort: 5000,
     httpsPort: 5001,
     hashingSecret: 'thisissecr3at',
+    maxChecks: 5,
   },
 };
 
