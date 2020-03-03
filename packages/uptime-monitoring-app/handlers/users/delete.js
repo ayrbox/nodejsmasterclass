@@ -9,7 +9,6 @@ const makeDeleteUser = function(db, logger, helpers) {
     // Validate phone number
     const { phone } = data.query;
     const { token } = data.headers;
-    console.log('headers', data.headers)
 
     if(!phone) {
       callback(400, new Error('Phone number is required'));
