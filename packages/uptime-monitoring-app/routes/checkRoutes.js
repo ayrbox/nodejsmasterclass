@@ -4,6 +4,7 @@ const db = require('../lib/data');
 const {
   createHandler,
   getHandler,
+  updateHandler,
 } = makeCheckHandlers({ db });
 
 
@@ -15,4 +16,8 @@ module.exports = [{
   path: '/checks',
   method: 'GET',
   handler: getHandler,
+}, {
+  path: '/checks',
+  method: 'PUT',
+  handler: updateHandler,
 }];

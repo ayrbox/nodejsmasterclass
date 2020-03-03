@@ -7,7 +7,7 @@ const makeGetCheck = function({
 }) {
 
   const verifyToken = makeVerifyToken(db);
-return function(data, callback) {
+  return function(data, callback) {
     const { id } = data.query;
     const { token } = data.headers;
     if(!id) {
