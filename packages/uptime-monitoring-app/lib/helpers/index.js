@@ -19,6 +19,7 @@ module.exports = {
   },
 
   parseJsonToObject: (toParse) => {
+    if (toParse === '') return {};
     try {
       return JSON.parse(toParse);
     } catch (err) {
