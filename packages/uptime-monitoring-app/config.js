@@ -10,6 +10,10 @@ const environments = {
     httpsPort: 3091,
     hashingSecret: 'thisissecr3at',
     maxChecks: 10,
+    fromPhone: '+12055089327',
+    accountSID: 'ACc041fe75158c333bbb87681773ece9e9',
+    authToken: '8838feaaddc81ba35f1931d40cf853a6',
+    apiHost: 'api.twilio.com',
   },
   production: {
     envName: 'Production environment',

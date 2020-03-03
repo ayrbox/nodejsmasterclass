@@ -1,35 +1,36 @@
+const { inspect } = require('util');
 const https = require('https');
+const qs = require('querystring');
 
 const makeSMSClient = function({
   fromPhone,
   accountSID,
   authToken,
   apiHost = 'api.twilio.com',
-  apiPath,
+  apiPath = undefined,
 }) {
 
-  const apiPath_ = apiPath || `/2010-04-01/Accounts/${accountSID}/Message.json`;
+  const apiPath_ = apiPath || `/2010-04-01/Accounts/${accountSID}/Messages.json`;
 
 
   const send = function({
     phone,
     message,
-    callback,
-  }) {
+  }, callback) {
 
     if(!phone || !message) {
       callback(new Error('Invalid parameters.'));
       return;
     }
 
-    const payload = JSON.stringify({
+    const payload = qs.stringify({
       From: fromPhone,
       To: phone,
       Body: message, 
     });
 
-    const requestDetail = {
-      protocol: 'https',
+    const options = {
+      protocol: 'https:',
       hostname: apiHost,
       method: 'POST',
       path: apiPath_,
@@ -40,12 +41,12 @@ const makeSMSClient = function({
       },
     };
 
-    const req = https.request(requestDetail, function(res) {
+    const req = https.request(options, function(res) {
       const status = res.statusCode;
       if(status === 200 || status === 201) {
         callback(false);
       } else {
-        callback(new Error(`Status code return is ${status}`));
+        callback(new Error(`Status code return is ${inspect(status)}`));
       }
     });
 

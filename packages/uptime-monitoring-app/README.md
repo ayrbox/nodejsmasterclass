@@ -1144,7 +1144,7 @@ const sendSMS = function(phone, msg, cb) {
   }
 
   // configure request payload
-  const payload = JSON.stringify({
+  const payload = querystring.stringify({
     From: config.twilio.fromPhone,
     To: phone,
     Body: msg,
