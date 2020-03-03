@@ -5,8 +5,8 @@ const {
   createHandler,
   getHandler,
   updateHandler,
+  deleteHandler,
 } = makeCheckHandlers({ db });
-
 
 module.exports = [{
   path: '/checks',
@@ -20,4 +20,8 @@ module.exports = [{
   path: '/checks',
   method: 'PUT',
   handler: updateHandler,
+}, {
+  path: '/checks',
+  method: 'DELETE',
+  handler: deleteHandler,
 }];
