@@ -6,7 +6,10 @@ const {
   getHandler,
   updateHandler,
   deleteHandler,
-} = makeCheckHandlers({ db });
+} = makeCheckHandlers({
+  db,
+  logger: undefined,
+});
 
 module.exports = [{
   path: '/checks',

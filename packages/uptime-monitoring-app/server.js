@@ -21,8 +21,7 @@ const parseRequestUrl = function(httpRequest) {
 const defaultHandler = (_, callback) => {
   callback(404);
 };
-
-
+  
 const makeServer = function(routers, helpers) {
   return function(req, res) {
     const {
