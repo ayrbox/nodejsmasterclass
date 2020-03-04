@@ -5,6 +5,7 @@
 const crypto = require('crypto');
 const config = require('../../config');
 const createRandomString = require('./createRandomString');
+const listFiles = require('./listFiles');
 
 module.exports = {
   hash: (toHash) => {
@@ -29,4 +30,5 @@ module.exports = {
   },
   validateStringRequired: value => (value || '').trim().length > 0 ? (value || '').trim() : false,
   createRandomString,
+  listFiles,
 };
