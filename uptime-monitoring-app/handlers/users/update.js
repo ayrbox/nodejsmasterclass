@@ -23,7 +23,9 @@ const makeUserUpdate = function(db, logger, helpers) {
       const dataToStore = {
         firstName: firstName || userData.firstName,
         lastName: lastName || userData.lastName,
-        password: (password && helpers.hash(password)) || userData.password,
+        hashedPassword: (password && helpers.hash(password)) || userData.hashedPassword,
+        phone: userData.phone,
+        tosAgreement: userData.tosAgreement,
       };
 
       db.update('users', phone, dataToStore, function(err) {
