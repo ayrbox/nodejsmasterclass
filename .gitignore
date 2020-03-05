@@ -1,5 +1,2 @@
 *.swp
 .DS_Store
-**/.data/** 
-!**/.gitkeep
-
