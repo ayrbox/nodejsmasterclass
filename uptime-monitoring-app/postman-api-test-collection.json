@@ -1,0 +1,438 @@
+{
+	"info": {
+		"_postman_id": "8e294da7-27ed-42da-a0ca-86b40b8a4b37",
+		"name": "NodeJS Masterclass - Uptime Monitor Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/ping",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"Mister\",\n\t\"lastName\": \"Bean\",\n\t\"phone\": \"02012345678\",\n\t\"password\": \"admin123\",\n\t\"tosAgreement\": \"yes\"\n}"
+				},
+				"url": {
+					"raw": "{{API}}/users",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"Mr\",\n\t\"lastName\": \"Bean\",\n\t\"phone\": \"02012345678\",\n\t\"password\": \"abc123\"\n}"
+				},
+				"url": {
+					"raw": "{{API}}/users",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/users?phone=02012345678",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "phone",
+							"value": "02012345678"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/users?phone=02012345678",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "phone",
+							"value": "02012345678"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phone\": \"02012345678\",\n\t\"password\": \"admin123\"\n}"
+				},
+				"url": {
+					"raw": "{{API}}/tokens",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Token",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": \"xasde37egjkah3qwgyga\",\n\t\"extend\": true\n}"
+				},
+				"url": {
+					"raw": "{{API}}/tokens",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read Token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/tokens?id=xasde37egjkah3qwgyga",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"tokens"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "xasde37egjkah3qwgyga"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Token",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/tokens?id=xasde37egjkah3qwgyga",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"tokens"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "xasde37egjkah3qwgyga"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Checks",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "93otp442xhkiu1h57nb7",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"protocol\": \"https\",\n\t\"url\": \"www.duedil.com\",\n\t\"method\": \"GET\",\n\t\"successCodes\": [200, 201],\n\t\"timeouts\": 1000\n}"
+				},
+				"url": {
+					"raw": "{{API}}/checks",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"checks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Checks",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "token",
+						"value": "93otp442xhkiu1h57nb7",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": \"384rowig9jj4o4utw4ft\",\n\t\"protocol\": \"https\",\n\t\"url\": \"www.duedil.com\",\n\t\"method\": \"GET\",\n\t\"successCodes\": [200],\n\t\"timeouts\": 1000\n}"
+				},
+				"url": {
+					"raw": "{{API}}/checks",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"checks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Checks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "93otp442xhkiu1h57nb7",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/checks?id=384rowig9jj4o4utw4ft",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"checks"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "384rowig9jj4o4utw4ft"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Checks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "93otp442xhkiu1h57nb7",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{API}}/checks?id=384rowig9jj4o4utw4ft",
+					"host": [
+						"{{API}}"
+					],
+					"path": [
+						"checks"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "384rowig9jj4o4utw4ft"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "27ea8132-fb77-4363-87e8-13b3dc22aa41",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "486f9b13-28ce-4e91-ab31-9d81bae1347c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "6200709a-1b14-48ad-b385-87eed7289ecc",
+			"key": "API",
+			"value": "http://localhost:3099",
+			"type": "string"
+		}
+	]
+}
