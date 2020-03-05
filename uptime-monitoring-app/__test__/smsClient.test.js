@@ -1,9 +1,9 @@
 const makeSMSClient = require('../lib/smsClient');
 
 const config = {
-  fromPhone: '+12055089327',
-  accountSID: 'ACc041fe75158c333bbb87681773ece9e9',
-  authToken: '8838feaaddc81ba35f1931d40cf853a6',
+  fromPhone: '+12',
+  accountSID: 'ACc041fe7515',
+  authToken: '8838feaaddc81',
   apiHost: 'api.twilio.com',
 };
 

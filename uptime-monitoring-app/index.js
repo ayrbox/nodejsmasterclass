@@ -5,6 +5,8 @@ const path = require('path');
 
 const config = require('./config');
 const helpers = require('./lib/helpers');
+const makeSMSClient = require('./lib/smsClient');
+
 const makeServer = require('./server');
 const makeWorker = require('./worker');
 
@@ -12,15 +14,16 @@ const routes = require('./routes');
 
 console.log('Available Routes', JSON.stringify(routes, null, 2));
 
-
 const __CURRENT_DIR = process.cwd(); 
 const __DATA_DIR = path.join(__CURRENT_DIR, '.data'); 
+const smsClient = makeSMSClient(config);
 
 // Make instance of webserver and worker
 const server = makeServer(routes, helpers);
 const worker = makeWorker({
-  interval: 1000,
+  interval: 60000,
   dataDirectory: __DATA_DIR,
+  smsClient,
 });
 
 // The server should response to all request with a string

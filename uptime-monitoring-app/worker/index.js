@@ -1,16 +1,14 @@
 const path = require('path');
 const fs = require('fs');
-const https = require('https');
-const http = require('http');
-const url = require('url');
 const db = require('../lib/data');
 const helpers = require('../lib/helpers');
 
 let workerInterval = 1000 * 60;
 let dataDirectory_;
 const makeGatherChecks = require('./makeGatherChecks');
+const makeAlertUser = require('./makeAlertUser');
 
-let gatherChecks = function() { };
+let gatherChecks = function() {};
 
 const loop = function() {
   setInterval(function() {
@@ -21,6 +19,7 @@ const loop = function() {
 const makeWorker = function({
   interval,
   dataDirectory,
+  smsClient,
 }) {
   workerInterval = interval || workerInterval;
   dataDirectory_ = dataDirectory;
@@ -30,7 +29,9 @@ const makeWorker = function({
     helpers,
     logger: undefined,
     checkFileDirectory: path.join(dataDirectory_, 'checks'),
+    alertUser: makeAlertUser(smsClient) 
   });
+
 
   const init = function() {
     console.log('Running worker');
