@@ -4,7 +4,7 @@ const path = require('path');
 
 const makeUpdate = function(dataDir) {
   return function(dataId, data, callback) {
-    fs.open(path.join(datadir, `${dataId}.json`, 'r+', (err, fileDescriptor) => {
+    fs.open(path.join(dataDir, `${dataId}.json`), 'r+', (err, fileDescriptor) => {
       if(err) {
         callback(new Error('Unable to open file for updating.'));
         return;
@@ -33,7 +33,7 @@ const makeUpdate = function(dataDir) {
           });
         });
       });
-    }));
+    });
   }
 }
 
