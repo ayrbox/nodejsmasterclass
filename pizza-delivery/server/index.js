@@ -31,7 +31,9 @@ const makeServer = function({
     req.on('end', () => {
       buffer += decoder.end();
 
-      const { handler } = defaultHandler;
+      const { handler } = routes.find(({ path: routePath, method: routeMethod }) => {
+        return routePath.replace(/^\/+|\/+$/g, '') === requestPath && routeMethod === method;
+      }) || defaultHandler;
 
       const requestData = {
         path: requestPath,
