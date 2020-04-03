@@ -10,7 +10,7 @@ const DATADIR = path.join(process.cwd(), '.data');
 const server = Server({
   routes: [],
 });
-const logger = makeLogger('main', 'app');
+const logger = makeLogger('main');
 
 // const makeDataHandler = require('./lib/makeDataHandlers');
 // const usersData = makeDataHandler(DATADIR, 'users');

@@ -7,7 +7,7 @@ const CONSOLE_COLORS = {
 };
 
 
-function makeLogger(sectionKey, prefix) {
+function makeLogger(sectionKey, prefix = 'app') {
 
   const debugLogger = util.debuglog(`${prefix}:${sectionKey}`);
 
