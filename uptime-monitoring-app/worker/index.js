@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../lib/data');
 const helpers = require('../lib/helpers');
+const logger = require('../lib/logger');
 
 let workerInterval = 1000 * 60;
 let dataDirectory_;
@@ -34,7 +35,7 @@ const makeWorker = function({
 
 
   const init = function() {
-    console.log('Running worker');
+    logger.info('Running worker');
     gatherChecks();
     loop();
   }

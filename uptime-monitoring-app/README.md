@@ -1709,7 +1709,6 @@ debug('Successful log');
 ```
 Above log is only triggered if app is started with `NODE_DEBUG='workers'`.
 
-
 ```js
 if(statusCode === 200) {
   debug('\x1b[32m%s\x1b[0m', method.toUpperCase() + '/' + statusCode);

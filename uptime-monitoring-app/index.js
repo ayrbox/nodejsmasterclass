@@ -12,7 +12,12 @@ const makeWorker = require('./worker');
 
 const routes = require('./routes');
 
-console.log('Available Routes', JSON.stringify(routes, null, 2));
+const logger = require('./lib/logger');
+
+logger.info('Available Routes');
+routes
+  .map(({ method, path }) => `${method}\t\t: ${path}`)
+  .forEach(info => logger.info(info));
 
 const __CURRENT_DIR = process.cwd(); 
 const __DATA_DIR = path.join(__CURRENT_DIR, '.data'); 
@@ -28,14 +33,14 @@ const worker = makeWorker({
 
 // The server should response to all request with a string
 http.createServer(server).listen(config.httpPort, () => {
-  console.log(`The server is listenning on port ${config.httpPort} in ${config.envName} mode`);
+  logger.warning(`The server is listenning on port ${config.httpPort} in ${config.envName} mode`);
 });
 
 https.createServer({
   key: fs.readFileSync('./https/key.pem'),
   cert: fs.readFileSync('./https/cert.pem'), 
 }, server).listen(config.httpsPort, () => {
-  console.log(`The server is listenning on port ${config.httpsPort} in ${config.envName} mode`);
+  logger.warning(`The server is listenning on port ${config.httpsPort} in ${config.envName} mode`);
 });
 
 
