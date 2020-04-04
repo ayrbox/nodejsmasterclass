@@ -6,7 +6,6 @@ const Server = require('./server');
 const routes = require('./routes');
 const makeLogger = require('./lib/makeLogger');
 
-const DATADIR = path.join(process.cwd(), '.data');
 
 const server = Server({
   routes,
