@@ -1,7 +1,7 @@
 const { StringDecoder } = require('string_decoder');
 
 const parseRequestUrl = require('./parseRequestUrl');
-const logger= require('../lib/makeLogger')('server');
+const logger = require('../lib/makeLogger')('server');
 
 const defaultHandler = {
   handler: function (_, callback) {
@@ -12,6 +12,10 @@ const defaultHandler = {
 const makeServer = function({
   routes,
 }) {
+
+  routes
+    .map(({ method, path }) => `${method}\t\t: ${path}`)
+    .forEach(info => logger.info(info));
 
   return function(req, res) {
     const {
