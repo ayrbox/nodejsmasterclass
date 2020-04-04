@@ -13,12 +13,15 @@ module.exports = [{
   path: '/users',
   method: 'DELETE',
   handler: deleteUser,
+  secure: true,
 }, {
   path: '/users',
   method: 'PUT',
   handler: updateUser,
+  secure: true,
 }, {
   path: '/users',
   method: 'GET',
-  handler:readUser 
+  handler:readUser,
+  secure: true
 }];

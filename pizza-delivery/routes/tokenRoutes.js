@@ -14,14 +14,17 @@ module.exports = [{
   path: '/tokens',
   method: 'GET',
   handler: readToken,
+  secure: true,
 }, {
   path: '/tokens',
   method: 'PUT',
   handler: updateToken, 
+  secure: true,
 }, {
   path: '/tokens',
   method: 'DELETE',
   handler: deleteToken,
+  secure: true,
 }];
 
 
