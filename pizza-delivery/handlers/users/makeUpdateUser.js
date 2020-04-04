@@ -1,4 +1,5 @@
 const { inspect } = require('util');
+const { hash } = require('../../lib/cryptoHash');
 
 const makeUpdateUser = function({
   db,
@@ -10,6 +11,7 @@ const makeUpdateUser = function({
       email,
       phone,
       address,
+      password,
     } = payload; // TODO: validate users data
 
     db.read(email, function(err, data) {
@@ -23,6 +25,7 @@ const makeUpdateUser = function({
         name: name || data.name,
         phone: phone || data.phone,
         address: address || data.address,
+        password: (password && hash(password)) || data.password,
       };
 
       db.update(email, dataToSave, function(err) {

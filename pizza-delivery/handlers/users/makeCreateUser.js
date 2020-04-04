@@ -1,3 +1,5 @@
+const { hash } = require('../../lib/cryptoHash');
+
 const makeCreateUser = function({
   db,
   logger,
@@ -8,13 +10,17 @@ const makeCreateUser = function({
       email,
       phone,
       address,
+      password,
     } = payload; // TODO: validate users data
+
+    const hashedPassword = hash(password);
 
     db.create(email, {
       name,
       email,
       phone,
       address,
+      password: hashedPassword,
     }, function(err) {
       if(err) {
         logger.warning(err.message);
