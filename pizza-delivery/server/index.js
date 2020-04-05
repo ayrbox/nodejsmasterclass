@@ -2,6 +2,7 @@ const { StringDecoder } = require('string_decoder');
 
 const parseRequestUrl = require('./parseRequestUrl');
 const logger = require('../lib/makeLogger')('server');
+const composeMiddleware = require('./composeMiddleware');
 
 const defaultHandler = {
   handler: function (_, callback) {
@@ -10,7 +11,8 @@ const defaultHandler = {
 };
 
 const makeServer = function({
-  routes,
+  routes = [],
+  middlewares = [],
 }) {
 
   routes
@@ -47,13 +49,19 @@ const makeServer = function({
         payload: JSON.parse(buffer || '\{\}'), // TODO: user generic parse function
       }
 
-      handler(requestData, function(status = 200, payload = {}) {
-        res.setHeader('Content-Type', 'application/json');
-        res.writeHead(status);
-        res.end(JSON.stringify(payload));
+      const composedHandler = composeMiddleware(middlewares);
 
-        logger.info(`Status ${status}: ${JSON.stringify(payload)}`);
-      });
+      const fnNext = function() {
+        handler(requestData, function(status = 200, payload = {}) {
+          res.setHeader('Content-Type', 'application/json');
+          res.writeHead(status);
+          res.end(JSON.stringify(payload));
+
+          logger.info(`Status ${status}: ${JSON.stringify(payload)}`);
+        });
+      };
+
+      composedHandler(requestData, res, fnNext);
     });
   }
 }
