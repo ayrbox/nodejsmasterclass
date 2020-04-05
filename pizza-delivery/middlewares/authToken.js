@@ -1,10 +1,10 @@
 const logger = require('../lib/makeLogger')('middleware:log');
 
 const authToken = function(req, res, next) {
-  const { headers } = req;
+  const { headers, secure } = req;
   const { token } = headers;
 
-  if(!token) {
+  if(secure && !token) {
     logger.warning('401 Unautenticated');
     res.writeHead(401);
     res.end(JSON.stringify({ message: 'Unautenticated.' }));

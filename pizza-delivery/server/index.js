@@ -37,7 +37,7 @@ const makeServer = function({
     req.on('end', () => {
       buffer += decoder.end();
 
-      const { handler } = routes.find(({ path: routePath, method: routeMethod }) => {
+      const { handler, secure } = routes.find(({ path: routePath, method: routeMethod }) => {
         return routePath.replace(/^\/+|\/+$/g, '') === requestPath && routeMethod === method;
       }) || defaultHandler;
 
@@ -47,6 +47,7 @@ const makeServer = function({
         method,
         headers,
         payload: JSON.parse(buffer || '\{\}'), // TODO: user generic parse function
+        secure,
       }
 
       const composedHandler = composeMiddleware(middlewares);
