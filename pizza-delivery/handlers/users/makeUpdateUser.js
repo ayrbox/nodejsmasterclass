@@ -24,6 +24,7 @@ const makeUpdateUser = function({
       const dataToSave =  {
         name: name || data.name,
         phone: phone || data.phone,
+        email: email || data.email,
         address: address || data.address,
         password: (password && hash(password)) || data.password,
       };
