@@ -4,8 +4,13 @@ const makeReadUser = function({
   db,
   logger,
 }) {
-  return function({ query }, responseCallback) {
+  return function({ query, user }, responseCallback) {
     const { email } = query;
+
+    if(user && user.email !== email) {
+      responseCallback(403, { message: `Not authorised.`})
+      return;
+    }
 
     db.read(email, function(err, data) {
       if(err) {
