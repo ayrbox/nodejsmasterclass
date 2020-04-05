@@ -8,6 +8,12 @@ const dbUsers = makeDataHandler(DATADIR, 'users');
 
 const authToken = function(req, res, next) {
   const { headers, secure } = req;
+
+  if(!secure) {
+    next();
+    return;
+  }
+
   const { token } = headers;
 
   if(secure && !token) {
