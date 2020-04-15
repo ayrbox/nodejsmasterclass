@@ -64,13 +64,16 @@ const pizzas = [{
 }];
 
 const pizzaOptions = [{
-  name: '9 inches',
+  name: 'small',
+  description: '9 inches',
   price: 11.5,
 }, {
-  name: '12 inches',
+  name: 'medium',
+  description: '12 inches',
   price: 16.5,
 }, {
-  name: '15 inches',
+  name: 'large',
+  description: '15 inches',
   price: 17.5,
 }];
 
