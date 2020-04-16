@@ -13,13 +13,39 @@ const makeAddToCart = function({
    * @param {object} itemToAdd Item Object
    */
   const updateCart = function(cartId, cart = {}, itemToAdd, callback) {
-    // TODO: update item if exists
+    const rawItems= [...(cart.items || []), itemToAdd];
 
-    const items = [...(cart.items || []), itemToAdd];
+    // Aggregrate items by menuId and size
+    const items = rawItems.reduce((aggregatedResult, itemToCheck) => {
+      const itemFound = aggregatedResult.find((itemToFind) => {
+        return itemToFind.menuId === itemToCheck.menuId &&
+          itemToFind.option.name === itemToCheck.option.name;
+      });
+
+      const quantity = ((itemFound && itemFound.quantity) || 0) + itemToCheck.quantity;
+
+      const itemFoundIdx = aggregatedResult.indexOf(itemFound);
+      if(itemFoundIdx> -1) {
+        aggregatedResult.splice(itemFoundIdx, 1);
+      }
+
+      return [
+        ...aggregatedResult,
+        {
+          ...itemToCheck,
+          quantity,
+        }
+      ]
+
+    }, []).map(item => ({
+      ...item,
+      amount: (item.quantity * item.option.price), // calculate amount for each item
+    }));
+
 
     const updatedData = {
       items,
-      total: items.reduce((t, { amount }) => (t + amount), 0),
+      total: items.reduce((t, { amount }) => (t + amount), 0), // calculate cart total
     };
 
     db.update(cartId, updatedData, (err) => {
@@ -61,13 +87,10 @@ const makeAddToCart = function({
         return;
       }
 
-      // get price for pizza selected (item and size)
-      const { price } = option;
       const itemToAdd = {
         menuId,
         quantity, 
         option,
-        amount: (price * quantity),
       };
 
       // Read data from cart
