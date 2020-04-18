@@ -1,8 +1,7 @@
 const { hash } = require('../../lib/cryptoHash');
 
-const makeAddToCart = function({
+const makeAddCartItem = function({
   db,
-  logger,
   dbMenu,
 }) { 
 
@@ -25,7 +24,7 @@ const makeAddToCart = function({
       const quantity = ((itemFound && itemFound.quantity) || 0) + itemToCheck.quantity;
 
       const itemFoundIdx = aggregatedResult.indexOf(itemFound);
-      if(itemFoundIdx> -1) {
+      if(itemFoundIdx > -1) {
         aggregatedResult.splice(itemFoundIdx, 1);
       }
 
@@ -136,5 +135,5 @@ const makeAddToCart = function({
   }
 };
 
-module.exports = makeAddToCart;
+module.exports = makeAddCartItem;
 
