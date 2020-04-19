@@ -40,9 +40,13 @@ const makeCheckout = function({
       // Create stripe payment intent
       createPayment({
         orderId,
-        custoemrId: `${name} (${email})`,
+        customerId: `${name} (${email})`,
         amount: cartData.total,
         confirm: true,
+        cardType,
+        cardNo,
+        cvvCode,
+        expiryDate,
       }, function(err, detail) {
         if(err) {
           responseCallback(500, {
