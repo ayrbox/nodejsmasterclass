@@ -41,7 +41,6 @@ const createPayment = function({
     res.on("data", responseBuffer => {
       const decoder = new StringDecoder("utf-8");
       const data = decoder.write(responseBuffer);
-      console.log('data>>>>>>>>>', data);
 
       const err = (status === 200 || status === 201) ?
         false :
