@@ -1,4 +1,5 @@
 const { hash } = require('../../lib/cryptoHash');
+const { createPayment } = require('../../lib/stripePayment');
 
 const makeCheckout = function({
   dbCart, 
@@ -29,38 +30,61 @@ const makeCheckout = function({
 
       const { 
         name,
+        email,
         phone,
         address,
       } = user;
 
       const orderId = randomString();
-      const orderData = {
-        orderId,
-        delivery: {
-          name,
-          phone,
-          address,
-        },
-        ...cartData,
-        status: 'pending payment',
-      };
 
-      dbOrder.create(orderId, orderData, (err) => {
+      // Create stripe payment intent
+      createPayment({
+        orderId,
+        custoemrId: `${name} (${email})`,
+        amount: cartData.total,
+        confirm: true,
+      }, function(err, detail) {
         if(err) {
           responseCallback(500, {
-            msg: 'Unable to create new order',
+            msg: 'Unable to create order payments',
           });
-          logger.error('Error creating order', err);
+          logger.warning('Error creating payment', err, detail);
           return;
         }
 
-        responseCallback(200, orderData);
-        // Clear current cart after order is created successfully.
-        dbCart.delete(cartId, (err) => {
+        const { id: paymentId, payment_method: paymentMethod } = detail;
+
+        const orderData = {
+          orderId,
+          delivery: {
+            name,
+            phone,
+            address,
+          },
+          ...cartData,
+          payment: {
+            paymentId,
+            paymentMethod ,
+            status: 'successful',
+          },
+        };
+        dbOrder.create(orderId, orderData, (err) => {
           if(err) {
-            logger.warn('Error clearing cart.', err);
+            responseCallback(500, {
+              msg: 'Unable to create new order',
+            });
+            logger.warning('Error creating order', err);
+            return;
           }
-          logger.info('Cart clared', cartId);
+
+          responseCallback(200, orderData);
+          // Clear current cart after order is created successfully.
+          dbCart.delete(cartId, (err) => {
+            if(err) {
+              logger.warning('Error clearing cart.', err);
+            }
+            logger.info('Cart clared', cartId);
+          });
         });
       });
     });
