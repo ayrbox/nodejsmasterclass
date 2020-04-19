@@ -1,5 +1,7 @@
 const { hash } = require('../../lib/cryptoHash');
 const { createPayment } = require('../../lib/stripePayment');
+const createReceiptText = require('../../utils/createReceiptText');
+const { sendEmail } = require('../../lib/mailgunClient');
 
 const makeCheckout = function({
   dbCart, 
@@ -64,6 +66,7 @@ const makeCheckout = function({
             name,
             phone,
             address,
+            email,
           },
           ...cartData,
           payment: {
@@ -82,12 +85,27 @@ const makeCheckout = function({
           }
 
           responseCallback(200, orderData);
+
           // Clear current cart after order is created successfully.
           dbCart.delete(cartId, (err) => {
             if(err) {
               logger.warning('Error clearing cart.', err);
             }
             logger.info('Cart clared', cartId);
+          });
+
+          // Send receipt in email
+          const receiptText = createReceiptText(orderData);
+          sendEmail({
+            to: email,
+            subject: 'Pizza: Order Receipt',
+            text: receiptText,
+          }, (err) => {
+            if(err) {
+              logger.warning('Receipt not send' + err);
+            } else {
+              logger.info('Receipt send');
+            }
           });
         });
       });

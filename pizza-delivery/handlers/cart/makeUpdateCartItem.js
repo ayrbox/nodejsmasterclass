@@ -23,7 +23,7 @@ const makeUpdateCartItem = function({
         return;
       }
 
-      const { options } = menu;
+      const { name, options } = menu;
       const option = options.find(({ name }) => name === size);
       if(!option) {
         responseCallback(400, {
@@ -34,6 +34,7 @@ const makeUpdateCartItem = function({
 
       const itemToUpdate = {
         menuId,
+        name,
         quantity,
         option,
       };

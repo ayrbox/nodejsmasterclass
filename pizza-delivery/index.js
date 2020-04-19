@@ -5,6 +5,8 @@ const middlewares = require('./middlewares');
 const routes = require('./routes');
 const makeLogger = require('./lib/makeLogger');
 
+
+
 console.clear();
 const server = Server({
   routes,

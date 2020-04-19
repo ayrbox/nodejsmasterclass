@@ -77,7 +77,7 @@ const makeAddCartItem = function({
         return;
       }
 
-      const { options } = menu; 
+      const { name, options } = menu;
       const option = options.find(({ name }) => name === size); // find size selected
       if(!option) {
         responseCallback(400, {
@@ -88,6 +88,7 @@ const makeAddCartItem = function({
 
       const itemToAdd = {
         menuId,
+        name,
         quantity, 
         option,
       };

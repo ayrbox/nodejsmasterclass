@@ -10,8 +10,7 @@ const sendEmail = function({
   subject,
   text,
 }, callback) {
-
-  const apiPath = `/v3/${domain}`;
+  const apiPath = `/v3/${domain}/messages`;
 
   const payload = qs.stringify({
     from,
@@ -23,14 +22,17 @@ const sendEmail = function({
   const options = {
     protocol: "https:",
     hostname: host,
+    port: 443,
     method: "POST",
     path: apiPath,
-    auth: `${apiKey}:`,
+    auth: `api:${apiKey}`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       "Content-Length": Buffer.byteLength(payload)
     }
   };
+
+  console.log(options, '\n\n\n\n\n', payload);
 
   const req = https.request(options, function(res) {
     const status = res.statusCode;
@@ -42,7 +44,7 @@ const sendEmail = function({
         false:
         new Error('Error sending email');
 
-      callback(err, JSON.parse(data));
+      callback(err, data);
     });
   });
 
@@ -52,4 +54,8 @@ const sendEmail = function({
 
   req.write(payload);
   req.end();
+};
+
+module.exports = {
+  sendEmail,
 };
