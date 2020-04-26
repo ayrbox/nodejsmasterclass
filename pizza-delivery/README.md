@@ -30,6 +30,10 @@ node seeder/index.js
 `329467891144628052c50423242ca8d9532a0d57a1385f6134d50ee26a6a42cc` in sample curl script is specificaly generated with
 expiry date for 1 year to help easily test.
 
+**Insomina**
+
+JSON file testing the api is also included [insomnia-api-test.json](insomnia-api-test.json).
+
 ## Create User (Register)
 
 Create or register new user. Users are identified email so no duplicate registration is allowed.  
