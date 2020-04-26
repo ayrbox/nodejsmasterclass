@@ -1,18 +1,16 @@
-const http = require('http');
+const http = require("http");
 
-const Server = require('./server');
-const middlewares = require('./middlewares');
-const routes = require('./routes');
-const makeLogger = require('./lib/makeLogger');
-
-
+const Server = require("./server");
+const middlewares = require("./middlewares");
+const routes = require("./routes");
+const makeLogger = require("./lib/makeLogger");
 
 console.clear();
 const server = Server({
   routes,
-  middlewares,
+  middlewares
 });
-const logger = makeLogger('main');
+const logger = makeLogger("main");
 
 const port = 8080;
 

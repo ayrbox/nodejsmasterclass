@@ -1,9 +1,9 @@
-const pingRoutes = require('./ping');
-const userRoutes = require('./usersRoutes');
-const tokenRoutes = require('./tokenRoutes');
-const menuRoutes = require('./menuRoutes');
-const cartRoutes = require('./cartRoutes');
-const checkoutRoutes = require('./checkoutRoutes');
+const pingRoutes = require("./ping");
+const userRoutes = require("./usersRoutes");
+const tokenRoutes = require("./tokenRoutes");
+const menuRoutes = require("./menuRoutes");
+const cartRoutes = require("./cartRoutes");
+const checkoutRoutes = require("./checkoutRoutes");
 
 module.exports = [
   ...pingRoutes,
@@ -11,5 +11,5 @@ module.exports = [
   ...tokenRoutes,
   ...menuRoutes,
   ...cartRoutes,
-  ...checkoutRoutes,
+  ...checkoutRoutes
 ];

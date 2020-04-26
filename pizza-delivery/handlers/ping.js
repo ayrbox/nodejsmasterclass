@@ -1,3 +1,3 @@
-module.exports = function(_, callback) {
-  callback(200, { message: 'PONG'});
-}
+module.exports = function (_, callback) {
+  callback(200, { message: "PONG" });
+};

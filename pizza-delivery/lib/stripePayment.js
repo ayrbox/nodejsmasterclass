@@ -6,12 +6,10 @@ const { stripe } = require("../config");
 
 const { url, key, currency, paymentMethods } = stripe;
 
-const createPayment = function({
-  orderId,
-  customerId,
-  amount,
-  confirm = false,
-}, callback) {
+const createPayment = function (
+  { orderId, customerId, amount, confirm = false },
+  callback
+) {
   const apiPath = "/v1/payment_intents";
 
   const payload = qs.stringify({
@@ -21,7 +19,7 @@ const createPayment = function({
     payment_method: "pm_card_visa_debit",
     confirm,
     description: customerId,
-    'metadata[order_id]': orderId,
+    "metadata[order_id]": orderId
   });
 
   const options = {
@@ -36,20 +34,21 @@ const createPayment = function({
     }
   };
 
-  const req = https.request(options, function(res) {
+  const req = https.request(options, function (res) {
     const status = res.statusCode;
     res.on("data", responseBuffer => {
       const decoder = new StringDecoder("utf-8");
       const data = decoder.write(responseBuffer);
 
-      const err = (status === 200 || status === 201) ?
-        false :
-        new Error(`Status code returned is ${status}`);
+      const err =
+        status === 200 || status === 201
+          ? false
+          : new Error(`Status code returned is ${status}`);
       callback(err, JSON.parse(data)); // TODO: user utils function to parse
     });
   });
 
-  req.on("error", function(err) {
+  req.on("error", function (err) {
     callback(err, null);
   });
 
@@ -57,7 +56,7 @@ const createPayment = function({
   req.end();
 };
 
-const confirmPayment = function(
+const confirmPayment = function (
   { paymentId, paymentMethod = "pm_card_visa" },
   callback
 ) {
@@ -79,7 +78,7 @@ const confirmPayment = function(
     }
   };
 
-  const req = https.request(options, function(res) {
+  const req = https.request(options, function (res) {
     const status = res.statusCode;
 
     res.on("data", responseBuffer => {
@@ -94,7 +93,7 @@ const confirmPayment = function(
     });
   });
 
-  req.on("error", function(err) {
+  req.on("error", function (err) {
     callback(err);
   });
 
@@ -102,7 +101,7 @@ const confirmPayment = function(
   req.end();
 };
 
-const cancelPayment = function({ paymentId }, callback) {
+const cancelPayment = function ({ paymentId }, callback) {
   const apiPath = `/v1/payment_intents/${paymentId}/cancel`;
 
   const options = {
@@ -116,7 +115,7 @@ const cancelPayment = function({ paymentId }, callback) {
     }
   };
 
-  const req = https.request(options, function(res) {
+  const req = https.request(options, function (res) {
     const status = res.statusCode;
     res.on("data", responseBuffer => {
       const decoder = new StringDecoder("utf-8");
@@ -130,7 +129,7 @@ const cancelPayment = function({ paymentId }, callback) {
       callback(err, resData);
     });
   });
-  req.on("error", function(err) {
+  req.on("error", function (err) {
     callback(err);
   });
   req.end();
