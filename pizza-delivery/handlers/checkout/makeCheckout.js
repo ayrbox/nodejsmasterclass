@@ -75,7 +75,7 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
               if (err) {
                 logger.warning("Error clearing cart.", err);
               }
-              logger.info("Cart clared", cartId);
+              logger.info("Cart cleared", cartId);
             });
 
             // Send receipt in email
