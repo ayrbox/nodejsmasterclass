@@ -5,6 +5,7 @@ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out c
 ```
 
 You will be prompt will some generate questions as follows:
+
 ```shell
 Generating a 2048 bit RSA private key
 .............................................................+++
@@ -28,5 +29,6 @@ Email Address []:test@hotmail.com
 ```
 
 Following file will be generated:
+
 1. `key.pem`
 2. `cert.pem`

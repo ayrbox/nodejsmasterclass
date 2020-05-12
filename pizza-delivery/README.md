@@ -16,28 +16,31 @@ $ NODE_DEBUG=app:* node ./index.js
 
 By default, app will listen in `localhost:8080`.
 
-**Data Seeder for Menu**
-For menu script is created for seeding data. The script generates pizza menu with options.
+**Data Seeder for Menu** For menu script is created for seeding data. The script
+generates pizza menu with options.
 
 ```bash
 node seeder/index.js
 ```
 
-> **Warning**: If run twice will generates duplicate items. Only use if menu data folder is empty.
+> **Warning**: If run twice will generates duplicate items. Only use if menu
+> data folder is empty.
 
 **Token for Testing**
 
-`329467891144628052c50423242ca8d9532a0d57a1385f6134d50ee26a6a42cc` in sample curl script is specificaly generated with
-expiry date for 1 year to help easily test.
+`329467891144628052c50423242ca8d9532a0d57a1385f6134d50ee26a6a42cc` in sample
+curl script is specificaly generated with expiry date for 1 year to help easily
+test.
 
 **Insomina**
 
-JSON file testing the api is also included [insomnia-api-test.json](insomnia-api-test.json).
+JSON file testing the api is also included
+[insomnia-api-test.json](insomnia-api-test.json).
 
 ## Create User (Register)
 
-Create or register new user. Users are identified email so no duplicate registration is allowed.  
-Return users data crated.
+Create or register new user. Users are identified email so no duplicate
+registration is allowed. Return users data crated.
 
 | Path     | Method | Secure |
 | -------- | ------ | ------ |
@@ -58,8 +61,8 @@ curl --request POST \
 
 ## Get User
 
-Get user account information. User must have valid token to get data.  
-Returns users account data.
+Get user account information. User must have valid token to get data. Returns
+users account data.
 
 | Path     | Method | Secure |
 | -------- | ------ | ------ |
@@ -73,8 +76,7 @@ curl --request GET \
 
 ## Update Account
 
-Update user account information.  
-Returns updated account information.
+Update user account information. Returns updated account information.
 
 | Path     | Method | Secure |
 | -------- | ------ | ------ |
@@ -94,7 +96,8 @@ curl --request PUT \
 
 ## Delete Account
 
-Delete user account permanently. This will not delete orders and token that has been created for user.
+Delete user account permanently. This will not delete orders and token that has
+been created for user.
 
 | Path     | Method | Secure |
 | -------- | ------ | ------ |
@@ -134,7 +137,8 @@ curl --request GET \
 
 ## Update Token (Extend)
 
-Update the token with new expiry time. App has been configure to add +1 hours on expiry time.
+Update the token with new expiry time. App has been configure to add +1 hours on
+expiry time.
 
 ```bash
 curl --request PUT \
@@ -159,7 +163,8 @@ curl --request DELETE \
 
 ## Get Menus
 
-Returns list of pizza menu for users to choose from. Includes name, options and price.
+Returns list of pizza menu for users to choose from. Includes name, options and
+price.
 
 ```bash
 curl --request GET \
@@ -179,8 +184,8 @@ curl --request GET \
 
 ## Add Cart Item
 
-Adds item (pizza) to users cart. There is only one active shopping cart for user.
-If cart does not exists app will create new cart.
+Adds item (pizza) to users cart. There is only one active shopping cart for
+user. If cart does not exists app will create new cart.
 
 ```bash
 curl --request POST \
@@ -212,7 +217,8 @@ curl --request PUT \
 
 ## Delete Cart Item
 
-Delete previously added cart item. Returns 404 error of item is not already added.
+Delete previously added cart item. Returns 404 error of item is not already
+added.
 
 ```bash
 curl --request DELETE \
@@ -227,7 +233,8 @@ curl --request DELETE \
 
 ## Get Cart
 
-Get detail for users' cart. List all items added to cart and total amount to be paid.
+Get detail for users' cart. List all items added to cart and total amount to be
+paid.
 
 ```bash
 curl --request GET \
@@ -262,8 +269,9 @@ curl --request POST \
 }'
 ```
 
-If payment is sucessful, order is created with unique id, delivery information of user,
-payment detail and items. Following confirmation email will be send to user.
+If payment is sucessful, order is created with unique id, delivery information
+of user, payment detail and items. Following confirmation email will be send to
+user.
 
 **Sample Confirmation Email**
 

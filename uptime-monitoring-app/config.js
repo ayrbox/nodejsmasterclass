@@ -1,4 +1,4 @@
-/** 
+/**
  * Create and export configuration variables
  */
 
@@ -23,7 +23,6 @@ const environments = {
     maxChecks: 5,
   },
 };
-
 
 // export as per environment
 const env = (process.env.NODE_ENV || '').toLowerCase();

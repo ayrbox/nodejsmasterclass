@@ -1,19 +1,19 @@
-const { DATADIR } = require("../../context");
-const logger = require("../../lib/makeLogger")("handlers:tokens");
+const { DATADIR } = require('../../context');
+const logger = require('../../lib/makeLogger')('handlers:tokens');
 
-const makeDataHandler = require("../../lib/makeDataHandlers");
-const makeCreateToken = require("./makeCreateToken");
-const makeReadToken = require("./makeReadToken");
-const makeUpdateToken = require("./makeUpdateToken");
-const makeDeleteToken = require("./makeDeleteToken");
+const makeDataHandler = require('../../lib/makeDataHandlers');
+const makeCreateToken = require('./makeCreateToken');
+const makeReadToken = require('./makeReadToken');
+const makeUpdateToken = require('./makeUpdateToken');
+const makeDeleteToken = require('./makeDeleteToken');
 
-const db = makeDataHandler(DATADIR, "tokens");
-const dbUsers = makeDataHandler(DATADIR, "users");
+const db = makeDataHandler(DATADIR, 'tokens');
+const dbUsers = makeDataHandler(DATADIR, 'users');
 
 const params = {
   db,
   dbUsers,
-  logger
+  logger,
 };
 
 const createToken = makeCreateToken(params);
@@ -25,5 +25,5 @@ module.exports = {
   createToken,
   readToken,
   updateToken,
-  deleteToken
+  deleteToken,
 };

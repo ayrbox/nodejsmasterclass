@@ -1,21 +1,23 @@
 # Building `Uptime Monitoring Api`
 
-An "uptime monitor" allows users to enter URLs
-they want to monitored and receive alerts when those 
-resources "go down" or "come back up". The application will be restful API without any npm packages.
+An "uptime monitor" allows users to enter URLs they want to monitored and
+receive alerts when those resources "go down" or "come back up". The application
+will be restful API without any npm packages.
 
 ## Specifiication
- 
-1. API listens on a PORT and accepts GET, POST, PUT, DELETE and HEAD http request
-2. API allows a client to connect then create new user, then edit and delete that user.
-3. User to be able to sign in which give them token that they can use for subsequent authenticated requests.
+
+1. API listens on a PORT and accepts GET, POST, PUT, DELETE and HEAD http
+   request
+2. API allows a client to connect then create new user, then edit and delete
+   that user.
+3. User to be able to sign in which give them token that they can use for
+   subsequent authenticated requests.
 4. Same user to be able to sign out which invalidate their token,
 5. Sign in user to use their token to check a new 'check'
 6. Sign in user to edit or delete their checks and limit it to 5 checks.
-7. In the backgrounds, worker perform all the "checks" at the appropriate times and sedn alerts to the 
-user when a check changes its state from "up" and "down", or vise versa. Runs once a minute. (using Twilio SMS api)
-
-
+7. In the backgrounds, worker perform all the "checks" at the appropriate times
+   and sedn alerts to the user when a check changes its state from "up" and
+   "down", or vise versa. Runs once a minute. (using Twilio SMS api)
 
 ## Start a Server
 
@@ -25,24 +27,25 @@ Start a http server that listen to a request.
 // node built-in module.
 const http = require('http');
 
-const server = http.createServer(function(req, res) { 
+const server = http.createServer(function (req, res) {
   res.end('Hello World');
 });
 
 // Listen to a port
-server.listen(3000, function() {
+server.listen(3000, function () {
   console.log('Server is listening on port 3000');
 });
 ```
 
 ## Parsing Request Paths
+
 Parse HTTP request to know which method to invoke.
 
 ```js
 const http = require('http');
 const url = require('url');
 
-const server = http.createServer(function(req, res) { 
+const server = http.createServer(function (req, res) {
   // Get Url and parse it
   const parsedUrl = url.parse(req.url, true);
 
@@ -57,10 +60,9 @@ const server = http.createServer(function(req, res) {
   console.log('Request received on this path: ' + trimmedPath);
 });
 
-server.listen(3000, function() {
+server.listen(3000, function () {
   console.log('Server is listening to port 3000');
 });
-
 ```
 
 ## Parting HTTP Methods
@@ -77,14 +79,17 @@ const method = req.method.toLowerCase();
 // Send reponse
 res.end('Request Received');
 
-console.log('Request received on this path: ' + trimmedPath + ' with method ' + method);
+console.log(
+  'Request received on this path: ' + trimmedPath + ' with method ' + method,
+);
 
 /* ...... */
 ```
 
 ## Parsing Query String
 
-Read query string parameters from HTTP request. `URL` module parse the query string.
+Read query string parameters from HTTP request. `URL` module parse the query
+string.
 
 ```js
 // Get query string to an object
@@ -104,6 +109,7 @@ $ curl localhost:3000/foo/bar?fizz=buzz
 ## Parsing Headers
 
 Parse request header for application to us it.
+
 ```js
 /* .... */
 
@@ -126,66 +132,67 @@ Parsing payload from request object with help of StringDecoder.
 ```js
 /* .... */
 
-const { StringDecoder}= require('string_decoder');
+const { StringDecoder } = require('string_decoder');
 
 // Get payload if exists
-const decoder = new StringDecoder('utf-8'); 
+const decoder = new StringDecoder('utf-8');
 
 var buffer = '';
-req.on('data', function(data) {
+req.on('data', function (data) {
   buffer += decoder.write(data);
 });
 
-req.on('end', function() {
+req.on('end', function () {
   buffer += decoder.end();
 
   res.end('Request received');
-  
+
   console.log('Requeste receved with payload', buffer);
 });
-
 ```
 
 ## Routing Requests
 
 Parse request and route to request handlers.
 
-
 ```js
-
 /* ..... */
 
-
-req.on('end', function() { 
+req.on('end', function () {
   buffer += decode.end();
 
-  const routerHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath]: handlers.notFound;
+  const routerHandler =
+    typeof router[trimmedPath] !== 'undefined'
+      ? router[trimmedPath]
+      : handlers.notFound;
 
   const data = {
     trimmedPath,
-    queryString, 
+    queryString,
     method,
     headers,
     payload: buffer,
   };
 
   // Route request to handler
-  rounterHander(data, function(statusCode, payload) {
+  rounterHander(data, function (statusCode, payload) {
     // Default statuscode or specified
     const responseStatusCode = statusCode || 200;
 
-    // Default payload or specified 
+    // Default payload or specified
     const responsePayload = payload || {};
 
     // Return response
     res.writeHead(responseStatusCode);
     res.end(JSON.stringify(responsePayload));
 
-    console.log('Returning this resposne:', responseStatuscode, responsePayload);
+    console.log(
+      'Returning this resposne:',
+      responseStatuscode,
+      responsePayload,
+    );
   });
-
 });
-
 
 // Define a request router handler
 const handlers = {};
@@ -197,28 +204,29 @@ handlers.sample = function (data, callback) {
 };
 
 // Not found handlers
-handlers.notFound = function(data, callback) {
+handlers.notFound = function (data, callback) {
   callback(404);
 };
 
 const router = {
-  'sample': handlers.sample,
-  'notFound': handlers.notFound
-}
+  sample: handlers.sample,
+  notFound: handlers.notFound,
+};
 ```
 
 ## Returning JSON
 
-Setting header that the content type is `application/json` so the consumer 
+Setting header that the content type is `application/json` so the consumer
 understand the return payload is json.
 
 ```js
 res.setheader('Content-Type', 'application/json');
 ```
 
-## Adding Configuration 
+## Adding Configuration
 
 `config.js`
+
 ```js
 const environments = {
   dev: {
@@ -241,22 +249,23 @@ module.exports = environments[env];
 ```
 
 After configuration `config.js` is created. The configuration module can be use
-in applicaiton `index.js`. 
+in applicaiton `index.js`.
 
 `index.js`
+
 ```js
-const config = require('./config'); 
+const config = require('./config');
 
 /* ..... */
 
 const { port, name: environmentName } = config;
-server.listen(port, function() {
-  console.log(`Listening on port ${port} in ${environmentName} mode`)
+server.listen(port, function () {
+  console.log(`Listening on port ${port} in ${environmentName} mode`);
 });
-
 ```
 
 Usage to change environment
+
 ```sh
 $ NODE_ENV=production node index.js
 ```
@@ -266,13 +275,15 @@ $ NODE_ENV=production node index.js
 Add https to the sever.
 
 - Create SSL Certificate
+
 ```sh
 $ mkdir https && cd ./https
 
 $ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
 ```
 
-Answer questions ask to generate key and you should have two file key.pem and cert.pem.
+Answer questions ask to generate key and you should have two file key.pem and
+cert.pem.
 
 ```
 Generating a 2048 bit RSA private key
@@ -297,6 +308,7 @@ Email Address []:admin@nodejs.com
 ```
 
 - Modify config to separate out where to run http and https server.
+
 ```js
 /* config.js */
 
@@ -327,8 +339,8 @@ const {
   httpPort,
   httpsPort,
   name: environmentName,
-} = require('./config'); 
-const https = require('https'); 
+} = require('./config');
+const https = require('https');
 const fs = require('fs');
 
 // Unified logic for both http and https server
@@ -345,7 +357,7 @@ httpServer.listen(httpPort, function() {
 // Https Server
 const httpsServerOptions = {
   key: fs.readFileSync('./https/key.pem'),
-  cert: fs.readFileSync('./https/cert.pem'), 
+  cert: fs.readFileSync('./https/cert.pem'),
  ;
 
 const httpsServer = https.createServer(httpsServerOptions, unifiedServer);
@@ -364,10 +376,10 @@ httpsServer.listen(httpsPort, function() {
 
 const handlers = {
   // ...,
-  ping: function(data, callback) {
+  ping: function (data, callback) {
     callback(200);
   },
-}
+};
 ```
 
 ```bash
@@ -375,16 +387,19 @@ $ curl localhost:3000/ping
 ```
 
 ## Storing Data
+
 Using JSON file to store data.
 
-- Create hidden folder named .data
-.data will be hidden and will store data (json) file. 
+- Create hidden folder named .data .data will be hidden and will store data
+  (json) file.
+
 ```sh
 $ mkdir .data
 ```
 
-- Create `lib` folder to contain library
-A data library or module that an app use interact with data file.
+- Create `lib` folder to contain library A data library or module that an app
+  use interact with data file.
+
 ```js
 $ mkdir lib
 $ touch lib/data.js
@@ -400,7 +415,7 @@ const BASE_DIR = path.join(__dirname, '../.data/');
 const create = (dir, fileName, data, callback) => {
   const filePath = path.join(BASE_DIR, dir, `${fileName}.json`);
 
-  // Open file for writing 
+  // Open file for writing
   fs.open(filePath, function(err, fileDescriptor) => {
     if (err || !fileDescriptor) {
       callback(new Error('Could not create new file, it may alrady exists.'));
@@ -484,7 +499,8 @@ module.exports = {
 };
 ```
 
-## Service 2: `/users` 
+## Service 2: `/users`
+
 Move handler to separate file.
 
 ```sh
@@ -497,7 +513,7 @@ $ touch lib/handlers.js
 const _data = require('./data');
 const { hash } = require('./helpers');
 
-const ping = function(data, callback) { 
+const ping = function(data, callback) {
   callback(200);
 };
 
@@ -506,15 +522,15 @@ const notFound = function(data, callback) {
 };
 const _users = {
   get: function(data, callback) {
-    // @TODO only let authenticated user access data 
-    
+    // @TODO only let authenticated user access data
+
     // Validate phone number
     const { phone } = data.queryString;
 
     if(!phone) {
       callback(400, new Error('Phone number is required'));
       return;
-    } 
+    }
 
     _data.read('users', phone, function(err, data) {
       if (err || !data) {
@@ -559,7 +575,7 @@ const _users = {
       };
       // Hash the password
       const hashedPassword = hash(password);
-      
+
       if(!hashedPassword) {
         callback(500, new Error('Unable to hash user password'));
         return;
@@ -581,10 +597,10 @@ const _users = {
       });
 
     });
-    
+
   },
   put: function(data, callback) {
-    // Update user with new datak 
+    // Update user with new datak
     // TODO: Allow only authenticated user to update data
 
     const { firstName, lastName, phone, password } = data.payload;
@@ -629,7 +645,7 @@ const _users = {
     if(!phone) {
       callback(400, new Error('Phone number is required'));
       return;
-    } 
+    }
 
     _data.read('users', phone, function(err, data) {
       if (err || !data) {
@@ -701,20 +717,21 @@ module.exports = {
 const handers = require('./lib/handlers');
 // ...
 
-
 const data = {
   // ...
-  payload: helpers.parsedJsonToObject(buffer)
-}
+  payload: helpers.parsedJsonToObject(buffer),
+};
 
 const router = {
   // ...,
   users: handlers.users,
-}
+};
 ```
 
 ## Service 3: `/tokens`
-Create a token by authenticatin using phone and password. Then use the token to authenticate futher request.
+
+Create a token by authenticatin using phone and password. Then use the token to
+authenticate futher request.
 
 ```js
 // index.js
@@ -722,22 +739,22 @@ Create a token by authenticatin using phone and password. Then use the token to 
 const router = {
   // ...,
   tokens: handlers.tokens,
-}
+};
 ```
 
 ```js
 // handlers.js
 
 _tokens = {
-  post: function(data, cb) {
+  post: function (data, cb) {
     const { phone, password } = data.payload;
-    if(!phone || !password) {
+    if (!phone || !password) {
       cb(400, new Error('Missing required fields'));
       return;
     }
 
     // Look up user
-    _data.read('users', phone, function(err, userData) {
+    _data.read('users', phone, function (err, userData) {
       if (err && !userData) {
         cb(400, new Error('Could not find user.'));
         return;
@@ -756,13 +773,13 @@ _tokens = {
       const expires = Date.now() + 1000 * 60 * 60;
 
       const tokenObject = {
-          phone,
-          id: tokenId,
-          expires,
+        phone,
+        id: tokenId,
+        expires,
       };
 
-      _data.create('tokens', tokenId, tokenObject, function(err) {
-        if(err) {
+      _data.create('tokens', tokenId, tokenObject, function (err) {
+        if (err) {
           cb(500, new Error('Unable to create token'));
           return;
         }
@@ -770,37 +787,34 @@ _tokens = {
       });
     });
   },
-  get: function(data, cb) {
+  get: function (data, cb) {
     const { id } = data.queryString;
-    if(!id) {
+    if (!id) {
       cb(400, new Error('Invalid id'));
       return;
     }
 
-    _data.read('tokens', id, function(err, tokenData) {
+    _data.read('tokens', id, function (err, tokenData) {
       if (err || !tokenData) {
         cb(404);
         return;
       }
       cb(200, tokenData);
-
     });
-
   },
-  put: function(data, cb) {
+  put: function (data, cb) {
     const { id, extend } = data.payload;
-    if (!id && !extend)  {
+    if (!id && !extend) {
       cb(400, new Error('Invalid required fields'));
       return;
     }
 
-
-    _data.read('tokens', id, function(err, tokenData) {
-      if(err || !tokenData) {
-        cb(400, new Error('Invalid token'))
+    _data.read('tokens', id, function (err, tokenData) {
+      if (err || !tokenData) {
+        cb(400, new Error('Invalid token'));
         return;
       }
-      
+
       const { expires } = tokenData;
       if (expires < Data.now()) {
         cb(400, new Error('Token already expired.'));
@@ -809,8 +823,8 @@ _tokens = {
 
       // Set  new expires
       tokenData.expires = Data.now() + 1000 * 60 * 60;
-      _data.update('tokens', id, tokenData, function(err) {
-        if(err) {
+      _data.update('tokens', id, tokenData, function (err) {
+        if (err) {
           cb(500, err);
           return;
         }
@@ -819,21 +833,21 @@ _tokens = {
       });
     });
   },
-  delete: function(data, cb) {
+  delete: function (data, cb) {
     const { id } = data.queryString;
     if (!id) {
       cb(400, new Error('Inavlid fields'));
       return;
     }
 
-    _data.read('tokens', id, function(err) {
-      if(err || !data)  {
+    _data.read('tokens', id, function (err) {
+      if (err || !data) {
         cb(400, new Error('Invalid token'));
         return;
       }
 
-      _data.delete('tokens', id, function(err) {
-        if(err) {
+      _data.delete('tokens', id, function (err) {
+        if (err) {
           cb(500, new Error('Unable to delete'));
           return;
         }
@@ -842,9 +856,9 @@ _tokens = {
       });
     });
   },
-}
+};
 
-const tokens = function(data, callback) {
+const tokens = function (data, callback) {
   const methodHandler = _tokens[data.method];
   if (!methodHander) {
     callback(405);
@@ -852,25 +866,26 @@ const tokens = function(data, callback) {
   }
   methodHandler(data, callback);
 };
-
 ```
-
 
 ```js
 // helpers.js
 
 // ....
-const createRandomString = function(length) {
-  const size = typeof(length) === 'number' && length > 0 && length;
+const createRandomString = function (length) {
+  const size = typeof length === 'number' && length > 0 && length;
   if (!size) {
     return false;
   }
 
   const CHARACTERS = 'abcdefghijklmnopqrstuvwxyz1234567890';
-  return new Array(size).fill(
-    () => CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length))
-  ).map(f => f()).join('');
-}
+  return new Array(size)
+    .fill(() =>
+      CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length)),
+    )
+    .map(f => f())
+    .join('');
+};
 ```
 
 ## Check Authentication
@@ -880,21 +895,20 @@ const createRandomString = function(length) {
 
 const _tokens = {
   // ....,
-  verifyToken: function(id, phone, cb) {
-    _data.read('tokens', id, function(err, tokenData) {
-      if(err || !tokenData) {
+  verifyToken: function (id, phone, cb) {
+    _data.read('tokens', id, function (err, tokenData) {
+      if (err || !tokenData) {
         cb(false);
       }
 
-      if(tokenData.phone === phone & tokenData.expires > Data.now()) {
+      if ((tokenData.phone === phone) & (tokenData.expires > Data.now())) {
         cb(true);
       } else {
-        cb(false); 
+        cb(false);
       }
     });
   },
 };
-
 ```
 
 Verify users token in handlers.
@@ -910,19 +924,20 @@ if(_verifytoken(token, phone, function(isValid) {
 ```
 
 ## Service 4: `/checks`
-Checks is service for users to check if any given endpoint (url) is up or down. Allow user to keep up to 5 checks.
 
+Checks is service for users to check if any given endpoint (url) is up or down.
+Allow user to keep up to 5 checks.
 
 ```js
 // index.js
 const router = {
   checks: handlers.checks,
-}
+};
 ```
 
 ```js
 // handlers.js
-const checks = function(data, callback) {
+const checks = function (data, callback) {
   const methodHandler = _tokens[data.method];
   if (!methodHander) {
     callback(405);
@@ -937,26 +952,26 @@ const _checks = {
 
     // Validate
     const { protocol, url, method, successCodes, timeouts } = data.payload;
-    if(!['http', 'https'].includes(protocol)) {
+    if (!['http', 'https'].includes(protocol)) {
       cb(400, new Error('Invalid check protocol'));
       return;
     }
 
-    if(!['post','get', 'put', 'delete'].includes(method)) {
+    if (!['post', 'get', 'put', 'delete'].includes(method)) {
       cb(400, new Error('Invalid check method'));
       return;
     }
 
     const { token } = data.headers || false;
-    _data.read('tokens', token, function(err, tokenData) {
-      if(err || !tokenData) {
+    _data.read('tokens', token, function (err, tokenData) {
+      if (err || !tokenData) {
         cb(403);
         return;
       }
 
       const { phone } = tokenData;
-      _data.read('users', phone, function(err, userData) {
-        if(err || !userData) {
+      _data.read('users', phone, function (err, userData) {
+        if (err || !userData) {
           cb(403);
           return;
         }
@@ -977,45 +992,44 @@ const _checks = {
           successCodes,
           timeout,
         };
-        _data.creat('checks', checkId, checkObject, function(err) { 
-          if(err) {
+        _data.creat('checks', checkId, checkObject, function (err) {
+          if (err) {
             cb(500, 'Unable to store check');
             return;
           }
 
-          userData.checks = checks || []; 
+          userData.checks = checks || [];
           userData.checks.push(checkId);
 
-          _data.update('users', phone, userData, function(err) {
-            if(err) {
+          _data.update('users', phone, userData, function (err) {
+            if (err) {
               cb(500, 'Unable to update user with checks');
               return;
             }
             cb(201, checkObject);
-          })
-
+          });
         });
       });
     });
   },
-  get: function(data, cb) {
+  get: function (data, cb) {
     const { id, token } = data.queryString;
-    if(!id) {
+    if (!id) {
       cb(400, new Error('Invalid fields'));
       return;
     }
 
     // Lookup check
-    _data.read('checks', id, function(err, checkData) {
-      if(err && !checkData) {
+    _data.read('checks', id, function (err, checkData) {
+      if (err && !checkData) {
         cb(404);
         return;
       }
 
       const { phone } = checkData;
 
-      _tokens.verifyToken(token, phone, function(isValid) {
-        if(!isValid) {
+      _tokens.verifyToken(token, phone, function (isValid) {
+        if (!isValid) {
           cb(403, new Error('Not authorised'));
           return;
         }
@@ -1023,34 +1037,33 @@ const _checks = {
       });
     });
   },
-  put: function(data, cb) {
-
+  put: function (data, cb) {
     // Validate
     const { id, protocol, url, method, successCodes, timeouts } = data.payload;
-    if(!id) {
+    if (!id) {
       cb(400, new Error('Invaid request payloadd'));
       return;
     }
 
-    if(!['http', 'https'].includes(protocol)) {
+    if (!['http', 'https'].includes(protocol)) {
       cb(400, new Error('Invalid check protocol'));
       return;
     }
 
-    if(!['post','get', 'put', 'delete'].includes(method)) {
+    if (!['post', 'get', 'put', 'delete'].includes(method)) {
       cb(400, new Error('Invalid check method'));
       return;
     }
 
-    _data.read('checks', id, function(err, checkData) {
-      if(err || !checkData) {
+    _data.read('checks', id, function (err, checkData) {
+      if (err || !checkData) {
         cb(400, new Error('Check ID did not exists.'));
         return;
       }
 
       const { token } = data.headers;
-      _tokens.verifyToken(token, checkData.phone, function(isValid) {
-        if(!isValid) {
+      _tokens.verifyToken(token, checkData.phone, function (isValid) {
+        if (!isValid) {
           cb(403);
           return;
         }
@@ -1064,8 +1077,8 @@ const _checks = {
           timeouts: timeouts || checkData.timeouts,
         };
 
-        _data.update('checks', id, checkObject, function(err) {
-          if(err) {
+        _data.update('checks', id, checkObject, function (err) {
+          if (err) {
             cb(500, new Error('Could not update check'));
             return;
           }
@@ -1074,43 +1087,43 @@ const _checks = {
       });
     });
   },
-  delete: function(data, cb) {
+  delete: function (data, cb) {
     const { id } = data.queryString;
-    if(!id) {
+    if (!id) {
       cb(400, new Error('Invalid request'));
       return;
     }
-    _data.read('checks', id, function(err, checkData) {
-      if(err || !checkData) {
+    _data.read('checks', id, function (err, checkData) {
+      if (err || !checkData) {
         cb(400, new Error('Invalid check'));
         return;
       }
 
       const { token } = data.headers;
-      
-      _tokens.verifyToken(token, checkData.phone, function(isValid) {
-        if(!isValid) {
+
+      _tokens.verifyToken(token, checkData.phone, function (isValid) {
+        if (!isValid) {
           cb(403);
           return;
         }
 
         // delete check data;
-        _data.delete('checks', id, function(err) {
+        _data.delete('checks', id, function (err) {
           if (err) {
             cb(500, 'Unable to delete check');
             return;
           }
 
-          _data.read('users', checkData.phone, function(err, userData) {
-            if(err || !userData) {
+          _data.read('users', checkData.phone, function (err, userData) {
+            if (err || !userData) {
               cb(500, new Error('Check user not found'));
               return;
             }
 
             const { checks } = userData;
             const updatedCheks = checks.filter(c => c !== id); // filter out chek
-            _data.update('users', phone, function(err) {
-              if(err) {
+            _data.update('users', phone, function (err) {
+              if (err) {
                 cb(500, 'Unable to update check user');
                 return;
               }
@@ -1121,7 +1134,7 @@ const _checks = {
       });
     });
   },
-}
+};
 ```
 
 ## Connecting to API
@@ -1136,8 +1149,8 @@ const querystring = require('querystring');
 
 // ...
 
-const sendSMS = function(phone, msg, cb) {
-  // validate 
+const sendSMS = function (phone, msg, cb) {
+  // validate
   if (!phone || !msg) {
     cb(new Error('Invalid paramaters'));
     return;
@@ -1159,10 +1172,10 @@ const sendSMS = function(phone, msg, cb) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(payload),
-    }
+    },
   };
 
-  const req = https.request(requestDetails, function(res) {
+  const req = https.request(requestDetails, function (res) {
     const status = res.statusCode;
 
     if (status === 200 || status === 201) {
@@ -1172,19 +1185,18 @@ const sendSMS = function(phone, msg, cb) {
     }
   });
 
-  req.on('error', function(err) {
+  req.on('error', function (err) {
     cb(err);
   });
 
   req.write(payload);
   req.end();
-}
-
+};
 
 module.exports = {
   // ...
   sendSMS,
-}
+};
 ```
 
 ```js
@@ -1199,7 +1211,9 @@ twilio: {
 ```
 
 ## Background Workers
+
 Create background worker to run checks requests by users.
+
 - Move all api routers and server to `server.js`
 
 ```js
@@ -1209,7 +1223,7 @@ const server = require('./server');
 const workers = require('./workers');
 
 const app = {
-  init: function() {
+  init: function () {
     server.init();
     workers.init();
   },
@@ -1221,7 +1235,7 @@ module.exports = app;
 ```js
 // server.js
 
-// ... all code from index.js 
+// ... all code from index.js
 
 const server = {
   httpServer,
@@ -1238,19 +1252,20 @@ module.exports = server;
 ```js
 // helpers.js
 
-lib.list = function(dir, cb) {
-  fs.readdir(lib.baseDir, function(err, data) {
-    if(err) {
+lib.list = function (dir, cb) {
+  fs.readdir(lib.baseDir, function (err, data) {
+    if (err) {
       cb(err, data);
       return;
     }
 
-    const fileList = (data || []).map(fileName => fileName.replace('.json', ''));
+    const fileList = (data || []).map(fileName =>
+      fileName.replace('.json', ''),
+    );
     cb(false, fileList);
   });
-}
+};
 ```
-
 
 ```js
 // worker.js
@@ -1264,25 +1279,33 @@ const url = require('url');
 const _data = require('./data');
 const helpers = require('./helpers');
 
-
-const alertUserToStatusChange = function({ phone, method, protocol, url, state }) {
+const alertUserToStatusChange = function ({
+  phone,
+  method,
+  protocol,
+  url,
+  state,
+}) {
   const msg = `Alert: your check for ${method.toUpperCase()} ${protocol}://${url} is currently ${state}`;
-  helpers.sendSMS(phone, msg, function(err) {
-    if(!err) {
+  helpers.sendSMS(phone, msg, function (err) {
+    if (!err) {
       console.log('User is alerted');
     } else {
       console.log('Error sending SMS alert');
     }
   });
-}
+};
 
+const processCheckoutcome = function (checkData, checkOutcome) {
+  const state =
+    !checkoutOutcome.error &&
+    checkOutcome.responseCode &&
+    checkData.successCodes.indexOf(checkoutOutcome.responseCode) > -1
+      ? 'up'
+      : 'down';
 
-const processCheckoutcome = function(checkData, checkOutcome) {
-  const state = !checkoutOutcome.error && checkOutcome.responseCode && checkData.successCodes.indexOf(checkoutOutcome.responseCode) > -1 ? 
-    'up' : 'down';
-    
   const alertWarranted = checkData.lastChecked && checkData.state !== state;
-  
+
   // update the check
 
   const updatedCheck = {
@@ -1291,9 +1314,9 @@ const processCheckoutcome = function(checkData, checkOutcome) {
     lastChecked: Date.now(),
   };
 
-  _data.update('checks', checkData.id, updatedCheck, function(err) {
-    if(!err) {
-      if(alertWarranted) {
+  _data.update('checks', checkData.id, updatedCheck, function (err) {
+    if (!err) {
+      if (alertWarranted) {
         alertUserToStatusChange(updatedCheck);
       } else {
         console.log('Check outcome has not changed');
@@ -1301,25 +1324,18 @@ const processCheckoutcome = function(checkData, checkOutcome) {
     } else {
       console.log('Error upading checks');
     }
-  })
-}
+  });
+};
 
-
-const performCheck = function({
-  protocol,
-  url,
-  method,
-  path,
-  timeout,
-}) {
+const performCheck = function ({ protocol, url, method, path, timeout }) {
   const checkOutcome = {
     error: false,
     responseCode: false,
   };
 
   const outcomeSent = false;
-  
-  const { hostname, path }= url.parse(`${protocol}://${url}`, true);
+
+  const { hostname, path } = url.parse(`${protocol}://${url}`, true);
 
   const requestDetails = {
     protocol: `${protocol}:`,
@@ -1331,33 +1347,33 @@ const performCheck = function({
 
   httpModule = protocol === 'http' ? http : https;
 
-  const req = httpModule.request(requestDetails, function(res) {
+  const req = httpModule.request(requestDetails, function (res) {
     checkOutcome.responseCode = res.statusCode;
-    if(!outcomeSend) {
+    if (!outcomeSend) {
       processCheckoutcome(checkData, checkOutcome);
       outcomeSent = true;
     }
   });
 
-  req.on('error', function(e) {
+  req.on('error', function (e) {
     checkoutcome.error = {
       error: true,
       value: e,
     };
 
-    if(!outcomeSend) {
+    if (!outcomeSend) {
       processCheckoutcome(checkData, checkoutOutcome);
       outcomeSent = true;
     }
   });
 
-  req.on('timeout', function(e) {
+  req.on('timeout', function (e) {
     checkoutcome.error = {
       error: true,
       value: 'Timeout',
     };
 
-    if(!outcomeSend) {
+    if (!outcomeSend) {
       processCheckoutcome(checkData, checkoutOutcome);
       outcomeSent = true;
     }
@@ -1366,13 +1382,23 @@ const performCheck = function({
   req.end();
 };
 
-
 const validateCheckData = function (checkData) {
-  const d = (typeof(checkData) === 'object' && checkData !== null) ? checkData : {};
-  const { id, phone, protocol, url, method, successCode, timeout, state, lastChecked }  = d;
+  const d =
+    typeof checkData === 'object' && checkData !== null ? checkData : {};
+  const {
+    id,
+    phone,
+    protocol,
+    url,
+    method,
+    successCode,
+    timeout,
+    state,
+    lastChecked,
+  } = d;
   // if (typeof(id) === 'string')
 
-  if(id && phone && protocol && url && method && successCode && timeout) {
+  if (id && phone && protocol && url && method && successCode && timeout) {
     performCheck({
       id,
       phone,
@@ -1383,22 +1409,22 @@ const validateCheckData = function (checkData) {
       timeout,
       state: state || 'down',
       lastChecked: lastChecked || false,
-    })
+    });
   } else {
     console.log('Error in check data');
   }
-}
+};
 
-const gatherAllChecks = function() {
-  _data.list('checks', function(err, checks) {
-    if(err || !checks || !checks.length) {
+const gatherAllChecks = function () {
+  _data.list('checks', function (err, checks) {
+    if (err || !checks || !checks.length) {
       console.log('Error: no checks');
-      return; 
+      return;
     }
 
-    checks.forEach(function(check) {
-      _data.read('checks', check, function(err, originalCheckData) {
-        if(err) {
+    checks.forEach(function (check) {
+      _data.read('checks', check, function (err, originalCheckData) {
+        if (err) {
           console.log('Error reading checks' + check);
           return;
         }
@@ -1406,23 +1432,23 @@ const gatherAllChecks = function() {
       });
     });
   });
-}
+};
 
-const loop = function() {
-  setInterval(function() {
+const loop = function () {
+  setInterval(function () {
     gatherAllChecks();
   }, 1000 * 60);
-}
+};
 
 const workers = {
-  init: function() {
+  init: function () {
     // execute all checks immediately
     gatherAllChecks();
 
-    // call loop 
+    // call loop
     loop();
-  }
-}
+  },
+};
 
 module.exports = workers;
 ```
@@ -1436,22 +1462,17 @@ const _logs = require('./logs');
 
 // ...
 
-const rotateLogs = () => {
+const rotateLogs = () => {};
 
-}
+const logRotationLoop = () => {};
 
-const logRotationLoop = () => {
-
-}
-
-const log = function(
+const log = function (
   originalCheckdata,
   checkOutcome,
   state,
   alertWarned,
   timeOfCheck,
 ) {
-
   // Form log object
   const logData = {
     check: originalCheckdata,
@@ -1468,61 +1489,57 @@ const log = function(
   const logFileName = originalCheckData.id;
 
   // Append the log string to the file
-  _logs.append(logFileName, logString, function(err) {
-    if(err) {
-      console.log('Login to file failed'); 
+  _logs.append(logFileName, logString, function (err) {
+    if (err) {
+      console.log('Login to file failed');
       return;
     }
     console.log('Login succeeded');
   });
-}
-
+};
 
 // Rotate (compress) the logs files
-const rotateLogs = function() {
-  _logs.list(false, function(err, logs) {
-    if(err || !logs || logs.length <= 0) {
+const rotateLogs = function () {
+  _logs.list(false, function (err, logs) {
+    if (err || !logs || logs.length <= 0) {
       console.log('Error: could not find any logs to rotate');
       return;
     }
-    logs.forEach(function(logName) {
+    logs.forEach(function (logName) {
       const logId = logName.replace('.log', '');
       const newFileNameId = `${logId}-${Date.now()}`;
-      _logs.compress(logId, newFileNameId, function(err) {
-        if(err) {
+      _logs.compress(logId, newFileNameId, function (err) {
+        if (err) {
           console.log('Error: compressing log files', err);
           return;
         }
         // Truncating the logs
-        _logs.truncate(logId, function(err) {
-          if(err) {
+        _logs.truncate(logId, function (err) {
+          if (err) {
             console.log('Error: truncating log file');
             return;
           }
           console.log('Success truncating logFile');
         });
-      })
+      });
     });
   });
-}
+};
 
 // Timer to execute the log-rotation process once per day
-const logRationloop = function() {
-  setInterval(function() {
+const logRationloop = function () {
+  setInterval(function () {
     rotateLogs();
   }, 1000 * 60 * 60 * 24);
-}
-
-
+};
 
 const worker = {
-  init: function() {
+  init: function () {
     // ...
   },
   log,
-}
+};
 ```
-
 
 ```js
 // logs.js
@@ -1533,93 +1550,89 @@ const zlib = require('zlib');
 
 const BASEDIR = path.join(__dirname, '../.logs');
 
-
 // Append a string to a file. Create the file if it does not exists.
-const append = function(file, str, callback) {
-  fs.open(`${BASEDIR}${file}.log`, 'a', function(err, fileDescriptor) {
-    if(err && !fileDescriptor) {
+const append = function (file, str, callback) {
+  fs.open(`${BASEDIR}${file}.log`, 'a', function (err, fileDescriptor) {
+    if (err && !fileDescriptor) {
       callback(new Error('Could not open file for appending.'));
       return;
     }
 
     // Append to the file and close it
-    fs.appendFile(fileDescriptor, `${str}\n`, function(err) {
-      if(err) {
+    fs.appendFile(fileDescriptor, `${str}\n`, function (err) {
+      if (err) {
         callback(new Error('Error appending to file.'));
         return;
       }
 
-      fs.close(fileDescriptor, function(err) {
-        if(err) {
+      fs.close(fileDescriptor, function (err) {
+        if (err) {
           callback(new Error('Error closing file.'));
           return;
         }
         callback(false);
       });
-
     });
   });
-}
+};
 
-
-const list = function(includeCompressedLogs, callback) {
-  fs.readdir(BASEIDR, function(err, data) {
-    if(err || data || data.length > 0) {
+const list = function (includeCompressedLogs, callback) {
+  fs.readdir(BASEIDR, function (err, data) {
+    if (err || data || data.length > 0) {
       callback(err, data);
       return;
     }
     const trimmedFileNames = [];
-    data.forEach(function(fileName) {
+    data.forEach(function (fileName) {
       // Add the .log files
-      if(fileName.indexOf('.log') > -1) {
+      if (fileName.indexOf('.log') > -1) {
         trimmedFileNames.push(fileName.replace('.log', ''));
       }
-      
+
       // Add on the .gz files
-      if(fileName.indexOf('.gz.b64') >- 1 && includeCompressedLogs) {
+      if (fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs) {
         trimmedFileNames.push(fileName.replace('.gz.b64', ''));
       }
     });
     callback(false, trimmedFileNames);
   });
-} 
-
+};
 
 // Compress
-const compress = function(logId, newFileId, callback) {
+const compress = function (logId, newFileId, callback) {
   const sourceFile = `${logId}.log`;
   const destFile = `${newFileId}.gz.b64`;
 
   // Read source file
-  fs.readFile(`${BASEDIR}${sourceFile}`, 'utf8', function(err, inputString) {
-    if(err || !inputString) {
+  fs.readFile(`${BASEDIR}${sourceFile}`, 'utf8', function (err, inputString) {
+    if (err || !inputString) {
       callback(err);
       return;
     }
 
     // Compress the data using zlib
-    zlib.gzip(inputString, function(err, buffer) {
-      if(err || !buffer) {
+    zlib.gzip(inputString, function (err, buffer) {
+      if (err || !buffer) {
         callback(err);
         return;
       }
 
       // Send data to dest file
-      fs.open(`${BASEDIR}${destFile}`, 'wx', function(err, fileDescriptor) {
-        if(err || !fileDescriptor) {
+      fs.open(`${BASEDIR}${destFile}`, 'wx', function (err, fileDescriptor) {
+        if (err || !fileDescriptor) {
           callback(err);
           return;
         }
       });
 
-      fs.writeFile(fileDescriptor, buffer.toString('base64'), function(err) {
-        if(err) {
+      fs.writeFile(fileDescriptor, buffer.toString('base64'), function (err) {
+        if (err) {
           callback(err);
           return;
         }
 
-        fs.close(fileDescriptor, function(err) {
-          if(err) {
+        fs.close(fileDescriptor, function (err) {
+          if (err) {
             callback(err);
             return;
           }
@@ -1628,39 +1641,38 @@ const compress = function(logId, newFileId, callback) {
       });
     });
   });
-}
+};
 
-
-const decompress = function(fileId, callback) {
+const decompress = function (fileId, callback) {
   const fileName = `${fileId}.gz.b64`;
-  fs.readFile(BASEDIR + fileName, 'utf8', function(err, str) {
-    if(err) {
+  fs.readFile(BASEDIR + fileName, 'utf8', function (err, str) {
+    if (err) {
       callback(err);
       return;
     }
 
     // Decompress data
     const inputBuffer = Buffer.from(str, 'base64');
-    zlib.unzip(inputBuffer, function(err, outputBuffer) {
-      if(err || !outputBuffer) {
+    zlib.unzip(inputBuffer, function (err, outputBuffer) {
+      if (err || !outputBuffer) {
         callback(err);
         return;
       }
       const str = outputBuffer.toString();
       callback(false, str);
-    });  
+    });
   });
-}
+};
 
-const truncate = function(logId, callback) {
-  fs.truncate(`${BASEDIR}${logId}.log`, 0, function(err) {
-    if(err) {
+const truncate = function (logId, callback) {
+  fs.truncate(`${BASEDIR}${logId}.log`, 0, function (err) {
+    if (err) {
       callback(err);
       return;
     }
     callback(false);
   });
-}
+};
 
 // Container module for logs
 const lib = {
@@ -1680,24 +1692,27 @@ module.exports.lib;
 // worker.js
 
 // Send to console in green
-console.log('\x1b[32m%s\x1b[0m', 'Background Workers are running.')
+console.log('\x1b[32m%s\x1b[0m', 'Background Workers are running.');
 
 // Send to console in yellow
-console.log('\x1b[33m%s\x1b[0m', 'Background Workers are running.')
+console.log('\x1b[33m%s\x1b[0m', 'Background Workers are running.');
 
 // Send to console in blue
-console.log('\x1b[36m%s\x1b[0m%s', `[${(new Date()).toUTCString()}] `, 'Normal Color')
+console.log(
+  '\x1b[36m%s\x1b[0m%s',
+  `[${new Date().toUTCString()}] `,
+  'Normal Color',
+);
 
 // Send to consle in purple
-console.log('\x1b[35m%s\x1b[0m', 'Background Workers are running.')
+console.log('\x1b[35m%s\x1b[0m', 'Background Workers are running.');
 ```
 
-
 Debug node module.
+
 ```sh
 $ NODE_DEBUG=http node index.js
 ```
-
 
 ```js
 // worker.js
@@ -1707,10 +1722,11 @@ const debug = util.debuglog('workers');
 
 debug('Successful log');
 ```
+
 Above log is only triggered if app is started with `NODE_DEBUG='workers'`.
 
 ```js
-if(statusCode === 200) {
+if (statusCode === 200) {
   debug('\x1b[32m%s\x1b[0m', method.toUpperCase() + '/' + statusCode);
 } else {
   debug('\x1b[31m%s\x1b[0m', method.toUpperCase() + '/' + statusCode);

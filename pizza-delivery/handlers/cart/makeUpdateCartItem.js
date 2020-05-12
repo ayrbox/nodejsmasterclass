@@ -1,4 +1,4 @@
-const { hash } = require("../../lib/cryptoHash");
+const { hash } = require('../../lib/cryptoHash');
 
 const makeUpdateCartItem = function ({ db, dbMenu }) {
   return function ({ payload, user }, responseCallback) {
@@ -7,7 +7,7 @@ const makeUpdateCartItem = function ({ db, dbMenu }) {
     dbMenu.read(menuId, (err, menu) => {
       if (err || !menu) {
         responseCallback(404, {
-          msg: "Menu item not found"
+          msg: 'Menu item not found',
         });
         return;
       }
@@ -16,7 +16,7 @@ const makeUpdateCartItem = function ({ db, dbMenu }) {
       const option = options.find(({ name }) => name === size);
       if (!option) {
         responseCallback(400, {
-          msg: "Invalid options selected"
+          msg: 'Invalid options selected',
         });
         return;
       }
@@ -25,7 +25,7 @@ const makeUpdateCartItem = function ({ db, dbMenu }) {
         menuId,
         name,
         quantity,
-        option
+        option,
       };
 
       // Read data from cart
@@ -33,7 +33,7 @@ const makeUpdateCartItem = function ({ db, dbMenu }) {
       db.read(cartId, (err, cartData) => {
         if (err || !cartData) {
           responseCallback(500, {
-            msg: "Unable to find cart."
+            msg: 'Unable to find cart.',
           });
           return;
         }
@@ -49,7 +49,7 @@ const makeUpdateCartItem = function ({ db, dbMenu }) {
 
         if (itemFoundIndex < 0) {
           responseCallback(404, {
-            msg: "Unable to find menu item in cart"
+            msg: 'Unable to find menu item in cart',
           });
           return;
         }
@@ -58,18 +58,18 @@ const makeUpdateCartItem = function ({ db, dbMenu }) {
 
         const updatedItems = [...items, itemToUpdate].map(item => ({
           ...item,
-          amount: item.quantity * item.option.price // calculate amount for each item
+          amount: item.quantity * item.option.price, // calculate amount for each item
         }));
 
         const updatedData = {
           items: updatedItems,
-          total: updatedItems.reduce((t, { amount }) => t + amount, 0) // cart total
+          total: updatedItems.reduce((t, { amount }) => t + amount, 0), // cart total
         };
 
         db.update(cartId, updatedData, err => {
           if (err) {
             responseCallback(500, {
-              msg: "Unable to update cart."
+              msg: 'Unable to update cart.',
             });
             return;
           }

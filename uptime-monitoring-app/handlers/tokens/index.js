@@ -3,14 +3,9 @@ const makeTokenCreate = require('./makeTokenCreate');
 const makeTokenUpdate = require('./makeTokenUpdate');
 const makeTokenDeleteHandler = require('./makeTokenDelete');
 
-const makeTokenHandlers = function({
-  db,
-  logger,
-  helpers,
-}) {
-
+const makeTokenHandlers = function ({ db, logger, helpers }) {
   const createHandler = makeTokenCreate({ db, logger, helpers });
-  const readHandler = makeTokenRead({ db }) 
+  const readHandler = makeTokenRead({ db });
   const updateHandler = makeTokenUpdate({ db });
   const deleteHandler = makeTokenDeleteHandler({ db });
 
@@ -20,6 +15,6 @@ const makeTokenHandlers = function({
     updateHandler,
     deleteHandler,
   };
-}
+};
 
 module.exports = makeTokenHandlers;

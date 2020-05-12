@@ -1,16 +1,16 @@
-const { listMenu, getMenu } = require("../handlers/menu");
+const { listMenu, getMenu } = require('../handlers/menu');
 
 module.exports = [
   {
-    path: "/menus",
-    method: "GET",
+    path: '/menus',
+    method: 'GET',
     handler: listMenu,
-    secure: true
+    secure: true,
   },
   {
-    path: "/menu",
-    method: "GET",
+    path: '/menu',
+    method: 'GET',
     handler: getMenu,
-    secure: true
-  }
+    secure: true,
+  },
 ];

@@ -1,9 +1,9 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 function readFileAsync(filepPath) {
   return new Promise((resolve, reject) => {
-    fs.readFile(filepPath, "utf8", (err, fileContent) => {
+    fs.readFile(filepPath, 'utf8', (err, fileContent) => {
       if (err && !fileContent) {
         reject(err);
       } else {
@@ -24,7 +24,7 @@ const makeList = function (dataDir) {
       }
 
       const readPromises = (files || [])
-        .filter(fileName => path.extname(fileName).toLowerCase() === ".json")
+        .filter(fileName => path.extname(fileName).toLowerCase() === '.json')
         .map(fileName => readFileAsync(path.join(dataDir, fileName)));
 
       Promise.all(readPromises)

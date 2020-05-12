@@ -1,43 +1,43 @@
-const https = require("https");
-const { StringDecoder } = require("string_decoder");
-const qs = require("querystring");
+const https = require('https');
+const { StringDecoder } = require('string_decoder');
+const qs = require('querystring');
 
-const { stripe } = require("../config");
+const { stripe } = require('../config');
 
 const { url, key, currency, paymentMethods } = stripe;
 
 const createPayment = function (
   { orderId, customerId, amount, confirm = false },
-  callback
+  callback,
 ) {
-  const apiPath = "/v1/payment_intents";
+  const apiPath = '/v1/payment_intents';
 
   const payload = qs.stringify({
     amount: amount * 100,
     currency,
-    "payment_method_types[]": [paymentMethods],
-    payment_method: "pm_card_visa_debit",
+    'payment_method_types[]': [paymentMethods],
+    payment_method: 'pm_card_visa_debit',
     confirm,
     description: customerId,
-    "metadata[order_id]": orderId
+    'metadata[order_id]': orderId,
   });
 
   const options = {
-    protocol: "https:",
+    protocol: 'https:',
     hostname: url,
-    method: "POST",
+    method: 'POST',
     path: apiPath,
     auth: `${key}:`,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": Buffer.byteLength(payload)
-    }
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(payload),
+    },
   };
 
   const req = https.request(options, function (res) {
     const status = res.statusCode;
-    res.on("data", responseBuffer => {
-      const decoder = new StringDecoder("utf-8");
+    res.on('data', responseBuffer => {
+      const decoder = new StringDecoder('utf-8');
       const data = decoder.write(responseBuffer);
 
       const err =
@@ -48,7 +48,7 @@ const createPayment = function (
     });
   });
 
-  req.on("error", function (err) {
+  req.on('error', function (err) {
     callback(err, null);
   });
 
@@ -57,32 +57,32 @@ const createPayment = function (
 };
 
 const confirmPayment = function (
-  { paymentId, paymentMethod = "pm_card_visa" },
-  callback
+  { paymentId, paymentMethod = 'pm_card_visa' },
+  callback,
 ) {
   const apiPath = `/v1/payment_intents/${paymentId}/confirm`;
 
   const payload = qs.stringify({
-    payment_method: paymentMethod
+    payment_method: paymentMethod,
   });
 
   const options = {
-    protocol: "https:",
+    protocol: 'https:',
     hostname: url,
-    method: "POST",
+    method: 'POST',
     path: apiPath,
     auth: `${key}:`,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": Buffer.byteLength(payload)
-    }
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(payload),
+    },
   };
 
   const req = https.request(options, function (res) {
     const status = res.statusCode;
 
-    res.on("data", responseBuffer => {
-      const decoder = new StringDecoder("utf-8");
+    res.on('data', responseBuffer => {
+      const decoder = new StringDecoder('utf-8');
       const resData = decoder.write(responseBuffer);
 
       const err =
@@ -93,7 +93,7 @@ const confirmPayment = function (
     });
   });
 
-  req.on("error", function (err) {
+  req.on('error', function (err) {
     callback(err);
   });
 
@@ -105,20 +105,20 @@ const cancelPayment = function ({ paymentId }, callback) {
   const apiPath = `/v1/payment_intents/${paymentId}/cancel`;
 
   const options = {
-    protocol: "https:",
+    protocol: 'https:',
     hostname: url,
-    method: "POST",
+    method: 'POST',
     path: apiPath,
     auth: `${key}:`,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    }
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
   };
 
   const req = https.request(options, function (res) {
     const status = res.statusCode;
-    res.on("data", responseBuffer => {
-      const decoder = new StringDecoder("utf-8");
+    res.on('data', responseBuffer => {
+      const decoder = new StringDecoder('utf-8');
       const resData = decoder.write(responseBuffer);
 
       const err =
@@ -129,7 +129,7 @@ const cancelPayment = function ({ paymentId }, callback) {
       callback(err, resData);
     });
   });
-  req.on("error", function (err) {
+  req.on('error', function (err) {
     callback(err);
   });
   req.end();
@@ -138,5 +138,5 @@ const cancelPayment = function ({ paymentId }, callback) {
 module.exports = {
   createPayment,
   confirmPayment,
-  cancelPayment
+  cancelPayment,
 };

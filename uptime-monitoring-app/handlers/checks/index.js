@@ -4,11 +4,7 @@ const makeGetCheck = require('./get');
 const makeUpdateCheckHandler = require('./update');
 const makeDeleteCheckHandler = require('./delete');
 
-const makeCheckHandlers = function({
-  db,
-  logger,
-}) {
-
+const makeCheckHandlers = function ({ db, logger }) {
   const createHandler = makeCreateCheck({ db, logger, helpers });
   const getHandler = makeGetCheck({ db, logger, helpers });
   const updateHandler = makeUpdateCheckHandler({ db, logger, helpers });
@@ -19,7 +15,7 @@ const makeCheckHandlers = function({
     getHandler,
     updateHandler,
     deleteHandler,
-  }
-}
+  };
+};
 
 module.exports = makeCheckHandlers;

@@ -1,4 +1,4 @@
-const logger = require("../lib/makeLogger")("middleware:log");
+const logger = require('../lib/makeLogger')('middleware:log');
 
 const logMiddleware = function (req, res, next) {
   const { path, method } = req;

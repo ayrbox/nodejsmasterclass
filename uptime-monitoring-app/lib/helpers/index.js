@@ -8,8 +8,8 @@ const createRandomString = require('./createRandomString');
 const listFiles = require('./listFiles');
 
 module.exports = {
-  hash: (toHash) => {
-    if (typeof(toHash) !== 'string' && toHash.length < 0) {
+  hash: toHash => {
+    if (typeof toHash !== 'string' && toHash.length < 0) {
       return false;
     }
 
@@ -19,7 +19,7 @@ module.exports = {
       .digest('hex');
   },
 
-  parseJsonToObject: (toParse) => {
+  parseJsonToObject: toParse => {
     if (toParse === '') return {};
     try {
       return JSON.parse(toParse);
@@ -28,7 +28,8 @@ module.exports = {
       return {};
     }
   },
-  validateStringRequired: value => (value || '').trim().length > 0 ? (value || '').trim() : false,
+  validateStringRequired: value =>
+    (value || '').trim().length > 0 ? (value || '').trim() : false,
   createRandomString,
   listFiles,
 };

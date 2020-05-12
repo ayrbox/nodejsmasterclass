@@ -3,18 +3,18 @@ const makeDeleteToken = function ({ db, logger }) {
     const { token } = query;
 
     if (!token) {
-      responseCallback(400, { message: "Invalid token" });
+      responseCallback(400, { message: 'Invalid token' });
       return;
     }
 
     db.delete(token, function (err) {
       if (err) {
         logger.warning(err);
-        responseCallback(404, { message: "Unable to delete token." });
+        responseCallback(404, { message: 'Unable to delete token.' });
         return;
       }
 
-      responseCallback(200, { message: "Token deleted." });
+      responseCallback(200, { message: 'Token deleted.' });
     });
   };
 };

@@ -19,8 +19,8 @@ routes
   .map(({ method, path }) => `${method}\t\t: ${path}`)
   .forEach(info => logger.info(info));
 
-const __CURRENT_DIR = process.cwd(); 
-const __DATA_DIR = path.join(__CURRENT_DIR, '.data'); 
+const __CURRENT_DIR = process.cwd();
+const __DATA_DIR = path.join(__CURRENT_DIR, '.data');
 const smsClient = makeSMSClient(config);
 
 // Make instance of webserver and worker
@@ -33,15 +33,23 @@ const worker = makeWorker({
 
 // The server should response to all request with a string
 http.createServer(server).listen(config.httpPort, () => {
-  logger.warning(`The server is listenning on port ${config.httpPort} in ${config.envName} mode`);
+  logger.warning(
+    `The server is listenning on port ${config.httpPort} in ${config.envName} mode`,
+  );
 });
 
-https.createServer({
-  key: fs.readFileSync('./https/key.pem'),
-  cert: fs.readFileSync('./https/cert.pem'), 
-}, server).listen(config.httpsPort, () => {
-  logger.warning(`The server is listenning on port ${config.httpsPort} in ${config.envName} mode`);
-});
-
+https
+  .createServer(
+    {
+      key: fs.readFileSync('./https/key.pem'),
+      cert: fs.readFileSync('./https/cert.pem'),
+    },
+    server,
+  )
+  .listen(config.httpsPort, () => {
+    logger.warning(
+      `The server is listenning on port ${config.httpsPort} in ${config.envName} mode`,
+    );
+  });
 
 worker.init();

@@ -3,38 +3,38 @@ const {
   updateCartItem,
   deleteCartItem,
   getCart,
-  deleteCart
-} = require("../handlers/cart");
+  deleteCart,
+} = require('../handlers/cart');
 
 module.exports = [
   {
-    path: "/cartitem",
-    method: "POST",
+    path: '/cartitem',
+    method: 'POST',
     handler: addCartItem,
-    secure: true
+    secure: true,
   },
   {
-    path: "/cartitem",
-    method: "PUT",
+    path: '/cartitem',
+    method: 'PUT',
     handler: updateCartItem,
-    secure: true
+    secure: true,
   },
   {
-    path: "/cartitem",
-    method: "DELETE",
+    path: '/cartitem',
+    method: 'DELETE',
     handler: deleteCartItem,
-    secure: true
+    secure: true,
   },
   {
-    path: "/cart",
-    method: "GET",
+    path: '/cart',
+    method: 'GET',
     handler: getCart,
-    secure: true
+    secure: true,
   },
   {
-    path: "/cart",
-    method: "DELETE",
+    path: '/cart',
+    method: 'DELETE',
     handler: deleteCart,
-    secure: true
-  }
+    secure: true,
+  },
 ];

@@ -2,31 +2,31 @@ const {
   createToken,
   readToken,
   updateToken,
-  deleteToken
-} = require("../handlers/tokens");
+  deleteToken,
+} = require('../handlers/tokens');
 
 module.exports = [
   {
-    path: "/tokens",
-    method: "POST",
-    handler: createToken
+    path: '/tokens',
+    method: 'POST',
+    handler: createToken,
   },
   {
-    path: "/tokens",
-    method: "GET",
+    path: '/tokens',
+    method: 'GET',
     handler: readToken,
-    secure: true
+    secure: true,
   },
   {
-    path: "/tokens",
-    method: "PUT",
+    path: '/tokens',
+    method: 'PUT',
     handler: updateToken,
-    secure: true
+    secure: true,
   },
   {
-    path: "/tokens",
-    method: "DELETE",
+    path: '/tokens',
+    method: 'DELETE',
     handler: deleteToken,
-    secure: true
-  }
+    secure: true,
+  },
 ];

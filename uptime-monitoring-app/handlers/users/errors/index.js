@@ -1,5 +1,5 @@
 const UserAlreadyExists = require('./userAlreadyExists');
-const UserNotFound = require('./userNotFound')
+const UserNotFound = require('./userNotFound');
 const InvalidUserData = require('./invalidUserData');
 
 module.exports = {

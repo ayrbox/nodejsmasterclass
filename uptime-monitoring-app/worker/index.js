@@ -9,19 +9,15 @@ let dataDirectory_;
 const makeGatherChecks = require('./makeGatherChecks');
 const makeAlertUser = require('./makeAlertUser');
 
-let gatherChecks = function() {};
+let gatherChecks = function () {};
 
-const loop = function() {
-  setInterval(function() {
+const loop = function () {
+  setInterval(function () {
     gatherChecks();
   }, workerInterval);
-}
+};
 
-const makeWorker = function({
-  interval,
-  dataDirectory,
-  smsClient,
-}) {
+const makeWorker = function ({ interval, dataDirectory, smsClient }) {
   workerInterval = interval || workerInterval;
   dataDirectory_ = dataDirectory;
 
@@ -30,19 +26,18 @@ const makeWorker = function({
     helpers,
     logger: undefined,
     checkFileDirectory: path.join(dataDirectory_, 'checks'),
-    alertUser: makeAlertUser(smsClient) 
+    alertUser: makeAlertUser(smsClient),
   });
 
-
-  const init = function() {
+  const init = function () {
     logger.info('Running worker');
     gatherChecks();
     loop();
-  }
+  };
 
   return {
     init,
-  }
-}
+  };
+};
 
 module.exports = makeWorker;

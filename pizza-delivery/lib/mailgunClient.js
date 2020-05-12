@@ -1,7 +1,7 @@
-const https = require("https");
-const { StringDecoder } = require("string_decoder");
-const qs = require("querystring");
-const { mailgun } = require("../config");
+const https = require('https');
+const { StringDecoder } = require('string_decoder');
+const qs = require('querystring');
+const { mailgun } = require('../config');
 
 const { apiKey, host, domain, from } = mailgun;
 
@@ -12,40 +12,40 @@ const sendEmail = function ({ to, subject, text }, callback) {
     from,
     to,
     subject,
-    text
+    text,
   });
 
   const options = {
-    protocol: "https:",
+    protocol: 'https:',
     hostname: host,
     port: 443,
-    method: "POST",
+    method: 'POST',
     path: apiPath,
     auth: `api:${apiKey}`,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": Buffer.byteLength(payload)
-    }
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(payload),
+    },
   };
 
-  console.log(options, "\n\n\n\n\n", payload);
+  console.log(options, '\n\n\n\n\n', payload);
 
   const req = https.request(options, function (res) {
     const status = res.statusCode;
-    res.on("data", buffer => {
-      const decoder = new StringDecoder("utf-8");
+    res.on('data', buffer => {
+      const decoder = new StringDecoder('utf-8');
       const data = decoder.write(buffer);
 
       const err =
         status === 200 || status === 201
           ? false
-          : new Error("Error sending email");
+          : new Error('Error sending email');
 
       callback(err, data);
     });
   });
 
-  req.on("error", function (err) {
+  req.on('error', function (err) {
     callback(err, null);
   });
 
@@ -54,5 +54,5 @@ const sendEmail = function ({ to, subject, text }, callback) {
 };
 
 module.exports = {
-  sendEmail
+  sendEmail,
 };

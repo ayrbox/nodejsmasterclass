@@ -11,20 +11,25 @@ const {
   logger: undefined,
 });
 
-module.exports = [{
-  path: '/checks',
-  method: 'POST',
-  handler: createHandler,
-}, {
-  path: '/checks',
-  method: 'GET',
-  handler: getHandler,
-}, {
-  path: '/checks',
-  method: 'PUT',
-  handler: updateHandler,
-}, {
-  path: '/checks',
-  method: 'DELETE',
-  handler: deleteHandler,
-}];
+module.exports = [
+  {
+    path: '/checks',
+    method: 'POST',
+    handler: createHandler,
+  },
+  {
+    path: '/checks',
+    method: 'GET',
+    handler: getHandler,
+  },
+  {
+    path: '/checks',
+    method: 'PUT',
+    handler: updateHandler,
+  },
+  {
+    path: '/checks',
+    method: 'DELETE',
+    handler: deleteHandler,
+  },
+];

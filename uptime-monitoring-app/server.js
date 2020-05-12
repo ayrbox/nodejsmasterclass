@@ -2,11 +2,11 @@ const url = require('url');
 const { StringDecoder } = require('string_decoder');
 const { inspect } = require('util');
 
-const parseRequestUrl = function(httpRequest) {
+const parseRequestUrl = function (httpRequest) {
   const parsedUrl = url.parse(httpRequest.url, true);
 
   const requestPath = parsedUrl.pathname.replace(/^\/+|\/+$/g, '');
-  const queryStringObject = parsedUrl.query; 
+  const queryStringObject = parsedUrl.query;
   const method = httpRequest.method.toUpperCase();
   const headers = httpRequest.headers;
 
@@ -14,23 +14,18 @@ const parseRequestUrl = function(httpRequest) {
     requestPath,
     query: queryStringObject,
     method,
-    headers, 
+    headers,
   };
-}
+};
 
 const defaultHandler = (_, callback) => {
   callback(404);
 };
-  
-const makeServer = function(routers, helpers) {
-  return function(req, res) {
-    const {
-      requestPath,
-      query,
-      method,
-      headers,
-    } = parseRequestUrl(req); // TODO: move to helper file
-    
+
+const makeServer = function (routers, helpers) {
+  return function (req, res) {
+    const { requestPath, query, method, headers } = parseRequestUrl(req); // TODO: move to helper file
+
     // get payload, if any
     const decoder = new StringDecoder('utf-8');
 
@@ -43,19 +38,24 @@ const makeServer = function(routers, helpers) {
       buffer += decoder.end();
 
       // choose handler by the pathname
-      const { handler }= routers.find(({ path: routePath, method: routeMethod }) => {
-        return routePath.replace(/^\/+|\/+$/g, '') === requestPath && method === routeMethod;
-      }) || {
+      const { handler } = routers.find(
+        ({ path: routePath, method: routeMethod }) => {
+          return (
+            routePath.replace(/^\/+|\/+$/g, '') === requestPath &&
+            method === routeMethod
+          );
+        },
+      ) || {
         handler: defaultHandler,
       };
-      
+
       // construct data object to send to hander
       const data = {
         path: requestPath,
         query,
         method,
         headers,
-        payload: helpers.parseJsonToObject(buffer)
+        payload: helpers.parseJsonToObject(buffer),
       };
 
       // Router the request to the handler to specifed router
@@ -65,11 +65,11 @@ const makeServer = function(routers, helpers) {
         res.writeHead(status);
         res.end(JSON.stringify(payload));
 
-        // Log the resposne 
+        // Log the resposne
         console.log('Return', status, payload);
       });
     });
   };
-}
+};
 
 module.exports = makeServer;

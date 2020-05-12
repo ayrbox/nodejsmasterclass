@@ -2,24 +2,18 @@ const http = require('http');
 const https = require('https');
 const urlModule = require('url');
 
-const performCheck = function({
-  id,
-  protocol,
-  url,
-  method,
-  timeouts,
-  successCodes,
-  state,
-  lastChecked,
-}, callback) {
+const performCheck = function (
+  { id, protocol, url, method, timeouts, successCodes, state, lastChecked },
+  callback,
+) {
   const checkOutcome = {
     error: undefined,
     responseCode: undefined,
   };
 
   let outcomeSent = false;
-  
-  const { hostname, path }= urlModule.parse(`${protocol}://${url}`, true);
+
+  const { hostname, path } = urlModule.parse(`${protocol}://${url}`, true);
 
   const requestDetails = {
     protocol: `${protocol}:`,
@@ -31,33 +25,33 @@ const performCheck = function({
 
   const httpModule = protocol === 'http' ? http : https;
 
-  const req = httpModule.request(requestDetails, function(res) {
+  const req = httpModule.request(requestDetails, function (res) {
     checkOutcome.responseCode = res.statusCode;
-    if(!outcomeSent) {
+    if (!outcomeSent) {
       callback(checkOutcome);
       outcomeSent = true;
     }
   });
 
-  req.on('error', function(e) {
+  req.on('error', function (e) {
     checkOutcome.error = {
       error: true,
       value: e,
     };
 
-    if(!outcomeSent) {
+    if (!outcomeSent) {
       callback(checkOutcome);
       outcomeSent = true;
     }
   });
 
-  req.on('timeout', function(e) {
+  req.on('timeout', function (e) {
     checkOutcome.error = {
       error: true,
       value: 'Timeout',
     };
 
-    if(!outcomeSent) {
+    if (!outcomeSent) {
       callback(checkOutcome);
       outcomeSent = true;
     }

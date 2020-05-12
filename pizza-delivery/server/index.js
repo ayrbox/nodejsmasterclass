@@ -1,13 +1,13 @@
-const { StringDecoder } = require("string_decoder");
+const { StringDecoder } = require('string_decoder');
 
-const parseRequestUrl = require("./parseRequestUrl");
-const logger = require("../lib/makeLogger")("server");
-const composeMiddleware = require("./composeMiddleware");
+const parseRequestUrl = require('./parseRequestUrl');
+const logger = require('../lib/makeLogger')('server');
+const composeMiddleware = require('./composeMiddleware');
 
 const defaultHandler = {
   handler: function (_, callback) {
-    callback(404, { message: "Not found." });
-  }
+    callback(404, { message: 'Not found.' });
+  },
 };
 
 const makeServer = function ({ routes = [], middlewares = [] }) {
@@ -18,20 +18,20 @@ const makeServer = function ({ routes = [], middlewares = [] }) {
   return function (req, res) {
     const { requestPath, query, method, headers } = parseRequestUrl(req);
 
-    const decoder = new StringDecoder("utf-8");
+    const decoder = new StringDecoder('utf-8');
 
-    let buffer = "";
-    req.on("data", data => {
+    let buffer = '';
+    req.on('data', data => {
       buffer += decoder.write(data);
     });
 
-    req.on("end", () => {
+    req.on('end', () => {
       buffer += decoder.end();
 
       const { handler, secure } =
         routes.find(({ path: routePath, method: routeMethod }) => {
           return (
-            routePath.replace(/^\/+|\/+$/g, "") === requestPath &&
+            routePath.replace(/^\/+|\/+$/g, '') === requestPath &&
             routeMethod === method
           );
         }) || defaultHandler;
@@ -41,15 +41,15 @@ const makeServer = function ({ routes = [], middlewares = [] }) {
         query,
         method,
         headers,
-        payload: JSON.parse(buffer || "{}"), // TODO: user generic parse function
-        secure
+        payload: JSON.parse(buffer || '{}'), // TODO: user generic parse function
+        secure,
       };
 
       const composedHandler = composeMiddleware(middlewares);
 
       const fnNext = function () {
         handler(requestData, function (status = 200, payload = {}) {
-          res.setHeader("Content-Type", "application/json");
+          res.setHeader('Content-Type', 'application/json');
           res.writeHead(status);
           res.end(JSON.stringify(payload));
 

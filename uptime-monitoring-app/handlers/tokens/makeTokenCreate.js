@@ -1,16 +1,13 @@
-const makeTokenCreate = function({
-  db,
-  helpers,
-}) {
-  return function(data, cb) {
+const makeTokenCreate = function ({ db, helpers }) {
+  return function (data, cb) {
     const { phone, password } = data.payload;
-    if(!phone || !password) {
+    if (!phone || !password) {
       cb(400, new Error('Missing required fields'));
       return;
     }
 
     // Look up user
-    db.read('users', phone, function(err, userData) {
+    db.read('users', phone, function (err, userData) {
       if (err && !userData) {
         cb(400, new Error('Could not find user.'));
         return;
@@ -31,13 +28,13 @@ const makeTokenCreate = function({
       const expires = Date.now() + 1000 * 60 * 60;
 
       const tokenObject = {
-          phone,
-          id: tokenId,
-          expires,
+        phone,
+        id: tokenId,
+        expires,
       };
 
-      db.create('tokens', tokenId, tokenObject, function(err) {
-        if(err) {
+      db.create('tokens', tokenId, tokenObject, function (err) {
+        if (err) {
           cb(500, new Error('Unable to create token'));
           return;
         }

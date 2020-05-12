@@ -1,4 +1,4 @@
-const { hash } = require("../../lib/cryptoHash");
+const { hash } = require('../../lib/cryptoHash');
 
 const makeCreateUser = function ({ db, logger }) {
   return function ({ payload }, responseCallback) {
@@ -13,7 +13,7 @@ const makeCreateUser = function ({ db, logger }) {
         email,
         phone,
         address,
-        password: hashedPassword
+        password: hashedPassword,
       },
       function (err) {
         if (err) {
@@ -21,8 +21,8 @@ const makeCreateUser = function ({ db, logger }) {
           responseCallback(500, { message: err.message });
           return;
         }
-        responseCallback(201, { message: "User created" });
-      }
+        responseCallback(201, { message: 'User created' });
+      },
     );
   };
 };

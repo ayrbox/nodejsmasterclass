@@ -1,17 +1,20 @@
-const {
-  UserAlreadyExists,
-  InvalidUserData,
-} = require('./errors');
+const { UserAlreadyExists, InvalidUserData } = require('./errors');
 
-const validateStringRequired = value => (value || '').trim().length > 0 ? (value || '').trim() : false;
+const validateStringRequired = value =>
+  (value || '').trim().length > 0 ? (value || '').trim() : false;
 
-const makeCreateUser = function(db, logger, helpers) {
-  return function(data, callback) {
+const makeCreateUser = function (db, logger, helpers) {
+  return function (data, callback) {
     // validate required fields
     const { payload } = data;
 
-    const rawData = ['firstName', 'lastName', 'phone', 'password', 'tosAgreement']
-      .map(key => ({key, value: validateStringRequired(payload[key])}))
+    const rawData = [
+      'firstName',
+      'lastName',
+      'phone',
+      'password',
+      'tosAgreement',
+    ].map(key => ({ key, value: validateStringRequired(payload[key]) }));
 
     const invalidData = rawData.find(d => !d.value);
     if (invalidData) {
@@ -27,9 +30,9 @@ const makeCreateUser = function(db, logger, helpers) {
       tosAgreement,
     } = rawData.reduce((o, item) => {
       o[item.key] = item.value;
-      return o; 
+      return o;
     }, {});
-      
+
     //data make sure user does not exists
     db.read('users', phone, (err, data) => {
       if (!err) {
@@ -44,25 +47,29 @@ const makeCreateUser = function(db, logger, helpers) {
         return;
       }
 
-      db.create('users', phone, {
-        firstName,
-        lastName,
+      db.create(
+        'users',
         phone,
-        hashedPassword,
-        tosAgreement
-      }, (err) => {
+        {
+          firstName,
+          lastName,
+          phone,
+          hashedPassword,
+          tosAgreement,
+        },
+        err => {
+          if (err) {
+            // logger.log(err);
+            console.log(err);
+            callback(500, new Error('Unable to create user'));
+            return;
+          }
 
-        if (err) {
-          // logger.log(err);
-          console.log(err);
-          callback(500, new Error('Unable to create user'));
-          return;
-        }
-
-        callback(201);
-      });
+          callback(201);
+        },
+      );
     });
   };
-}
+};
 
 module.exports = makeCreateUser;

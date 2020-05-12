@@ -1,9 +1,9 @@
-const { DATADIR } = require("../context");
-const makeDataHandler = require("../lib/makeDataHandlers");
-const logger = require("../lib/makeLogger")("middleware:log");
+const { DATADIR } = require('../context');
+const makeDataHandler = require('../lib/makeDataHandlers');
+const logger = require('../lib/makeLogger')('middleware:log');
 
-const db = makeDataHandler(DATADIR, "tokens");
-const dbUsers = makeDataHandler(DATADIR, "users");
+const db = makeDataHandler(DATADIR, 'tokens');
+const dbUsers = makeDataHandler(DATADIR, 'users');
 
 const authToken = function (req, res, next) {
   const { headers, secure } = req;
@@ -16,9 +16,9 @@ const authToken = function (req, res, next) {
   const { token } = headers;
 
   if (secure && !token) {
-    logger.warning("401 Unautenticated");
+    logger.warning('401 Unautenticated');
     res.writeHead(401);
-    res.end(JSON.stringify({ message: "Unautenticated." }));
+    res.end(JSON.stringify({ message: 'Unautenticated.' }));
     return;
   }
 
@@ -26,7 +26,7 @@ const authToken = function (req, res, next) {
     if (err || !tokenData) {
       logger.warning(err);
       res.writeHead(403);
-      res.end(JSON.stringify({ message: "Invalid token." }));
+      res.end(JSON.stringify({ message: 'Invalid token.' }));
       return;
     }
 
@@ -36,7 +36,7 @@ const authToken = function (req, res, next) {
     if (expires < Date.now()) {
       logger.warning(`Expired token ${token}`);
       res.writeHead(403);
-      res.end(JSON.stringify({ message: "Token already expired." }));
+      res.end(JSON.stringify({ message: 'Token already expired.' }));
       return;
     }
 
@@ -45,7 +45,7 @@ const authToken = function (req, res, next) {
       if (err || !user) {
         logger.warning(err);
         res.writeHead(403);
-        res.end(JSON.stringify({ message: "User with auth token not found" }));
+        res.end(JSON.stringify({ message: 'User with auth token not found' }));
         return;
       }
 

@@ -1,4 +1,4 @@
-const { hash } = require("../../lib/cryptoHash");
+const { hash } = require('../../lib/cryptoHash');
 
 const makeDeleteCartItem = function ({ db, dbMenu }) {
   return function ({ payload, user }, repsonseCallback) {
@@ -7,7 +7,7 @@ const makeDeleteCartItem = function ({ db, dbMenu }) {
     dbMenu.read(menuId, (err, menu) => {
       if (err || !menu) {
         repsonseCallback(404, {
-          msg: "Menu item not found"
+          msg: 'Menu item not found',
         });
         return;
       }
@@ -17,21 +17,21 @@ const makeDeleteCartItem = function ({ db, dbMenu }) {
 
       if (!option) {
         repsonseCallback(400, {
-          msg: "Invalid option selected"
+          msg: 'Invalid option selected',
         });
         return;
       }
 
       const itemToDelete = {
         menuId,
-        option
+        option,
       };
 
       const cartId = `cart-${hash(user.email)}`;
       db.read(cartId, (err, cartData) => {
         if (err || !cartData) {
           repsonseCallback(404, {
-            msg: "Unable to find cart."
+            msg: 'Unable to find cart.',
           });
           return;
         }
@@ -46,7 +46,7 @@ const makeDeleteCartItem = function ({ db, dbMenu }) {
 
         if (itemIndexToDelete < 0) {
           repsonseCallback(404, {
-            msg: "Unable to find menu item in cart"
+            msg: 'Unable to find menu item in cart',
           });
           return;
         }
@@ -55,13 +55,13 @@ const makeDeleteCartItem = function ({ db, dbMenu }) {
 
         const updatedData = {
           items,
-          total: items.reduce((t, { amount }) => t + amount, 0)
+          total: items.reduce((t, { amount }) => t + amount, 0),
         };
 
         db.update(cartId, updatedData, err => {
           if (err) {
             repsonseCallback(500, {
-              msg: "Unable to update cart."
+              msg: 'Unable to update cart.',
             });
             return;
           }

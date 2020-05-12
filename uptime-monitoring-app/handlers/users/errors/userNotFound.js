@@ -9,4 +9,3 @@ class UserNotFound extends Error {
 }
 
 module.exports = UserNotFound;
-

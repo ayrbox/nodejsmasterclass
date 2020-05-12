@@ -3,14 +3,14 @@ const makeReadToken = function ({ db, logger }) {
     const { token } = query;
 
     if (!token) {
-      responseCallback(400, { message: "Invalid token" });
+      responseCallback(400, { message: 'Invalid token' });
       return;
     }
 
     db.read(token, function (err, tokenData) {
       if (err || !tokenData) {
         logger.warning(err);
-        responseCallback(404, { message: "Invalid token. Not found. " });
+        responseCallback(404, { message: 'Invalid token. Not found. ' });
         return;
       }
 

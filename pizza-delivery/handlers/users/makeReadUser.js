@@ -1,4 +1,4 @@
-const { inspect } = require("util");
+const { inspect } = require('util');
 
 const makeReadUser = function ({ db, logger }) {
   return function ({ query, user }, responseCallback) {
@@ -13,7 +13,7 @@ const makeReadUser = function ({ db, logger }) {
       if (err) {
         logger.warning(err.message);
         responseCallback(404, {
-          message: `User with email ${inspect(email)} not found.`
+          message: `User with email ${inspect(email)} not found.`,
         });
         return;
       }

@@ -14,7 +14,6 @@ const delete_ = makeDelete(BASE_DIR, fs, path);
 const read = makeRead(BASE_DIR, fs, path, helpers);
 const update = makeUpdate(BASE_DIR, fs, path);
 
-
 module.exports = {
   create,
   delete: delete_,

@@ -1,6 +1,6 @@
 const makePing = require('./ping');
 
-const makePingHandlers = function() {
+const makePingHandlers = function () {
   return {
     ping: makePing(),
   };

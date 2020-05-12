@@ -4,7 +4,7 @@ const makeGetMenu = function ({ db, logger }) {
     db.read(id, function (err, data) {
       if (err) {
         logger.warning(err.message);
-        responseCallback(404, { message: "Unable to read menu." });
+        responseCallback(404, { message: 'Unable to read menu.' });
         return;
       }
       responseCallback(200, data);

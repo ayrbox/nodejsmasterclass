@@ -1,4 +1,4 @@
-const { inspect } = require("util");
+const { inspect } = require('util');
 
 const makeDeleteUser = function ({ db, logger }) {
   return function ({ query }, responseCallback) {
@@ -8,7 +8,7 @@ const makeDeleteUser = function ({ db, logger }) {
       if (err) {
         logger.warning(err);
         responseCallback(404, {
-          message: `User with email ${inspect(email)} not found.`
+          message: `User with email ${inspect(email)} not found.`,
         });
         return;
       }
@@ -17,11 +17,11 @@ const makeDeleteUser = function ({ db, logger }) {
         if (err) {
           logger.warning(err);
           responseCallback(500, {
-            message: `Unable to delete data for email ${inspect(email)}.`
+            message: `Unable to delete data for email ${inspect(email)}.`,
           });
           return;
         }
-        responseCallback(200, { message: "User deleted." });
+        responseCallback(200, { message: 'User deleted.' });
       });
     });
   };
