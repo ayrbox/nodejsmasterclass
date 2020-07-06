@@ -1,11 +1,11 @@
-const url = require('url');
-const { StringDecoder } = require('string_decoder');
-const { inspect } = require('util');
+const url = require("url");
+const { StringDecoder } = require("string_decoder");
+const { inspect } = require("util");
 
 const parseRequestUrl = function (httpRequest) {
   const parsedUrl = url.parse(httpRequest.url, true);
 
-  const requestPath = parsedUrl.pathname.replace(/^\/+|\/+$/g, '');
+  const requestPath = parsedUrl.pathname.replace(/^\/+|\/+$/g, "");
   const queryStringObject = parsedUrl.query;
   const method = httpRequest.method.toUpperCase();
   const headers = httpRequest.headers;
@@ -17,9 +17,8 @@ const parseRequestUrl = function (httpRequest) {
     headers,
   };
 };
-
 const defaultHandler = (_, callback) => {
-  callback(404);
+  callback(404, "NOT FOUND", "text/plain");
 };
 
 const makeServer = function (routers, helpers) {
@@ -27,24 +26,24 @@ const makeServer = function (routers, helpers) {
     const { requestPath, query, method, headers } = parseRequestUrl(req); // TODO: move to helper file
 
     // get payload, if any
-    const decoder = new StringDecoder('utf-8');
+    const decoder = new StringDecoder("utf-8");
 
-    let buffer = '';
-    req.on('data', data => {
+    let buffer = "";
+    req.on("data", (data) => {
       buffer += decoder.write(data);
     });
 
-    req.on('end', () => {
+    req.on("end", () => {
       buffer += decoder.end();
 
       // choose handler by the pathname
       const { handler } = routers.find(
         ({ path: routePath, method: routeMethod }) => {
           return (
-            routePath.replace(/^\/+|\/+$/g, '') === requestPath &&
+            routePath.replace(/^\/+|\/+$/g, "") === requestPath &&
             method === routeMethod
           );
-        },
+        }
       ) || {
         handler: defaultHandler,
       };
@@ -59,15 +58,24 @@ const makeServer = function (routers, helpers) {
       };
 
       // Router the request to the handler to specifed router
-      handler(data, (status = 200, payload = {}) => {
-        // Return the response
-        res.setHeader('Content-Type', 'application/json');
-        res.writeHead(status);
-        res.end(JSON.stringify(payload));
+      handler(
+        data,
+        (status = 200, payload = {}, contentType = "application/json") => {
+          // Return the response
+          res.setHeader("Content-Type", contentType);
+          res.writeHead(status);
+          let payload_ = "";
+          if (typeof payload === "object") {
+            payload_ = JSON.stringify(payload);
+          } else if (typeof payload === "string") {
+            payload_ = payload;
+          }
+          res.end(payload_);
 
-        // Log the resposne
-        console.log('Return', status, payload);
-      });
+          // Log the resposne
+          console.log("Return", status, payload);
+        }
+      );
     });
   };
 };
