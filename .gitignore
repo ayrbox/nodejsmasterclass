@@ -3,3 +3,6 @@
 
 /**/*/.data/*
 !.gitkeep
+
+node_modules/
+.vscode
