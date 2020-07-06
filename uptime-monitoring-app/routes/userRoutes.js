@@ -1,6 +1,6 @@
-const makeUserHandler = require('../handlers/users');
+const makeUserHandler = require("../handlers/users");
 
-const db = require('../lib/data');
+const db = require("../lib/data");
 
 // Making handlers
 const {
@@ -12,23 +12,23 @@ const {
 
 module.exports = [
   {
-    path: '/users',
-    method: 'POST',
+    path: "/api/users",
+    method: "POST",
     handler: createHandler,
   },
   {
-    path: '/users',
-    method: 'DELETE',
+    path: "/api/users",
+    method: "DELETE",
     handler: deleteHandler,
   },
   {
-    path: '/users',
-    method: 'PUT',
+    path: "/api/users",
+    method: "PUT",
     handler: updateHandler,
   },
   {
-    path: '/users',
-    method: 'GET',
+    path: "/api/users",
+    method: "GET",
     handler: readHandler,
   },
 ];

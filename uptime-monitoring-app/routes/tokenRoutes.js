@@ -1,7 +1,7 @@
-const db = require('../lib/data');
-const helpers = require('../lib/helpers');
+const db = require("../lib/data");
+const helpers = require("../lib/helpers");
 
-const makeTokenHandlers = require('../handlers/tokens');
+const makeTokenHandlers = require("../handlers/tokens");
 
 const {
   createHandler,
@@ -12,23 +12,23 @@ const {
 
 module.exports = [
   {
-    path: '/tokens',
-    method: 'POST',
+    path: "/api/tokens",
+    method: "POST",
     handler: createHandler,
   },
   {
-    path: '/tokens',
-    method: 'GET',
+    path: "/api/tokens",
+    method: "GET",
     handler: readHandler,
   },
   {
-    path: '/tokens',
-    method: 'PUT',
+    path: "/api/tokens",
+    method: "PUT",
     handler: updateHandler,
   },
   {
-    path: '/tokens',
-    method: 'DELETE',
+    path: "/api/tokens",
+    method: "DELETE",
     handler: deleteHandler,
   },
 ];

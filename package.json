@@ -4,5 +4,8 @@
   "devDependencies": {
     "lerna": "^3.4.3",
     "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "dev": "cd ./uptime-monitoring-app && nodemon ."
   }
 }
