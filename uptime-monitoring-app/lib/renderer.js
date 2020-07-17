@@ -1,5 +1,5 @@
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
 function templateEngine(templateString, data) {
   const regEx = /<%([^%>]+)?%>/g;
@@ -14,30 +14,32 @@ function templateEngine(templateString, data) {
 }
 
 function makeRender(viewFolder) {
-  return function(viewFile, callback, layoutView = undefined) {
+  return function (viewFile, callback, data = {}, layoutView = undefined) {
     // TODO: if layout view provided wrap the content withint layoutView content
     const filePath = path.join(viewFolder, viewFile);
 
-    fs.readFile(filePath, "utf8", function(err, content) {
+    fs.readFile(filePath, 'utf8', function (err, content) {
       if (err) {
-        callback(new Error("Unable render template."));
+        callback(new Error('Unable render template.'));
         return;
       }
 
+      const pageHtml = templateEngine(content, data);
+
       if (!layoutView) {
-        callback(false, content);
+        callback(false, pageHtml);
         return;
       }
 
       const layout = path.join(viewFolder, layoutView);
-      fs.readFile(layout, "utf8", function(err, layoutContent) {
+      fs.readFile(layout, 'utf8', function (err, layoutContent) {
         if (err) {
-          callback(new Error("Layout not found."));
+          callback(new Error('Layout not found.'));
           return;
         }
 
-        const data = { content };
-        const resultHtml = templateEngine(layoutContent, data);
+        const layoutData = { content: pageHtml, ...data };
+        const resultHtml = templateEngine(layoutContent, layoutData);
         callback(false, resultHtml);
       });
     });
