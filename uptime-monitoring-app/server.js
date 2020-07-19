@@ -2,6 +2,8 @@ const url = require('url');
 const { StringDecoder } = require('string_decoder');
 const { inspect } = require('util');
 
+const makeServeStatic = require('./lib/static');
+
 const parseRequestUrl = function (httpRequest) {
   const parsedUrl = url.parse(httpRequest.url, true);
 
@@ -17,11 +19,22 @@ const parseRequestUrl = function (httpRequest) {
     headers,
   };
 };
-const defaultHandler = (_, callback) => {
-  callback(404, 'NOT FOUND', 'text/plain');
+
+const makeDefaultHandler = function (serveStatic) {
+  return function (req, callback) {
+    serveStatic(req.path, function (err, content, contentType = 'text/plain') {
+      if (err) {
+        callback(404, 'NOT FOUND', 'text/plain');
+        return;
+      }
+      callback(200, content, contentType);
+    });
+  };
 };
 
-const makeServer = function (routers, helpers) {
+const makeServer = function (routers, helpers, staticFolder) {
+  const serveStatic = makeServeStatic(staticFolder);
+
   return function (req, res) {
     const { requestPath, query, method, headers } = parseRequestUrl(req); // TODO: move to helper file
 
@@ -45,7 +58,7 @@ const makeServer = function (routers, helpers) {
           );
         }
       ) || {
-        handler: defaultHandler,
+        handler: makeDefaultHandler(serveStatic),
       };
 
       // construct data object to send to hander
