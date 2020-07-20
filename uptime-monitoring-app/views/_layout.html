@@ -8,8 +8,8 @@
     <base href="{global.baseUrl}" />
 
     <!-- Meta Tags -->
-    <title>{head.title} | {global.appName}</title>
-    <meta name="description" content="{head.description}">
+    <title><%title%> | <%appName%></title>
+    <meta name="description" content="<%appDescription%>">
 
     <!-- Static Assets -->
     <link type="image/x-icon" rel="icon" href="favicon.ico">
@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="/app.css" />
 
   </head>
-  <body class="{body.class}">
+  <body class="<%bodyClass%>">
     <!-- Page Wrapper -->
     <div class="wrapper">
       <!-- Header -->
@@ -53,13 +53,12 @@
 
       <!-- Page-Specific Content -->
       <div class="content">
-
-
+        <%content%>
       </div>
 
       <!-- Footer -->
       <div class="footer">
-        <div class="copyright">Copyright {global.yearCreated} {global.companyName} | All Rights Reserved</div>
+        <div class="copyright">Copyright <%copyRightYear%> <%companyName%> | All Rights Reserved</div>
       </div>
     </div>
   </body>

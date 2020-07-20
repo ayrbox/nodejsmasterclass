@@ -1,4 +1,4 @@
-module.exports = function (render) {
+module.exports = function (render, appData) {
   return function (data, callback) {
     render(
       'index.html',
@@ -10,8 +10,9 @@ module.exports = function (render) {
         callback(200, content, 'text/html');
       },
       {
+        ...appData,
         title: 'Home',
-        message: 'Hello world :). I like it',
+        message: '',
       },
       '_layout.html'
     );
