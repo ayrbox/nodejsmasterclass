@@ -1,15 +1,15 @@
 var app = {};
 
 app.config = {
-  sessionToken: false
+  sessionToken: false,
 };
 
 // Ajax cleint
 app.client = {};
 
-app.client.request = function(
-  path = "/",
-  method = "GET",
+app.client.request = function (
+  path = '/',
+  method = 'GET',
   queryString = {},
   headers = {},
   payload = undefined,
@@ -17,17 +17,17 @@ app.client.request = function(
 ) {
   // Prepare request url with query string
   const qs = Object.entries(queryString)
-    .map(function([key, value]) {
+    .map(function ([key, value]) {
       return `${key}=${value}`;
     })
-    .join("&");
+    .join('&');
 
   const requestUrl = `${path}/?${qs}`;
   console.log(requestUrl);
 
   const xhr = new XMLHttpRequest();
   xhr.open(method, requestUrl, true);
-  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader('Content-Type', 'application/json');
 
   // add headers to request
 
@@ -38,10 +38,10 @@ app.client.request = function(
 
   // add session token id if exists
   if (app.config.sessionToken) {
-    xhr.setRequestHeader("token", app.config.sessionToken.id);
+    xhr.setRequestHeader('token', app.config.sessionToken.id);
   }
 
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function () {
     if (xhr.readyState == XMLHttpRequest.DONE) {
       const statusCode = xhr.status;
       const responseReturned = xhr.responseText;
@@ -62,12 +62,12 @@ app.client.request = function(
 };
 
 app.client.request(
-  "/ping",
-  "GET",
-  { hello: "world" },
-  { "X-Tauko": "Terotauko" },
+  '/ping',
+  'GET',
+  { hello: 'world' },
+  { 'X-Tauko': 'Terotauko' },
   {},
-  function(statusCode, payload) {
+  function (statusCode, payload) {
     console.log(statusCode, payload);
   }
 );

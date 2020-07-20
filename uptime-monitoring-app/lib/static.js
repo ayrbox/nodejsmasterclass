@@ -18,7 +18,7 @@ function makeStatic(staticFolder) {
 
     const ext = filePath.match(/\w+$/i)[0];
 
-    fs.readFile(filePath, 'utf-8', function (err, content) {
+    fs.readFile(filePath, function (err, content) {
       if (err) {
         callback(new Error('Error reading file'));
         return;

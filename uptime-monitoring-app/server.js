@@ -79,10 +79,13 @@ const makeServer = function (routers, helpers, staticFolder) {
           res.writeHead(status);
           if (typeof payload === 'string') {
             res.end(payload);
-          } else if (typeof payload === 'object') {
+          } else if (
+            typeof payload === 'object' &&
+            contentType === 'application/json'
+          ) {
             res.end(JSON.stringify(payload));
           } else {
-            res.end();
+            res.end(payload);
           }
 
           // Log the resposne
