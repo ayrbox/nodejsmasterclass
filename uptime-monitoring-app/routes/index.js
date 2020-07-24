@@ -1,17 +1,17 @@
-const pingRoutes = require('./pingRoutes');
+const pingRoutes = require("./pingRoutes");
 
 /* API Routes */
-const userRoutes = require('./userRoutes');
-const tokenRoutes = require('./tokenRoutes');
-const checkRoutes = require('./checkRoutes');
+const userRoutes = require("./userRoutes");
+const tokenRoutes = require("./tokenRoutes");
+const checkRoutes = require("./checkRoutes");
 
 /* HTML Page Routes */
-const accountRoutes = require('./accountRoutes');
+const pageRoutes = require("./pageRoutes");
 
 module.exports = [
   ...pingRoutes,
   ...userRoutes,
   ...tokenRoutes,
   ...checkRoutes,
-  ...accountRoutes,
+  ...pageRoutes
 ];

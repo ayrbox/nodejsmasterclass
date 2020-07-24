@@ -1,0 +1,32 @@
+<h1>create your account</h1>
+<h2>signup is easy and only takes a few seconds.</h2>
+
+<div class="formwrapper">
+  <form id="accountcreate" action="/api/users" method="post">
+    <div class="formerror"></div>
+    <div class="inputwrapper">
+      <div class="inputlabel">first name</div>
+      <input type="text" name="firstname" placeholder="john" />
+    </div>
+    <div class="inputwrapper">
+      <div class="inputlabel">last name</div>
+      <input type="text" name="lastname" placeholder="smith" />
+    </div>
+    <div class="inputwrapper">
+      <div class="inputlabel">phone number</div>
+      <input type="text" name="phone" placeholder="(415) 123-4567" />
+    </div>
+    <div class="inputwrapper">
+      <div class="inputlabel">choose a password</div>
+      <input type="password" name="password" placeholder="make it a good one!" />
+    </div>
+    <div class="inputwrapper">
+      <div class="inputlabel">do you agree to the terms and conditions?</div>
+      <input type="checkbox" name="tosagreement" value="agree">
+    </div>
+    <div class="inputwrapper ctawrapper">
+      <button type="submit" class="cta blue">get started</button>
+    </div>
+  </form>
+</div>
+
