@@ -256,13 +256,14 @@ input.disabled {
   background-color: #efefef;
 }
 
-.inputWrapper {
+.inputwrapper {
   padding: 0 0 20px 0;
 }
 
-.inputLabel {
+.inputlabel {
   padding: 0 0 5px 0;
   color: #808080;
+  text-transform: capitalize;
 }
 
 .backButton {
@@ -325,4 +326,8 @@ td a:active {
 #createCheckCTA {
   margin-top: 40px;
   display: none;
+}
+
+#tosagreement {
+  width: auto;
 }
