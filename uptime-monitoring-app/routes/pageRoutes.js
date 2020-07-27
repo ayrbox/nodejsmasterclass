@@ -4,6 +4,8 @@ const {
   indexPageHandler,
   getAccountHandler,
   createSessionHandler,
+  deletedSessionHandler,
+  dashboardHandler,
 } = makePageRoutes();
 
 module.exports = [
@@ -21,5 +23,15 @@ module.exports = [
     path: '/session/create',
     method: 'GET',
     handler: createSessionHandler,
+  },
+  {
+    path: '/session/deleted',
+    method: 'GET',
+    handler: deletedSessionHandler,
+  },
+  {
+    path: '/checks/all',
+    method: 'GET',
+    handler: dashboardHandler,
   },
 ];

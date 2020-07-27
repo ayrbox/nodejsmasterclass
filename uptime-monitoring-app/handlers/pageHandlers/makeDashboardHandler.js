@@ -1,7 +1,7 @@
 module.exports = function (render, appData) {
   return function (data, callback) {
     render(
-      'createSession.html',
+      'dashboard.html',
       function (err, content) {
         if (err) {
           callback(500, err);
@@ -11,7 +11,7 @@ module.exports = function (render, appData) {
       },
       {
         ...appData,
-        title: 'Login',
+        title: 'Home',
         message: '',
       },
       '_layout.html'
