@@ -1,13 +1,13 @@
-const url = require("url");
-const { StringDecoder } = require("string_decoder");
-const { inspect } = require("util");
+const url = require('url');
+const { StringDecoder } = require('string_decoder');
+const { inspect } = require('util');
 
-const makeServeStatic = require("./lib/static");
+const makeServeStatic = require('./lib/static');
 
-const parseRequestUrl = function(httpRequest) {
+const parseRequestUrl = function (httpRequest) {
   const parsedUrl = url.parse(httpRequest.url, true);
 
-  const requestPath = parsedUrl.pathname.replace(/^\/+|\/+$/g, "");
+  const requestPath = parsedUrl.pathname.replace(/^\/+|\/+$/g, '');
   const queryStringObject = parsedUrl.query;
   const method = httpRequest.method.toUpperCase();
   const headers = httpRequest.headers;
@@ -16,15 +16,15 @@ const parseRequestUrl = function(httpRequest) {
     requestPath,
     query: queryStringObject,
     method,
-    headers
+    headers,
   };
 };
 
-const makeDefaultHandler = function(serveStatic) {
-  return function(req, callback) {
-    serveStatic(req.path, function(err, content, contentType = "text/plain") {
+const makeDefaultHandler = function (serveStatic) {
+  return function (req, callback) {
+    serveStatic(req.path, function (err, content, contentType = 'text/plain') {
       if (err) {
-        callback(404, "NOT FOUND", "text/plain");
+        callback(404, 'NOT FOUND', 'text/plain');
         return;
       }
       callback(200, content, contentType);
@@ -32,33 +32,33 @@ const makeDefaultHandler = function(serveStatic) {
   };
 };
 
-const makeServer = function(routers, helpers, staticFolder) {
+const makeServer = function (routers, helpers, staticFolder) {
   const serveStatic = makeServeStatic(staticFolder);
 
-  return function(req, res) {
+  return function (req, res) {
     const { requestPath, query, method, headers } = parseRequestUrl(req); // TODO: move to helper file
 
     // get payload, if any
-    const decoder = new StringDecoder("utf-8");
+    const decoder = new StringDecoder('utf-8');
 
-    let buffer = "";
-    req.on("data", data => {
+    let buffer = '';
+    req.on('data', data => {
       buffer += decoder.write(data);
     });
 
-    req.on("end", () => {
+    req.on('end', () => {
       buffer += decoder.end();
 
       // choose handler by the pathname
       const { handler } = routers.find(
         ({ path: routePath, method: routeMethod }) => {
           return (
-            routePath.replace(/^\/+|\/+$/g, "") === requestPath &&
+            routePath.replace(/^\/+|\/+$/g, '') === requestPath &&
             method === routeMethod
           );
         }
       ) || {
-        handler: makeDefaultHandler(serveStatic)
+        handler: makeDefaultHandler(serveStatic),
       };
 
       // construct data object to send to hander
@@ -67,21 +67,21 @@ const makeServer = function(routers, helpers, staticFolder) {
         query,
         method,
         headers,
-        payload: helpers.parseJsonToObject(buffer)
+        payload: helpers.parseJsonToObject(buffer),
       };
 
       // Router the request to the handler to specifed router
       handler(
         data,
-        (status = 200, payload = "", contentType = "application/json") => {
+        (status = 200, payload = '', contentType = 'application/json') => {
           // Return the response
-          res.setHeader("Content-Type", contentType);
+          res.setHeader('Content-Type', contentType);
           res.writeHead(status);
-          if (typeof payload === "string") {
+          if (typeof payload === 'string') {
             res.end(payload);
           } else if (
-            typeof payload === "object" &&
-            contentType === "application/json"
+            typeof payload === 'object' &&
+            contentType === 'application/json'
           ) {
             res.end(JSON.stringify(payload));
           } else {
