@@ -7,6 +7,7 @@ const {
   deletedSessionHandler,
   dashboardHandler,
   accountEditHandler,
+  accountDeletedHandler,
 } = makePageRoutes();
 
 module.exports = [
@@ -39,5 +40,10 @@ module.exports = [
     path: '/account/edit',
     method: 'GET',
     handler: accountEditHandler,
+  },
+  {
+    path: '/account/deleted',
+    method: 'GET',
+    handler: accountDeletedHandler,
   },
 ];

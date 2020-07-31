@@ -5,6 +5,7 @@ const makeCreateSession = require('./makeCreateSession');
 const makeDeletedSession = require('./makeDeletedSession');
 const makeDashboardHandler = require('./makeDashboardHandler');
 const makeAccountEditHandler = require('./makeAccountEditHandler');
+const makeAccountDeletedHandler = require('./makeAccountDeletedHandler');
 
 const makeRenderer = require('../../lib/renderer');
 
@@ -27,6 +28,7 @@ const makeAccountHandlers = function () {
   const dashboardHandler = makeDashboardHandler(renderer, appData);
   const deletedSessionHandler = makeDeletedSession(renderer, appData);
   const accountEditHandler = makeAccountEditHandler(renderer, appData);
+  const accountDeletedHandler = makeAccountDeletedHandler(renderer, appData);
 
   return {
     indexPageHandler,
@@ -35,6 +37,7 @@ const makeAccountHandlers = function () {
     dashboardHandler,
     deletedSessionHandler,
     accountEditHandler,
+    accountDeletedHandler,
   };
 };
 
