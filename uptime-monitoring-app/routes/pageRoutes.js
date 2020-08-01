@@ -9,6 +9,7 @@ const {
   accountEditHandler,
   accountDeletedHandler,
   createCheckHandler,
+  editCheckHandler,
 } = makePageRoutes();
 
 module.exports = [
@@ -51,5 +52,10 @@ module.exports = [
     path: '/checks/create',
     method: 'GET',
     handler: createCheckHandler,
+  },
+  {
+    path: '/checks/edit',
+    method: 'GET',
+    handler: editCheckHandler,
   },
 ];

@@ -7,6 +7,7 @@ const makeDashboardHandler = require('./makeDashboardHandler');
 const makeAccountEditHandler = require('./makeAccountEditHandler');
 const makeAccountDeletedHandler = require('./makeAccountDeletedHandler');
 const makeCreateCheckHandler = require('./makeCreateCheckHandler');
+const makeEditCheckHandler = require('./makeEditCheckHandler');
 
 const makeRenderer = require('../../lib/renderer');
 
@@ -31,6 +32,7 @@ const makeAccountHandlers = function () {
   const accountEditHandler = makeAccountEditHandler(renderer, appData);
   const accountDeletedHandler = makeAccountDeletedHandler(renderer, appData);
   const createCheckHandler = makeCreateCheckHandler(renderer, appData);
+  const editCheckHandler = makeEditCheckHandler(renderer, appData);
 
   return {
     indexPageHandler,
@@ -41,6 +43,7 @@ const makeAccountHandlers = function () {
     accountEditHandler,
     accountDeletedHandler,
     createCheckHandler,
+    editCheckHandler,
   };
 };
 
