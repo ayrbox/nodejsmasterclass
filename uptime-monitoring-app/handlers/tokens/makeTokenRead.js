@@ -7,7 +7,6 @@ const makeTokenRead = function ({ db }) {
     }
 
     db.read('tokens', id, function (err, tokenData) {
-      console.log('>>>>>>>>>>>>..', tokenData);
       if (err || !tokenData) {
         cb(404);
         return;

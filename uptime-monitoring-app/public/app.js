@@ -617,7 +617,7 @@ app.loadChecksEditPage = function () {
           document.querySelector('#checksEdit1 .methodInput').value =
             responsePayload.method;
           document.querySelector('#checksEdit1 .timeoutInput').value =
-            responsePayload.timeoutSeconds;
+            responsePayload.timeouts;
           var successCodeCheckboxes = document.querySelectorAll(
             '#checksEdit1 input.successCodesInput'
           );

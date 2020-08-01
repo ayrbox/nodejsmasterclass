@@ -45,7 +45,6 @@ const makeCreateCheck = function ({ db, logger, helpers }) {
           successCodes,
           timeouts,
         };
-        console.log('>>>>>>>>>>>>>>>', 'test');
 
         db.create('checks', checkId, checkObject, function (err) {
           if (err) {
