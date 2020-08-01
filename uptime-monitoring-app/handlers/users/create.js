@@ -1,7 +1,14 @@
 const { UserAlreadyExists, InvalidUserData } = require('./errors');
 
-const validateStringRequired = value =>
-  (value || '').trim().length > 0 ? (value || '').trim() : false;
+const validateStringRequired = value => {
+  if (typeof value === 'string') {
+    return (value || '').trim().length > 0 ? (value || '').trim() : false;
+  } else if (typeof (value === 'bool')) {
+    return !!value;
+  } else {
+    return false;
+  }
+};
 
 const makeCreateUser = function (db, logger, helpers) {
   return function (data, callback) {
@@ -65,8 +72,8 @@ const makeCreateUser = function (db, logger, helpers) {
             return;
           }
 
-          callback(201);
-        },
+          callback(200);
+        }
       );
     });
   };

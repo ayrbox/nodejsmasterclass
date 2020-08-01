@@ -30,7 +30,7 @@ const makeGetCheck = function ({ db, logger, helpers }) {
             return;
           }
           callback(200, checkData);
-        },
+        }
       );
     });
   };

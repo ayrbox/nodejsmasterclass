@@ -1,5 +1,5 @@
-const makeCheckHandlers = require('../handlers/checks');
-const db = require('../lib/data');
+const makeCheckHandlers = require("../handlers/checks");
+const db = require("../lib/data");
 
 const {
   createHandler,
@@ -13,23 +13,23 @@ const {
 
 module.exports = [
   {
-    path: '/checks',
-    method: 'POST',
+    path: "/api/checks",
+    method: "POST",
     handler: createHandler,
   },
   {
-    path: '/checks',
-    method: 'GET',
+    path: "/api/checks",
+    method: "GET",
     handler: getHandler,
   },
   {
-    path: '/checks',
-    method: 'PUT',
+    path: "/api/checks",
+    method: "PUT",
     handler: updateHandler,
   },
   {
-    path: '/checks',
-    method: 'DELETE',
+    path: "/api/checks",
+    method: "DELETE",
     handler: deleteHandler,
   },
 ];

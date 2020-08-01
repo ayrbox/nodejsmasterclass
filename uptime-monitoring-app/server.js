@@ -2,6 +2,8 @@ const url = require('url');
 const { StringDecoder } = require('string_decoder');
 const { inspect } = require('util');
 
+const makeServeStatic = require('./lib/static');
+
 const parseRequestUrl = function (httpRequest) {
   const parsedUrl = url.parse(httpRequest.url, true);
 
@@ -18,11 +20,21 @@ const parseRequestUrl = function (httpRequest) {
   };
 };
 
-const defaultHandler = (_, callback) => {
-  callback(404);
+const makeDefaultHandler = function (serveStatic) {
+  return function (req, callback) {
+    serveStatic(req.path, function (err, content, contentType = 'text/plain') {
+      if (err) {
+        callback(404, 'NOT FOUND', 'text/plain');
+        return;
+      }
+      callback(200, content, contentType);
+    });
+  };
 };
 
-const makeServer = function (routers, helpers) {
+const makeServer = function (routers, helpers, staticFolder) {
+  const serveStatic = makeServeStatic(staticFolder);
+
   return function (req, res) {
     const { requestPath, query, method, headers } = parseRequestUrl(req); // TODO: move to helper file
 
@@ -44,9 +56,9 @@ const makeServer = function (routers, helpers) {
             routePath.replace(/^\/+|\/+$/g, '') === requestPath &&
             method === routeMethod
           );
-        },
+        }
       ) || {
-        handler: defaultHandler,
+        handler: makeDefaultHandler(serveStatic),
       };
 
       // construct data object to send to hander
@@ -59,15 +71,27 @@ const makeServer = function (routers, helpers) {
       };
 
       // Router the request to the handler to specifed router
-      handler(data, (status = 200, payload = {}) => {
-        // Return the response
-        res.setHeader('Content-Type', 'application/json');
-        res.writeHead(status);
-        res.end(JSON.stringify(payload));
+      handler(
+        data,
+        (status = 200, payload = '', contentType = 'application/json') => {
+          // Return the response
+          res.setHeader('Content-Type', contentType);
+          res.writeHead(status);
+          if (typeof payload === 'string') {
+            res.end(payload);
+          } else if (
+            typeof payload === 'object' &&
+            contentType === 'application/json'
+          ) {
+            res.end(JSON.stringify(payload));
+          } else {
+            res.end(payload);
+          }
 
-        // Log the resposne
-        console.log('Return', status, payload);
-      });
+          // Log the resposne
+          // console.log('Return', status, payload);
+        }
+      );
     });
   };
 };

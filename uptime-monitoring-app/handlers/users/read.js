@@ -11,13 +11,14 @@ const makeReadUser = function (db, logger, helpers) {
       if (err) {
         return callback(404);
       } else if (!err && data) {
-        const { firstName, lastName, tosAgreement } = data;
+        const { firstName, lastName, tosAgreement, checks } = data;
 
         callback(200, {
           firstName,
           lastName,
           phone,
           tosAgreement,
+          checks,
         });
       }
     });

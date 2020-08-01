@@ -22,9 +22,10 @@ routes
 const __CURRENT_DIR = process.cwd();
 const __DATA_DIR = path.join(__CURRENT_DIR, '.data');
 const smsClient = makeSMSClient(config);
+const staticFolder = path.join(__CURRENT_DIR, 'public');
 
 // Make instance of webserver and worker
-const server = makeServer(routes, helpers);
+const server = makeServer(routes, helpers, staticFolder);
 const worker = makeWorker({
   interval: 60000,
   dataDirectory: __DATA_DIR,
@@ -34,7 +35,7 @@ const worker = makeWorker({
 // The server should response to all request with a string
 http.createServer(server).listen(config.httpPort, () => {
   logger.warning(
-    `The server is listenning on port ${config.httpPort} in ${config.envName} mode`,
+    `The server is listenning on port ${config.httpPort} in ${config.envName} mode`
   );
 });
 
@@ -44,11 +45,11 @@ https
       key: fs.readFileSync('./https/key.pem'),
       cert: fs.readFileSync('./https/cert.pem'),
     },
-    server,
+    server
   )
   .listen(config.httpsPort, () => {
     logger.warning(
-      `The server is listenning on port ${config.httpsPort} in ${config.envName} mode`,
+      `The server is listenning on port ${config.httpsPort} in ${config.envName} mode`
     );
   });
 
