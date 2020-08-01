@@ -3,6 +3,7 @@ const {
   deleteUser,
   updateUser,
   readUser,
+  loginHandler,
 } = require('../handlers/users');
 
 module.exports = [
@@ -28,5 +29,11 @@ module.exports = [
     method: 'GET',
     handler: readUser,
     secure: true,
+  },
+  {
+    path: '/login',
+    method: 'GET',
+    handler: loginHandler,
+    secure: false,
   },
 ];
