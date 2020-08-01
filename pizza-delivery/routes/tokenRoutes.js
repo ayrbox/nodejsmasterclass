@@ -7,24 +7,24 @@ const {
 
 module.exports = [
   {
-    path: '/tokens',
+    path: 'api/tokens',
     method: 'POST',
     handler: createToken,
   },
   {
-    path: '/tokens',
+    path: 'api/tokens',
     method: 'GET',
     handler: readToken,
     secure: true,
   },
   {
-    path: '/tokens',
+    path: 'api/tokens',
     method: 'PUT',
     handler: updateToken,
     secure: true,
   },
   {
-    path: '/tokens',
+    path: 'api/tokens',
     method: 'DELETE',
     handler: deleteToken,
     secure: true,

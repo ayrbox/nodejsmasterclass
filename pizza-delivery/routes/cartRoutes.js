@@ -8,31 +8,31 @@ const {
 
 module.exports = [
   {
-    path: '/cartitem',
+    path: 'api/cartitem',
     method: 'POST',
     handler: addCartItem,
     secure: true,
   },
   {
-    path: '/cartitem',
+    path: 'api/cartitem',
     method: 'PUT',
     handler: updateCartItem,
     secure: true,
   },
   {
-    path: '/cartitem',
+    path: 'api/cartitem',
     method: 'DELETE',
     handler: deleteCartItem,
     secure: true,
   },
   {
-    path: '/cart',
+    path: 'api/cart',
     method: 'GET',
     handler: getCart,
     secure: true,
   },
   {
-    path: '/cart',
+    path: 'api/cart',
     method: 'DELETE',
     handler: deleteCart,
     secure: true,

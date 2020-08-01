@@ -7,24 +7,24 @@ const {
 
 module.exports = [
   {
-    path: '/users',
+    path: 'api/users',
     method: 'POST',
     handler: createUser,
   },
   {
-    path: '/users',
+    path: 'api/users',
     method: 'DELETE',
     handler: deleteUser,
     secure: true,
   },
   {
-    path: '/users',
+    path: 'api/users',
     method: 'PUT',
     handler: updateUser,
     secure: true,
   },
   {
-    path: '/users',
+    path: 'api/users',
     method: 'GET',
     handler: readUser,
     secure: true,

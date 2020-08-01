@@ -2,7 +2,7 @@ const { checkout } = require('../handlers/checkout');
 
 module.exports = [
   {
-    path: '/checkout',
+    path: 'api/checkout',
     method: 'POST',
     handler: checkout,
     secure: true,
