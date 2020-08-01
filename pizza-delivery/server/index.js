@@ -12,7 +12,7 @@ const defaultHandler = {
 
 const makeServer = function ({ routes = [], middlewares = [] }) {
   routes
-    .map(({ method, path }) => `${method}\t\t: ${path}`)
+    .map(({ method, path }) => `${method.padEnd(10, ' ')}: ${path}`)
     .forEach(info => logger.info(info));
 
   return function (req, res) {

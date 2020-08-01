@@ -6,6 +6,6 @@
     "nodemon": "^2.0.4"
   },
   "scripts": {
-    "dev": "cd ./uptime-monitoring-app && nodemon ."
+    "dev": "cd ./pizza-delivery && NODE_DEBUG=app:* nodemon ."
   }
 }
