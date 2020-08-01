@@ -61,7 +61,7 @@ const makeCreateCheck = function ({ db, logger, helpers }) {
               return;
             }
 
-            callback(201, checkObject);
+            callback(200, checkObject);
           });
         });
       });
