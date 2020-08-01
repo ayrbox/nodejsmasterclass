@@ -12,7 +12,7 @@ module.exports = function (render, appData) {
       {
         ...appData,
         title: 'Home',
-        message: '',
+        bodyClass: 'checksList',
       },
       '_layout.html'
     );
