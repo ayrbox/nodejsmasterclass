@@ -1,12 +1,12 @@
-var app = {};
-
-// Config
-app.config = {
-  sessionToken: false,
+var App = function () {
+  this.events = {};
+  this.config = {
+    sessionToken: false,
+  };
 };
 
 // Interface for making API calls
-app.request = function (
+App.prototype.request = function (
   headers,
   path,
   method,
@@ -58,8 +58,8 @@ app.request = function (
   }
 
   // If there is a current session token set, add that as a header
-  if (app.config.sessionToken) {
-    xhr.setRequestHeader('token', app.config.sessionToken.id);
+  if (this.config.sessionToken) {
+    xhr.setRequestHeader('token', this.config.sessionToken.id);
   }
 
   // When the request comes back, handle the response
@@ -85,122 +85,173 @@ app.request = function (
   xhr.send(payloadString);
 };
 
-app.bindForms = function () {
-  if (document.querySelector('form')) {
-    var allForms = document.querySelectorAll('form');
-    for (var i = 0; i < allForms.length; i++) {
-      allForms[i].addEventListener('submit', function (e) {
-        // Stop it from submitting
-        e.preventDefault();
-        var formId = this.id;
-        var path = this.action;
-        var method = this.method.toUpperCase();
+App.prototype.bindForm = function (formId) {
+  var formSelector = '#' + formId;
+  var _self = this;
 
-        // Hide the error message (if it's currently shown due to a previous error)
-        document.querySelector('#' + formId + ' .formError').style.display =
-          'none';
+  if (document.querySelector(formSelector)) {
+    var formList = document.querySelectorAll(formSelector);
 
-        // Hide the success message (if it's currently shown due to a previous error)
-        if (document.querySelector('#' + formId + ' .formSuccess')) {
-          document.querySelector('#' + formId + ' .formSuccess').style.display =
-            'none';
-        }
+    if (formList.length > 1) {
+      console.warn('More than 1 form is detected with same id.', '#' + formId);
+    }
 
-        // Turn the inputs into a payload
-        var payload = {};
-        var elements = this.elements;
-        for (var i = 0; i < elements.length; i++) {
-          if (elements[i].type !== 'submit') {
-            // Determine class of element and set value accordingly
-            var classOfElement =
-              typeof elements[i].classList.value == 'string' &&
-              elements[i].classList.value.length > 0
-                ? elements[i].classList.value
-                : '';
-            var valueOfElement =
-              elements[i].type == 'checkbox' &&
-              classOfElement.indexOf('multiselect') == -1
-                ? elements[i].checked
-                : classOfElement.indexOf('intval') == -1
-                ? elements[i].value
-                : parseInt(elements[i].value);
-            var elementIsChecked = elements[i].checked;
-            // Override the method of the form if the input's name is _method
-            var nameOfElement = elements[i].name;
-            if (nameOfElement == '_method') {
-              method = valueOfElement;
+    const theForm = formList[0];
+
+    theForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var formId = this.id;
+      var path = this.action;
+      var method = this.method.toUpperCase();
+
+      // Turn the inputs into a payload
+      var payload = {};
+      var elements = this.elements;
+      for (var i = 0; i < elements.length; i++) {
+        if (elements[i].type !== 'submit') {
+          // Determine class of element and set value accordingly
+          var classOfElement =
+            typeof elements[i].classList.value == 'string' &&
+            elements[i].classList.value.length > 0
+              ? elements[i].classList.value
+              : '';
+          var valueOfElement =
+            elements[i].type == 'checkbox' &&
+            classOfElement.indexOf('multiselect') == -1
+              ? elements[i].checked
+              : classOfElement.indexOf('intval') == -1
+              ? elements[i].value
+              : parseInt(elements[i].value);
+          var elementIsChecked = elements[i].checked;
+          // Override the method of the form if the input's name is _method
+          var nameOfElement = elements[i].name;
+          if (nameOfElement == '_method') {
+            method = valueOfElement;
+          } else {
+            // Create an payload field named "method" if the elements name is actually httpmethod
+            if (nameOfElement == 'httpmethod') {
+              nameOfElement = 'method';
+            }
+            // Create an payload field named "id" if the elements name is actually uid
+            if (nameOfElement == 'uid') {
+              nameOfElement = 'id';
+            }
+            // If the element has the class "multiselect" add its value(s) as array elements
+            if (classOfElement.indexOf('multiselect') > -1) {
+              if (elementIsChecked) {
+                payload[nameOfElement] =
+                  typeof payload[nameOfElement] == 'object' &&
+                  payload[nameOfElement] instanceof Array
+                    ? payload[nameOfElement]
+                    : [];
+                payload[nameOfElement].push(valueOfElement);
+              }
             } else {
-              // Create an payload field named "method" if the elements name is actually httpmethod
-              if (nameOfElement == 'httpmethod') {
-                nameOfElement = 'method';
-              }
-              // Create an payload field named "id" if the elements name is actually uid
-              if (nameOfElement == 'uid') {
-                nameOfElement = 'id';
-              }
-              // If the element has the class "multiselect" add its value(s) as array elements
-              if (classOfElement.indexOf('multiselect') > -1) {
-                if (elementIsChecked) {
-                  payload[nameOfElement] =
-                    typeof payload[nameOfElement] == 'object' &&
-                    payload[nameOfElement] instanceof Array
-                      ? payload[nameOfElement]
-                      : [];
-                  payload[nameOfElement].push(valueOfElement);
-                }
-              } else {
-                payload[nameOfElement] = valueOfElement;
-              }
+              payload[nameOfElement] = valueOfElement;
             }
           }
         }
+      }
 
-        // If the method is DELETE, the payload should be a queryStringObject instead
-        var queryStringObject = method == 'DELETE' ? payload : {};
+      // If the method is DELETE, the payload should be a queryStringObject instead
+      var queryStringObject = method == 'DELETE' ? payload : {};
 
-        // Call the API
-        app.request(
-          undefined,
-          path,
-          method,
-          queryStringObject,
-          payload,
-          function (statusCode, responsePayload) {
-            // Display an error on the form if needed
-            if (statusCode !== 200) {
-              if (statusCode == 403) {
-                console.log('TODO: LOGOUT USER');
-                // app.logUserOut();
-              } else {
-                // Try to get the error from the api, or set a default error message
-                var error =
-                  typeof responsePayload.Error == 'string'
-                    ? responsePayload.Error
-                    : 'An error has occured, please try again';
-
-                // Set the formError field with the error text
-                document.querySelector(
-                  '#' + formId + ' .formError'
-                ).innerHTML = error;
-
-                // Show (unhide) the form error field on the form
-                document.querySelector(
-                  '#' + formId + ' .formError'
-                ).style.display = 'block';
-              }
-            } else {
-              // If successful, send to form response processor
-              app.formResponseProcessor(formId, payload, responsePayload);
+      // Call the API
+      _self.request(
+        undefined,
+        path,
+        method,
+        queryStringObject,
+        payload,
+        function (statusCode, responsePayload) {
+          if (statusCode !== 200 && statusCode !== 201) {
+            if (statusCode == 403) {
+              console.log('TODO: LOGOUT USER');
+              this.emit('logout');
             }
+            _self.emit('response-error', { formId, payload, responsePayload });
+          } else {
+            // If successful, send to form response processor
+            _self.emit('response', { formId, payload, responsePayload });
           }
-        );
-      });
+        }
+      );
+    });
+  } else {
+    console.error('Form with the Id #' + formId + ' not found.');
+  }
+};
+
+var indexOf;
+
+if (typeof Array.prototype.indexOf === 'function') {
+  indexOf = function (haystack, needle) {
+    return haystack.indexOf(needle);
+  };
+} else {
+  indexOf = function (haystack, needle) {
+    var i = 0,
+      length = haystack.length,
+      idx = -1,
+      found = false;
+
+    while (i < length && !found) {
+      if (haystack[i] === needle) {
+        idx = i;
+        found = true;
+      }
+
+      i++;
+    }
+
+    return idx;
+  };
+}
+
+// Event Emitter for app
+App.prototype.on = function (event, listener) {
+  if (typeof this.events[event] !== 'object') {
+    this.events[event] = [];
+  }
+  this.events[event].push(listener);
+};
+
+App.prototype.removeListener = function (event, listener) {
+  var idx;
+  if (typeof this.events[event] === 'object') {
+    idx = indexOf(this.events[event], listener);
+    if (idx > -1) {
+      this.events[event].splice(idx, 1);
     }
   }
 };
 
+App.prototype.emit = function (event) {
+  var i,
+    listeners,
+    length,
+    args = [].slice.call(arguments, 1);
+  if (typeof this.events[event] === 'object') {
+    listeners = this.events[event].slice();
+    length = listeners.length;
+    for (i = 0; i < length; i++) {
+      listeners[i].apply(this, args);
+    }
+  }
+};
+
+App.prototype.once = function (event, listener) {
+  this.on(event, function g() {
+    this.removeListener(event, g);
+    listener.apply(this, arguments);
+  });
+};
+
+var app = new App();
 app.init = function () {
-  app.bindForms();
+  app.emit('beforeInit');
+  // TOOD methods specific to apps
+  app.emit('afterInit');
 };
 
 window.onload = function () {
