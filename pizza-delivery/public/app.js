@@ -182,6 +182,28 @@ App.prototype.bindForm = function (formId) {
   }
 };
 
+// Get the session token from localstorage and set it in the app.config object
+App.prototype.getSessionToken = function () {
+  var tokenString = localStorage.getItem('token');
+  if (typeof tokenString == 'string') {
+    try {
+      var token = JSON.parse(tokenString);
+      this.config.sessionToken = token;
+      this.emit('session');
+    } catch (e) {
+      this.config.sessionToken = false;
+    }
+  }
+};
+
+// Set the session token in the app.config object as well as localstorage
+App.prototype.setSessionToken = function (token) {
+  app.config.sessionToken = token;
+  var tokenString = JSON.stringify(token);
+  localStorage.setItem('token', tokenString);
+  this.emit('session');
+};
+
 var indexOf;
 
 if (typeof Array.prototype.indexOf === 'function') {
@@ -250,7 +272,8 @@ App.prototype.once = function (event, listener) {
 var app = new App();
 app.init = function () {
   app.emit('beforeInit');
-  // TOOD methods specific to apps
+  app.getSessionToken();
+  console.log(app.config);
   app.emit('afterInit');
 };
 

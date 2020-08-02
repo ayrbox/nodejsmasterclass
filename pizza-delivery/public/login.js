@@ -10,15 +10,14 @@ app.on('afterInit', function () {
 app.on('response', function (args) {
   var responsePayload = args.responsePayload;
 
-  var error =
-    typeof responsePayload.message == 'string'
-      ? responsePayload.message
-      : 'API request is successful';
+  if (responsePayload.token) {
+    app.setSessionToken(responsePayload.token);
+  }
 
   var formSuccess = document.querySelector(
     '#' + args.formId + ' .alert-success'
   );
-  formSuccess.innerHTML = error;
+  formSuccess.innerHTML = 'Login successfull. Redirecting';
   formSuccess.style.display = 'block';
 });
 
