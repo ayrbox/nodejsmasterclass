@@ -12,6 +12,7 @@ module.exports = function (render, appData) {
       {
         ...appData,
         title: 'Login',
+        description: 'Please enter your credential to accces.',
         message: '',
       },
       '_layout.tpl.html'

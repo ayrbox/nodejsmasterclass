@@ -9,7 +9,7 @@ const mimeTypes = {
   jpg: 'image/jpg',
   png: 'image/png',
   html: 'text/html',
-  favicon: 'image/x-icon', // TODO
+  favicon: 'image/x-icon',
 };
 
 function serveStaticMiddleware(staticFolder) {
