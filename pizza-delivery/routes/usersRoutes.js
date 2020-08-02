@@ -4,6 +4,7 @@ const {
   updateUser,
   readUser,
   loginHandler,
+  signupHandler,
 } = require('../handlers/users');
 
 module.exports = [
@@ -34,6 +35,12 @@ module.exports = [
     path: '/login',
     method: 'GET',
     handler: loginHandler,
+    secure: false,
+  },
+  {
+    path: '/signup',
+    method: 'GET',
+    handler: signupHandler,
     secure: false,
   },
 ];

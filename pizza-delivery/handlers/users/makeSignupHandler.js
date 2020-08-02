@@ -1,7 +1,7 @@
 module.exports = function (render, appData) {
   return function (data, callback) {
     render(
-      'login/login.tpl.html',
+      'signup.tpl.html',
       function (err, content) {
         if (err) {
           callback(500, err);
@@ -11,8 +11,8 @@ module.exports = function (render, appData) {
       },
       {
         ...appData,
-        title: 'Login',
-        description: 'Please enter your credential to accces.',
+        title: 'Sign Up',
+        description: 'Please sign up to order pizza online.',
         message: '',
       },
       '_loginLayout.tpl.html'

@@ -11,6 +11,7 @@ const makeReadUser = require('./makeReadUser');
 const makeUpdateUser = require('./makeUpdateUser');
 const makeDeleteUser = require('./makeDeleteUser');
 const makeLoginHandler = require('./makeLoginHandler');
+const makeSignupHandler = require('./makeSignupHandler');
 
 const db = makeDataHandler(DATADIR, 'users');
 
@@ -24,6 +25,7 @@ const viewsDir = path.join(process.cwd(), 'views');
 const render = makeRender(viewsDir);
 
 const loginHandler = makeLoginHandler(render, {});
+const signupHandler = makeSignupHandler(render, {});
 
 module.exports = {
   createUser,
@@ -31,4 +33,5 @@ module.exports = {
   updateUser,
   deleteUser,
   loginHandler,
+  signupHandler,
 };
