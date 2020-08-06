@@ -1,13 +1,13 @@
-app.on('afterInit', function () {
-  var alerts = document.querySelectorAll('.alert');
+app.on("afterInit", function() {
+  var alerts = document.querySelectorAll(".alert");
   for (var idx = 0; idx < alerts.length; idx++) {
-    alerts[idx].style.display = 'none';
+    alerts[idx].style.display = "none";
   }
 
-  app.bindForm('loginForm');
+  app.bindForm("loginForm");
 });
 
-app.on('response', function (args) {
+app.on("response", function(args) {
   var responsePayload = args.responsePayload;
 
   if (responsePayload.token) {
@@ -15,21 +15,23 @@ app.on('response', function (args) {
   }
 
   var formSuccess = document.querySelector(
-    '#' + args.formId + ' .alert-success'
+    "#" + args.formId + " .alert-success"
   );
-  formSuccess.innerHTML = 'Login successfull. Redirecting';
-  formSuccess.style.display = 'block';
+  formSuccess.innerHTML = "Login successfull. Redirecting";
+  formSuccess.style.display = "block";
+
+  window.location = "/dashboard";
 });
 
-app.on('response-error', function (args) {
+app.on("response-error", function(args) {
   var responsePayload = args.responsePayload;
 
   var error =
-    typeof responsePayload.message == 'string'
+    typeof responsePayload.message == "string"
       ? responsePayload.message
-      : 'An error has occured, please try again';
+      : "An error has occured, please try again";
 
-  var formError = document.querySelector('#' + args.formId + ' .alert-danger');
+  var formError = document.querySelector("#" + args.formId + " .alert-danger");
   formError.innerHTML = error;
-  formError.style.display = 'block';
+  formError.style.display = "block";
 });
