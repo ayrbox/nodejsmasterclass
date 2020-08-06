@@ -1,12 +1,12 @@
-var App = function () {
+var App = function() {
   this.events = {};
   this.config = {
-    sessionToken: false,
+    sessionToken: false
   };
 };
 
 // Interface for making API calls
-App.prototype.request = function (
+App.prototype.request = function(
   headers,
   path,
   method,
@@ -15,40 +15,40 @@ App.prototype.request = function (
   callback
 ) {
   // Set defaults
-  headers = typeof headers == 'object' && headers !== null ? headers : {};
-  path = typeof path == 'string' ? path : '/';
+  headers = typeof headers == "object" && headers !== null ? headers : {};
+  path = typeof path == "string" ? path : "/";
 
   method =
-    typeof method == 'string' &&
-    ['POST', 'GET', 'PUT', 'DELETE'].indexOf(method.toUpperCase()) > -1
+    typeof method == "string" &&
+    ["POST", "GET", "PUT", "DELETE"].indexOf(method.toUpperCase()) > -1
       ? method.toUpperCase()
-      : 'GET';
+      : "GET";
   queryStringObject =
-    typeof queryStringObject == 'object' && queryStringObject !== null
+    typeof queryStringObject == "object" && queryStringObject !== null
       ? queryStringObject
       : {};
-  payload = typeof payload == 'object' && payload !== null ? payload : {};
-  callback = typeof callback == 'function' ? callback : false;
+  payload = typeof payload == "object" && payload !== null ? payload : {};
+  callback = typeof callback == "function" ? callback : false;
 
   // For each query string parameter sent, add it to the path
-  var requestUrl = path + '?';
+  var requestUrl = path + "?";
   var counter = 0;
   for (var queryKey in queryStringObject) {
     if (queryStringObject.hasOwnProperty(queryKey)) {
       counter++;
       // If at least one query string parameter has already been added, preprend new ones with an ampersand
       if (counter > 1) {
-        requestUrl += '&';
+        requestUrl += "&";
       }
       // Add the key and value
-      requestUrl += queryKey + '=' + queryStringObject[queryKey];
+      requestUrl += queryKey + "=" + queryStringObject[queryKey];
     }
   }
 
   // Form the http request as a JSON type
   var xhr = new XMLHttpRequest();
   xhr.open(method, requestUrl, true);
-  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.setRequestHeader("Content-type", "application/json");
 
   // For each header sent, add it to the request
   for (var headerKey in headers) {
@@ -59,11 +59,11 @@ App.prototype.request = function (
 
   // If there is a current session token set, add that as a header
   if (this.config.sessionToken) {
-    xhr.setRequestHeader('token', this.config.sessionToken.id);
+    xhr.setRequestHeader("token", this.config.sessionToken.id);
   }
 
   // When the request comes back, handle the response
-  xhr.onreadystatechange = function () {
+  xhr.onreadystatechange = function() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
       var statusCode = xhr.status;
       var responseReturned = xhr.responseText;
@@ -85,20 +85,20 @@ App.prototype.request = function (
   xhr.send(payloadString);
 };
 
-App.prototype.bindForm = function (formId) {
-  var formSelector = '#' + formId;
+App.prototype.bindForm = function(formId) {
+  var formSelector = "#" + formId;
   var _self = this;
 
   if (document.querySelector(formSelector)) {
     var formList = document.querySelectorAll(formSelector);
 
     if (formList.length > 1) {
-      console.warn('More than 1 form is detected with same id.', '#' + formId);
+      console.warn("More than 1 form is detected with same id.", "#" + formId);
     }
 
     const theForm = formList[0];
 
-    theForm.addEventListener('submit', function (e) {
+    theForm.addEventListener("submit", function(e) {
       e.preventDefault();
       var formId = this.id;
       var path = this.action;
@@ -108,39 +108,39 @@ App.prototype.bindForm = function (formId) {
       var payload = {};
       var elements = this.elements;
       for (var i = 0; i < elements.length; i++) {
-        if (elements[i].type !== 'submit') {
+        if (elements[i].type !== "submit") {
           // Determine class of element and set value accordingly
           var classOfElement =
-            typeof elements[i].classList.value == 'string' &&
+            typeof elements[i].classList.value == "string" &&
             elements[i].classList.value.length > 0
               ? elements[i].classList.value
-              : '';
+              : "";
           var valueOfElement =
-            elements[i].type == 'checkbox' &&
-            classOfElement.indexOf('multiselect') == -1
+            elements[i].type == "checkbox" &&
+            classOfElement.indexOf("multiselect") == -1
               ? elements[i].checked
-              : classOfElement.indexOf('intval') == -1
+              : classOfElement.indexOf("intval") == -1
               ? elements[i].value
               : parseInt(elements[i].value);
           var elementIsChecked = elements[i].checked;
           // Override the method of the form if the input's name is _method
           var nameOfElement = elements[i].name;
-          if (nameOfElement == '_method') {
+          if (nameOfElement == "_method") {
             method = valueOfElement;
           } else {
             // Create an payload field named "method" if the elements name is actually httpmethod
-            if (nameOfElement == 'httpmethod') {
-              nameOfElement = 'method';
+            if (nameOfElement == "httpmethod") {
+              nameOfElement = "method";
             }
             // Create an payload field named "id" if the elements name is actually uid
-            if (nameOfElement == 'uid') {
-              nameOfElement = 'id';
+            if (nameOfElement == "uid") {
+              nameOfElement = "id";
             }
             // If the element has the class "multiselect" add its value(s) as array elements
-            if (classOfElement.indexOf('multiselect') > -1) {
+            if (classOfElement.indexOf("multiselect") > -1) {
               if (elementIsChecked) {
                 payload[nameOfElement] =
-                  typeof payload[nameOfElement] == 'object' &&
+                  typeof payload[nameOfElement] == "object" &&
                   payload[nameOfElement] instanceof Array
                     ? payload[nameOfElement]
                     : [];
@@ -154,7 +154,7 @@ App.prototype.bindForm = function (formId) {
       }
 
       // If the method is DELETE, the payload should be a queryStringObject instead
-      var queryStringObject = method == 'DELETE' ? payload : {};
+      var queryStringObject = method == "DELETE" ? payload : {};
 
       // Call the API
       _self.request(
@@ -163,33 +163,36 @@ App.prototype.bindForm = function (formId) {
         method,
         queryStringObject,
         payload,
-        function (statusCode, responsePayload) {
+        function(statusCode, responsePayload) {
           if (statusCode !== 200 && statusCode !== 201) {
             if (statusCode == 403) {
-              console.log('TODO: LOGOUT USER');
-              this.emit('logout');
+              console.log("TODO: LOGOUT USER");
+              this.emit("logout");
             }
-            _self.emit('response-error', { formId, payload, responsePayload });
+            _self.emit("response-error", { formId, payload, responsePayload });
           } else {
             // If successful, send to form response processor
-            _self.emit('response', { formId, payload, responsePayload });
+            _self.emit("response", { formId, payload, responsePayload });
           }
         }
       );
     });
   } else {
-    console.error('Form with the Id #' + formId + ' not found.');
+    console.error("Form with the Id #" + formId + " not found.");
   }
 };
 
 // Get the session token from localstorage and set it in the app.config object
-App.prototype.getSessionToken = function () {
-  var tokenString = localStorage.getItem('token');
-  if (typeof tokenString == 'string') {
+App.prototype.getSessionToken = function() {
+  var tokenString = localStorage.getItem("token");
+  if (typeof tokenString == "string") {
     try {
       var token = JSON.parse(tokenString);
       this.config.sessionToken = token;
-      this.emit('session');
+
+      document.cookie = "token=" + token + ";";
+      console.log(document.cookie);
+      this.emit("session");
     } catch (e) {
       this.config.sessionToken = false;
     }
@@ -197,21 +200,23 @@ App.prototype.getSessionToken = function () {
 };
 
 // Set the session token in the app.config object as well as localstorage
-App.prototype.setSessionToken = function (token) {
+App.prototype.setSessionToken = function(token) {
   app.config.sessionToken = token;
   var tokenString = JSON.stringify(token);
-  localStorage.setItem('token', tokenString);
-  this.emit('session');
+  localStorage.setItem("token", tokenString);
+  document.cookie = "token=" + token + ";";
+  console.log(document.cookie);
+  this.emit("session");
 };
 
 var indexOf;
 
-if (typeof Array.prototype.indexOf === 'function') {
-  indexOf = function (haystack, needle) {
+if (typeof Array.prototype.indexOf === "function") {
+  indexOf = function(haystack, needle) {
     return haystack.indexOf(needle);
   };
 } else {
-  indexOf = function (haystack, needle) {
+  indexOf = function(haystack, needle) {
     var i = 0,
       length = haystack.length,
       idx = -1,
@@ -231,16 +236,16 @@ if (typeof Array.prototype.indexOf === 'function') {
 }
 
 // Event Emitter for app
-App.prototype.on = function (event, listener) {
-  if (typeof this.events[event] !== 'object') {
+App.prototype.on = function(event, listener) {
+  if (typeof this.events[event] !== "object") {
     this.events[event] = [];
   }
   this.events[event].push(listener);
 };
 
-App.prototype.removeListener = function (event, listener) {
+App.prototype.removeListener = function(event, listener) {
   var idx;
-  if (typeof this.events[event] === 'object') {
+  if (typeof this.events[event] === "object") {
     idx = indexOf(this.events[event], listener);
     if (idx > -1) {
       this.events[event].splice(idx, 1);
@@ -248,12 +253,12 @@ App.prototype.removeListener = function (event, listener) {
   }
 };
 
-App.prototype.emit = function (event) {
+App.prototype.emit = function(event) {
   var i,
     listeners,
     length,
     args = [].slice.call(arguments, 1);
-  if (typeof this.events[event] === 'object') {
+  if (typeof this.events[event] === "object") {
     listeners = this.events[event].slice();
     length = listeners.length;
     for (i = 0; i < length; i++) {
@@ -262,7 +267,7 @@ App.prototype.emit = function (event) {
   }
 };
 
-App.prototype.once = function (event, listener) {
+App.prototype.once = function(event, listener) {
   this.on(event, function g() {
     this.removeListener(event, g);
     listener.apply(this, arguments);
@@ -270,13 +275,13 @@ App.prototype.once = function (event, listener) {
 };
 
 var app = new App();
-app.init = function () {
-  app.emit('beforeInit');
+app.init = function() {
+  app.emit("beforeInit");
   app.getSessionToken();
   console.log(app.config);
-  app.emit('afterInit');
+  app.emit("afterInit");
 };
 
-window.onload = function () {
+window.onload = function() {
   app.init();
 };
