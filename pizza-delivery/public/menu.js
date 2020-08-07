@@ -54,3 +54,19 @@ app.on('afterInit', function () {
     });
   });
 });
+
+// $('#menuContainer').on('click', 'a#addToOrder', function (e) {
+//   e.preventDefault();
+//   console.log($(this).text());
+// });
+
+document.addEventListener(
+  'click',
+  function (e) {
+    if (e.target.id == 'addToOrder') {
+      e.preventDefault();
+      console.log('targe >>>>>>>>>>', e.target.id);
+    }
+  },
+  false
+);
