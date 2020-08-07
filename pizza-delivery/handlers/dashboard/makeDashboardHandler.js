@@ -11,7 +11,8 @@ module.exports = function(render, appData) {
       },
       {
         ...appData,
-        title: "Dashboard"
+        title: "Pizza Delivery",
+        description: "Welcome to Pizza Delivery Service"
       },
       "_layout.tpl.html"
     );
