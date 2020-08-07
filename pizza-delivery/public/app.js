@@ -5,6 +5,74 @@ var App = function() {
   };
 };
 
+/**
+ * Polyfill for EventEmitter
+ */
+var indexOf;
+
+if (typeof Array.prototype.indexOf === "function") {
+  indexOf = function(haystack, needle) {
+    return haystack.indexOf(needle);
+  };
+} else {
+  indexOf = function(haystack, needle) {
+    var i = 0,
+      length = haystack.length,
+      idx = -1,
+      found = false;
+
+    while (i < length && !found) {
+      if (haystack[i] === needle) {
+        idx = i;
+        found = true;
+      }
+
+      i++;
+    }
+
+    return idx;
+  };
+}
+
+// Event Emitter for app
+App.prototype.on = function(event, listener) {
+  if (typeof this.events[event] !== "object") {
+    this.events[event] = [];
+  }
+  this.events[event].push(listener);
+};
+
+App.prototype.removeListener = function(event, listener) {
+  var idx;
+  if (typeof this.events[event] === "object") {
+    idx = indexOf(this.events[event], listener);
+    if (idx > -1) {
+      this.events[event].splice(idx, 1);
+    }
+  }
+};
+
+App.prototype.emit = function(event) {
+  var i,
+    listeners,
+    length,
+    args = [].slice.call(arguments, 1);
+  if (typeof this.events[event] === "object") {
+    listeners = this.events[event].slice();
+    length = listeners.length;
+    for (i = 0; i < length; i++) {
+      listeners[i].apply(this, args);
+    }
+  }
+};
+
+App.prototype.once = function(event, listener) {
+  this.on(event, function g() {
+    this.removeListener(event, g);
+    listener.apply(this, arguments);
+  });
+};
+
 // Interface for making API calls
 App.prototype.request = function(
   headers,
@@ -14,6 +82,7 @@ App.prototype.request = function(
   payload,
   callback
 ) {
+  const _self = this;
   // Set defaults
   headers = typeof headers == "object" && headers !== null ? headers : {};
   path = typeof path == "string" ? path : "/";
@@ -59,7 +128,7 @@ App.prototype.request = function(
 
   // If there is a current session token set, add that as a header
   if (this.config.sessionToken) {
-    xhr.setRequestHeader("token", this.config.sessionToken.id);
+    xhr.setRequestHeader("token", _self.config.sessionToken);
   }
 
   // When the request comes back, handle the response
@@ -85,6 +154,9 @@ App.prototype.request = function(
   xhr.send(payloadString);
 };
 
+/**
+ * Method to bind page forms to make api request instead of form post
+ */
 App.prototype.bindForm = function(formId) {
   var formSelector = "#" + formId;
   var _self = this;
@@ -166,8 +238,8 @@ App.prototype.bindForm = function(formId) {
         function(statusCode, responsePayload) {
           if (statusCode !== 200 && statusCode !== 201) {
             if (statusCode == 403) {
-              console.log("TODO: LOGOUT USER");
-              this.emit("logout");
+              _self.destorySessionToken(true);
+              _self.emit("logout");
             }
             _self.emit("response-error", { formId, payload, responsePayload });
           } else {
@@ -191,7 +263,6 @@ App.prototype.getSessionToken = function() {
       this.config.sessionToken = token;
 
       document.cookie = "token=" + token + ";";
-      console.log(document.cookie);
       this.emit("session");
     } catch (e) {
       this.config.sessionToken = false;
@@ -205,80 +276,55 @@ App.prototype.setSessionToken = function(token) {
   var tokenString = JSON.stringify(token);
   localStorage.setItem("token", tokenString);
   document.cookie = "token=" + token + ";";
-  console.log(document.cookie);
   this.emit("session");
 };
 
-var indexOf;
+App.prototype.destorySessionToken = function(redirectUser) {
+  var _self = this;
 
-if (typeof Array.prototype.indexOf === "function") {
-  indexOf = function(haystack, needle) {
-    return haystack.indexOf(needle);
+  // Get the current token id
+  var tokenId =
+    typeof app.config.sessionToken == "string"
+      ? app.config.sessionToken
+      : false;
+
+  // Send the current token to the tokens endpoint to delete it
+  var queryString = {
+    token: tokenId
   };
-} else {
-  indexOf = function(haystack, needle) {
-    var i = 0,
-      length = haystack.length,
-      idx = -1,
-      found = false;
 
-    while (i < length && !found) {
-      if (haystack[i] === needle) {
-        idx = i;
-        found = true;
+  _self.request(
+    null,
+    "api/tokens",
+    "DELETE",
+    queryString,
+    undefined,
+    function() {
+      _self.config.sessionToken = false;
+      localStorage.removeItem("token");
+      document.cookie = undefined;
+      if (redirectUser) {
+        window.location = "/logged-out";
       }
-
-      i++;
     }
-
-    return idx;
-  };
-}
-
-// Event Emitter for app
-App.prototype.on = function(event, listener) {
-  if (typeof this.events[event] !== "object") {
-    this.events[event] = [];
-  }
-  this.events[event].push(listener);
+  );
 };
 
-App.prototype.removeListener = function(event, listener) {
-  var idx;
-  if (typeof this.events[event] === "object") {
-    idx = indexOf(this.events[event], listener);
-    if (idx > -1) {
-      this.events[event].splice(idx, 1);
-    }
+App.prototype.bindLogoutButton = function() {
+  const logoutButton = document.getElementById("btnLogout");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      app.destorySessionToken(true);
+    });
   }
-};
-
-App.prototype.emit = function(event) {
-  var i,
-    listeners,
-    length,
-    args = [].slice.call(arguments, 1);
-  if (typeof this.events[event] === "object") {
-    listeners = this.events[event].slice();
-    length = listeners.length;
-    for (i = 0; i < length; i++) {
-      listeners[i].apply(this, args);
-    }
-  }
-};
-
-App.prototype.once = function(event, listener) {
-  this.on(event, function g() {
-    this.removeListener(event, g);
-    listener.apply(this, arguments);
-  });
 };
 
 var app = new App();
 app.init = function() {
   app.emit("beforeInit");
   app.getSessionToken();
-  console.log(app.config);
+  app.bindLogoutButton();
   app.emit("afterInit");
 };
 
