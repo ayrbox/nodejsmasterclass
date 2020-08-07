@@ -5,42 +5,49 @@ const {
   readUser,
   loginHandler,
   signupHandler,
-} = require('../handlers/users');
+  loggedOutHandler
+} = require("../handlers/users");
 
 module.exports = [
   {
-    path: 'api/users',
-    method: 'POST',
-    handler: createUser,
+    path: "api/users",
+    method: "POST",
+    handler: createUser
   },
   {
-    path: 'api/users',
-    method: 'DELETE',
+    path: "api/users",
+    method: "DELETE",
     handler: deleteUser,
-    secure: true,
+    secure: true
   },
   {
-    path: 'api/users',
-    method: 'PUT',
+    path: "api/users",
+    method: "PUT",
     handler: updateUser,
-    secure: true,
+    secure: true
   },
   {
-    path: 'api/users',
-    method: 'GET',
+    path: "api/users",
+    method: "GET",
     handler: readUser,
-    secure: true,
+    secure: true
   },
   {
-    path: '/login',
-    method: 'GET',
+    path: "/login",
+    method: "GET",
     handler: loginHandler,
-    secure: false,
+    secure: false
   },
   {
-    path: '/signup',
-    method: 'GET',
+    path: "/signup",
+    method: "GET",
     handler: signupHandler,
-    secure: false,
+    secure: false
   },
+  {
+    path: "/logged-out",
+    method: "GET",
+    handler: loggedOutHandler,
+    secure: false
+  }
 ];
