@@ -1,22 +1,22 @@
-const { DATADIR } = require('../../context');
-const logger = require('../../lib/makeLogger')('handlers:cart');
+const { DATADIR } = require("../../context");
+const logger = require("../../lib/makeLogger")("handlers:cart");
 
-const makeDataHandler = require('../../lib/makeDataHandlers');
+const makeDataHandler = require("../../lib/makeDataHandlers");
 
-const makeAddCartItem = require('./makeAddCartItem');
-const makeUpdateCartItem = require('./makeUpdateCartItem');
-const makeDeleteCartItem = require('./makeDeleteCartItem');
-const makeGetCart = require('./makeGetCart');
-const makeDeleteCart = require('./makeDeleteCart');
+const makeAddCartItem = require("./makeAddCartItem");
+const makeUpdateCartItem = require("./makeUpdateCartItem");
+const makeDeleteCartItem = require("./makeDeleteCartItem");
+const makeGetCart = require("./makeGetCart");
+const makeDeleteCart = require("./makeDeleteCart");
 
-const db = makeDataHandler(DATADIR, 'carts');
-const dbMenu = makeDataHandler(DATADIR, 'menu');
+const db = makeDataHandler(DATADIR, "carts");
+const dbMenu = makeDataHandler(DATADIR, "menu");
 
 const addCartItem = makeAddCartItem({ db, dbMenu, logger });
 const updateCartItem = makeUpdateCartItem({
   db,
   dbMenu,
-  logger,
+  logger
 });
 
 const getCart = makeGetCart({ db });
@@ -25,7 +25,7 @@ const deleteCart = makeDeleteCart({ db });
 const deleteCartItem = makeDeleteCartItem({
   db,
   dbMenu,
-  logger,
+  logger
 });
 
 module.exports = {
@@ -33,5 +33,5 @@ module.exports = {
   updateCartItem,
   deleteCartItem,
   getCart,
-  deleteCart,
+  deleteCart
 };

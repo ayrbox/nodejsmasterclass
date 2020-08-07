@@ -100,15 +100,13 @@ App.prototype.request = function(
   callback = typeof callback == "function" ? callback : false;
 
   // For each query string parameter sent, add it to the path
-  var requestUrl = path + "?";
+  var requestUrl = path;
   var counter = 0;
   for (var queryKey in queryStringObject) {
     if (queryStringObject.hasOwnProperty(queryKey)) {
       counter++;
       // If at least one query string parameter has already been added, preprend new ones with an ampersand
-      if (counter > 1) {
-        requestUrl += "&";
-      }
+      requestUrl += counter == 1 ? "?" : "&";
       // Add the key and value
       requestUrl += queryKey + "=" + queryStringObject[queryKey];
     }

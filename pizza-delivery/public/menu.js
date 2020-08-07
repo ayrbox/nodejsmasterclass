@@ -83,6 +83,21 @@ document.addEventListener(
       if (selectedOption) {
         console.log("Selected Size Option", selectedOption);
         console.log("TODO: Add menu to cart.");
+
+        app.request(
+          null,
+          "/api/cartitem",
+          "POST",
+          null,
+          {
+            menuId: menuItemId,
+            quantity: 1,
+            size: selectedOption
+          },
+          function(statusCode, responsePayload) {
+            console.log(statusCode, responsePayload);
+          }
+        );
       } else {
         alert("Please select menu option.");
         console.error("Please selecte an option");
