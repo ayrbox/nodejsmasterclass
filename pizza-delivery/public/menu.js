@@ -1,15 +1,20 @@
 function createMenuCard(menuItem) {
-  var optHtml = '';
+  var optHtml = "";
   for (var optIdx = 0; optIdx < menuItem.options.length; optIdx++) {
     opt = menuItem.options[optIdx];
     optHtml += `
-    <li class="list-group-item">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="${menuItem.id}" value="${menuItem.id}" id="${menuItem.id}-${opt.name}">
-        <label class="form-check-label" for="${menuItem.id}-${opt.name}">
-        ${opt.description}
+        <input class="form-check-input" type="radio" name="${
+          menuItem.id
+        }" value="${menuItem.id}" id="${menuItem.id}-${opt.name}">
+        <label class="form-check-label text-capitalize" for="${menuItem.id}-${
+      opt.name
+    }">
+        ${opt.name} <small>(${opt.description})</small>
         </label>
       </div>
+      <span class="badge badge-primary badge-pill">${opt.price}</span>
     </li>
     `;
   }
@@ -27,26 +32,26 @@ function createMenuCard(menuItem) {
     </div>
   `;
 
-  const card = document.createElement('div');
-  card.setAttribute('class', 'card mr-3 mb-3');
-  card.setAttribute('data-id', menuItem.id);
+  const card = document.createElement("div");
+  card.setAttribute("class", "card mr-3 mb-3");
+  card.setAttribute("data-id", menuItem.id);
   card.innerHTML = cardInnerHtml;
-  card.style.width = '18rem';
+  card.style.width = "18rem";
 
   return card;
 }
 
-app.on('afterInit', function () {
-  app.request(undefined, '/api/menus', 'GET', undefined, undefined, function (
+app.on("afterInit", function() {
+  app.request(undefined, "/api/menus", "GET", undefined, undefined, function(
     statusCode,
     payload
   ) {
     if (statusCode !== 200) {
-      console.error('Unable to get menus.');
+      console.error("Unable to get menus.");
       return;
     }
 
-    var container = document.getElementById('menuContainer');
+    var container = document.getElementById("menuContainer");
 
     payload.forEach(menuItem => {
       const i = createMenuCard(menuItem);
@@ -61,11 +66,11 @@ app.on('afterInit', function () {
 // });
 
 document.addEventListener(
-  'click',
-  function (e) {
-    if (e.target.id == 'addToOrder') {
+  "click",
+  function(e) {
+    if (e.target.id == "addToOrder") {
       e.preventDefault();
-      console.log('targe >>>>>>>>>>', e.target.id);
+      console.log("targe >>>>>>>>>>", e.target.id);
     }
   },
   false
