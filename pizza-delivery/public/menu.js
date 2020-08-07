@@ -5,12 +5,12 @@ function createMenuCard(menuItem) {
     optHtml += `
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="${
+        <input class="form-check-input" type="radio" name="option-${
           menuItem.id
-        }" value="${menuItem.id}" id="${menuItem.id}-${opt.name}">
-        <label class="form-check-label text-capitalize" for="${menuItem.id}-${
-      opt.name
-    }">
+        }" value="${opt.name}" id="option-${menuItem.id}-${opt.name}">
+        <label class="form-check-label text-capitalize" for="option-${
+          menuItem.id
+        }-${opt.name}">
         ${opt.name} <small>(${opt.description})</small>
         </label>
       </div>
@@ -60,17 +60,33 @@ app.on("afterInit", function() {
   });
 });
 
-// $('#menuContainer').on('click', 'a#addToOrder', function (e) {
-//   e.preventDefault();
-//   console.log($(this).text());
-// });
-
 document.addEventListener(
   "click",
   function(e) {
     if (e.target.id == "addToOrder") {
       e.preventDefault();
-      console.log("targe >>>>>>>>>>", e.target.id);
+      var addButtonEl = e.target;
+      var cardEl = addButtonEl.closest(".card");
+      console.log(cardEl);
+
+      var menuItemId = cardEl.dataset.id;
+
+      var menuOptionsEl = document.getElementsByName("option-" + menuItemId);
+      var selectedOption = undefined;
+
+      for (var optIdx = 0; optIdx < menuOptionsEl.length; optIdx++) {
+        if (menuOptionsEl[optIdx].checked) {
+          selectedOption = menuOptionsEl[optIdx].value;
+        }
+      }
+
+      if (selectedOption) {
+        console.log("Selected Size Option", selectedOption);
+        console.log("TODO: Add menu to cart.");
+      } else {
+        alert("Please select menu option.");
+        console.error("Please selecte an option");
+      }
     }
   },
   false
