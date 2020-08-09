@@ -38,3 +38,17 @@ app.on("user-updated", function(user) {
     document.querySelector("#userForm #" + field).value = user[field];
   }
 });
+
+app.on("response", function() {
+  window.location = "/checkout-completed";
+});
+
+app.on("response-error", function(args) {
+  var responsePayload = args.responsePayload;
+  var errorMessageEl = document.querySelector("#error-message");
+  var errorMsg = "Unable to process checkout. Please try again";
+  errorMsg += "<br/><em>" + responsePayload.msg + "</em>";
+
+  errorMessageEl.innerHTML = errorMsg;
+  errorMessageEl.classList.remove("d-none");
+});

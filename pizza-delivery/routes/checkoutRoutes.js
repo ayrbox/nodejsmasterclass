@@ -1,4 +1,8 @@
-const { checkout, checkoutPageHandler } = require("../handlers/checkout");
+const {
+  checkout,
+  checkoutPageHandler,
+  checkoutCompletePageHandler
+} = require("../handlers/checkout");
 
 module.exports = [
   {
@@ -11,6 +15,12 @@ module.exports = [
     path: "checkout",
     method: "GET",
     handler: checkoutPageHandler,
+    secure: true
+  },
+  {
+    path: "checkout-completed",
+    method: "GET",
+    handler: checkoutCompletePageHandler,
     secure: true
   }
 ];

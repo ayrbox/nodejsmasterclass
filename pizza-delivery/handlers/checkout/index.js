@@ -5,6 +5,7 @@ const logger = require("../../lib/makeLogger")("handlers:cart");
 const makeDataHandler = require("../../lib/makeDataHandlers");
 const makeRandomString = require("../../lib/makeRandomString");
 const makeCheckoutPageHandler = require("./makeCheckoutPageHandler");
+const makeCheckoutCompletePageHandler = require("./makeCheckoutCompletePageHandler");
 
 const makeCheckout = require("./makeCheckout");
 const randomString = makeRandomString(20);
@@ -17,6 +18,7 @@ const viewsDir = path.join(process.cwd(), "views");
 const render = makeRender(viewsDir);
 
 const checkoutPageHandler = makeCheckoutPageHandler(render, {});
+const checkoutCompletePageHandler = makeCheckoutCompletePageHandler(render, {});
 
 const checkout = makeCheckout({
   dbCart,
@@ -27,5 +29,6 @@ const checkout = makeCheckout({
 
 module.exports = {
   checkout,
-  checkoutPageHandler
+  checkoutPageHandler,
+  checkoutCompletePageHandler
 };
