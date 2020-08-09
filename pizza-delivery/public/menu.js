@@ -58,6 +58,27 @@ app.on("afterInit", function() {
       container.appendChild(i);
     });
   });
+  app.refreshCart();
+});
+
+app.on("cart-refresh", function() {
+  var cartTotalElement = document.getElementById("cart-total");
+  var cartItemsElement = document.getElementById("cart-items");
+
+  var cartItemCount = 0;
+  var cartTotal = 0;
+
+  if (app.cart) {
+    var cartItems = app.cart.items;
+
+    for (var itemIdx = 0; itemIdx < cartItems.length; itemIdx++) {
+      cartItemCount += cartItems[itemIdx].quantity;
+    }
+    cartTotal = app.cart.total;
+  }
+
+  cartTotalElement.innerText = cartTotal.toFixed(2);
+  cartItemsElement.innerText = cartItemCount.toFixed(0);
 });
 
 document.addEventListener(
@@ -81,9 +102,6 @@ document.addEventListener(
       }
 
       if (selectedOption) {
-        console.log("Selected Size Option", selectedOption);
-        console.log("TODO: Add menu to cart.");
-
         app.request(
           null,
           "/api/cartitem",
@@ -96,6 +114,9 @@ document.addEventListener(
           },
           function(statusCode, responsePayload) {
             console.log(statusCode, responsePayload);
+            if (statusCode == 200) {
+              app.refreshCart();
+            }
           }
         );
       } else {

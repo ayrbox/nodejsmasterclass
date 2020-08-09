@@ -3,6 +3,7 @@ var App = function() {
   this.config = {
     sessionToken: false
   };
+  this.cart = undefined;
 };
 
 /**
@@ -141,6 +142,7 @@ App.prototype.request = function(
           var parsedResponse = JSON.parse(responseReturned);
           callback(statusCode, parsedResponse);
         } catch (e) {
+          console.error("Callback Error on requst", e);
           callback(statusCode, false);
         }
       }
@@ -316,6 +318,19 @@ App.prototype.bindLogoutButton = function() {
       app.destorySessionToken(true);
     });
   }
+};
+
+App.prototype.refreshCart = function() {
+  var _self = this;
+  _self.request(null, "api/cart", "GET", undefined, undefined, function(
+    statusCode,
+    responsePayload
+  ) {
+    if (statusCode === 200) {
+      _self.cart = responsePayload;
+      _self.emit("cart-refresh");
+    }
+  });
 };
 
 var app = new App();
