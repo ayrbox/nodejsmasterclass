@@ -1,6 +1,7 @@
 var App = function() {
   this.events = {};
   this.config = {
+    userEmail: undefined,
     sessionToken: false
   };
   this.cart = undefined;
@@ -268,13 +269,27 @@ App.prototype.getSessionToken = function() {
       this.config.sessionToken = false;
     }
   }
+
+  var userEmailString = localStorage.getItem("userEmail");
+  if (typeof userEmailString == "string") {
+    try {
+      var userEmail = JSON.parse(userEmailString);
+      this.config.userEmail = userEmail;
+    } catch (e) {
+      console.error("Error reading user email", e);
+      this.config.sessionToken = false;
+      this.config.email = undefined;
+    }
+  }
 };
 
 // Set the session token in the app.config object as well as localstorage
-App.prototype.setSessionToken = function(token) {
+App.prototype.setSessionToken = function(token, email) {
   app.config.sessionToken = token;
+  app.config.userEmail = email;
   var tokenString = JSON.stringify(token);
   localStorage.setItem("token", tokenString);
+  localStorage.setItem("userEmail", JSON.stringify(email));
   document.cookie = "token=" + token + ";";
   this.emit("session");
 };
@@ -331,6 +346,23 @@ App.prototype.refreshCart = function() {
       _self.emit("cart-refresh");
     }
   });
+};
+
+App.prototype.getUser = function() {
+  var _self = this;
+  var userEmail = _self.config.userEmail;
+  _self.request(
+    null,
+    "api/users?email=" + userEmail,
+    "GET",
+    undefined,
+    undefined,
+    function(statusCode, responsePayload) {
+      if (statusCode == 200) {
+        _self.emit("user-updated", responsePayload);
+      }
+    }
+  );
 };
 
 var app = new App();

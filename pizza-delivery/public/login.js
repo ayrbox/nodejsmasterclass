@@ -9,9 +9,10 @@ app.on("afterInit", function() {
 
 app.on("response", function(args) {
   var responsePayload = args.responsePayload;
+  var requestPayload = args.payload;
 
   if (responsePayload.token) {
-    app.setSessionToken(responsePayload.token);
+    app.setSessionToken(responsePayload.token, requestPayload.email);
   }
 
   var formSuccess = document.querySelector(
