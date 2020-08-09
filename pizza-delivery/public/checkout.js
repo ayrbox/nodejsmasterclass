@@ -1,6 +1,8 @@
 app.on("afterInit", function() {
   app.getUser();
   app.refreshCart();
+
+  app.bindForm("payment-form");
 });
 
 app.on("cart-refresh", function() {

@@ -31,25 +31,25 @@
       </div>
       <h4 class="mt-5 mb-3">Payment</h4>
 
-      <form id="formPayment" novalidate>
+      <form id="payment-form" method="POST" action="/api/checkout">
         <div class="d-block my-3">
           <div class="custom-control custom-radio">
-            <input id="visa" name="paymentMethod" type="radio" class="custom-control-input" checked required value="visa">
+            <input id="cardtype-visa" name="cardType" type="radio" class="custom-control-input" checked required value="visa">
             <label class="custom-control-label" for="credit">Visa</label>
           </div>
           <div class="custom-control custom-radio">
-            <input id="mastercard" name="paymentMethod" type="radio" class="custom-control-input" required value="mastercard">
+            <input id="cardtype-mastercard" name="cardType" type="radio" class="custom-control-input" required value="mastercard">
             <label class="custom-control-label" for="debit">Master card</label>
           </div>
           <div class="custom-control custom-radio">
-            <input id="visa-debit" name="paymentMethod" type="radio" class="custom-control-input" required value="visa-debit">
+            <input id="cardtype-visadebit" name="cardType" type="radio" class="custom-control-input" required value="visa-debit">
             <label class="custom-control-label" for="paypal">Visa Debit</label>
           </div>
         </div>
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="cc-name">Name on card</label>
-            <input type="text" class="form-control" id="cc-name" placeholder="" required>
+            <input type="text" class="form-control" id="name" name="name" placeholder="" required>
             <small class="text-muted">Full name as displayed on card</small>
             <div class="invalid-feedback">
               Name on card is required
@@ -57,7 +57,7 @@
           </div>
           <div class="col-md-6 mb-3">
             <label for="cc-number">Credit card number</label>
-            <input type="text" class="form-control" id="cc-number" placeholder="" required>
+            <input type="text" class="form-control" id="cardNo" name="cardNo" required>
             <div class="invalid-feedback">
               Credit card number is required
             </div>
@@ -66,14 +66,14 @@
         <div class="row">
           <div class="col-md-3 mb-3">
             <label for="cc-expiration">Expiration</label>
-            <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
+            <input type="text" class="form-control" id="expiryDate" name="expiryDate" required>
             <div class="invalid-feedback">
               Expiration date required
             </div>
           </div>
           <div class="col-md-3 mb-3">
             <label for="cc-cvv">CVV</label>
-            <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
+            <input type="text" class="form-control" id="cvvCode" name="cvvCode" placeholder="" required>
             <div class="invalid-feedback">
               Security code required
             </div>
