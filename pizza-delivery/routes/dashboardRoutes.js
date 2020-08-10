@@ -1,6 +1,7 @@
 const {
   dashboardHandler,
-  orderHistoryHandler
+  orderHistoryHandler,
+  homePageHandler
 } = require("../handlers/dashboard");
 
 module.exports = [
@@ -15,5 +16,11 @@ module.exports = [
     method: "GET",
     handler: orderHistoryHandler,
     secure: true
+  },
+  {
+    path: "",
+    method: "GET",
+    handler: homePageHandler,
+    secure: false
   }
 ];

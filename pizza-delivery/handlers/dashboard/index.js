@@ -5,6 +5,7 @@ const logger = require("../../lib/makeLogger")("handlers:dashboard");
 const makeRender = require("../../lib/makeRender");
 const makeDashboardHandler = require("./makeDashboardHandler");
 const makeOrderHistoryHandler = require("./makeOrderHistoryHandler");
+const makeHomePageHandler = require("./makeHomePageHandler");
 
 // Pages UI
 const viewsDir = path.join(process.cwd(), "views");
@@ -17,8 +18,10 @@ const orderHistoryHandler = makeOrderHistoryHandler({
   db,
   logger
 });
+const homePageHandler = makeHomePageHandler(render, {});
 
 module.exports = {
   dashboardHandler,
-  orderHistoryHandler
+  orderHistoryHandler,
+  homePageHandler
 };
