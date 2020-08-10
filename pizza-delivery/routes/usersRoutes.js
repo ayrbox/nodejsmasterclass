@@ -5,7 +5,8 @@ const {
   readUser,
   loginHandler,
   signupHandler,
-  loggedOutHandler
+  loggedOutHandler,
+  accountPageHandler
 } = require("../handlers/users");
 
 module.exports = [
@@ -49,5 +50,11 @@ module.exports = [
     method: "GET",
     handler: loggedOutHandler,
     secure: false
+  },
+  {
+    path: "/account",
+    method: "GET",
+    handler: accountPageHandler,
+    secure: true
   }
 ];

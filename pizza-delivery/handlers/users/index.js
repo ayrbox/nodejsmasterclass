@@ -13,6 +13,7 @@ const makeDeleteUser = require("./makeDeleteUser");
 const makeLoginHandler = require("./makeLoginHandler");
 const makeSignupHandler = require("./makeSignupHandler");
 const makeLoggedOutHandler = require("./makeLoggedOutHandler");
+const makeAccountPageHandler = require("./makeAccountPageHandler");
 
 const db = makeDataHandler(DATADIR, "users");
 
@@ -28,6 +29,7 @@ const render = makeRender(viewsDir);
 const loginHandler = makeLoginHandler(render, {});
 const signupHandler = makeSignupHandler(render, {});
 const loggedOutHandler = makeLoggedOutHandler(render, {});
+const accountPageHandler = makeAccountPageHandler(render, {});
 
 module.exports = {
   createUser,
@@ -37,5 +39,6 @@ module.exports = {
   loginHandler,
   signupHandler,
   loginHandler,
-  loggedOutHandler
+  loggedOutHandler,
+  accountPageHandler
 };
