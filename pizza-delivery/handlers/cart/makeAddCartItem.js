@@ -1,13 +1,13 @@
-const { hash } = require('../../lib/cryptoHash');
+const { hash } = require("../../lib/cryptoHash");
 
-const makeAddCartItem = function ({ db, dbMenu }) {
+const makeAddCartItem = function({ db, dbMenu }) {
   /**
    *
    * @param {string} cartId Unique cart id for user
    * @param {array} data Array or items
    * @param {object} itemToAdd Item Object
    */
-  const updateCart = function (cartId, cart = {}, itemToAdd, callback) {
+  const updateCart = function(cartId, cart = {}, itemToAdd, callback) {
     const rawItems = [...(cart.items || []), itemToAdd];
 
     // Aggregrate items by menuId and size
@@ -32,23 +32,23 @@ const makeAddCartItem = function ({ db, dbMenu }) {
           ...aggregatedResult,
           {
             ...itemToCheck,
-            quantity,
-          },
+            quantity
+          }
         ];
       }, [])
       .map(item => ({
         ...item,
-        amount: item.quantity * item.option.price, // calculate amount for each item
+        amount: item.quantity * item.option.price // calculate amount for each item
       }));
 
     const updatedData = {
       items,
-      total: items.reduce((t, { amount }) => t + amount, 0), // calculate cart total
+      total: items.reduce((t, { amount }) => t + amount, 0) // calculate cart total
     };
 
     db.update(cartId, updatedData, err => {
       if (err) {
-        callback(new Error('Unable to update cart.'), null);
+        callback(new Error("Unable to update cart."), null);
         return;
       }
       callback(false, updatedData);
@@ -56,14 +56,14 @@ const makeAddCartItem = function ({ db, dbMenu }) {
   };
 
   // read payload
-  return function ({ payload, user }, responseCallback) {
+  return function({ payload, user }, responseCallback) {
     const { menuId, quantity, size } = payload;
 
     // get menu
     dbMenu.read(menuId, (err, menu) => {
       if (err || !menu) {
         responseCallback(404, {
-          msg: 'Menu Item not found',
+          msg: "Menu Item not found"
         });
         return;
       }
@@ -72,7 +72,7 @@ const makeAddCartItem = function ({ db, dbMenu }) {
       const option = options.find(({ name }) => name === size); // find size selected
       if (!option) {
         responseCallback(400, {
-          msg: 'Invalid option selected',
+          msg: "Invalid option selected"
         });
         return;
       }
@@ -81,7 +81,7 @@ const makeAddCartItem = function ({ db, dbMenu }) {
         menuId,
         name,
         quantity,
-        option,
+        option
       };
 
       // Read data from cart
@@ -93,7 +93,7 @@ const makeAddCartItem = function ({ db, dbMenu }) {
           db.create(cartId, {}, err => {
             if (err) {
               responseCallback(500, {
-                message: 'Unable to create cart.',
+                message: "Unable to create cart."
               });
               return;
             }
@@ -101,7 +101,7 @@ const makeAddCartItem = function ({ db, dbMenu }) {
             updateCart(cartId, [], itemToAdd, (err, data) => {
               if (err) {
                 responseCallback(500, {
-                  msg: 'Unable to add item to cart.',
+                  msg: "Unable to add item to cart."
                 });
                 return;
               }
@@ -116,7 +116,7 @@ const makeAddCartItem = function ({ db, dbMenu }) {
         updateCart(cartId, cartData, itemToAdd, (err, data) => {
           if (err) {
             responseCallback(500, {
-              msg: 'Unable to add item to cart.',
+              msg: "Unable to add item to cart."
             });
             return;
           }

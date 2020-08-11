@@ -1,7 +1,7 @@
-const { hash } = require('../../lib/cryptoHash');
-const { createPayment } = require('../../lib/stripePayment');
-const createReceiptText = require('../../utils/createReceiptText');
-const { sendEmail } = require('../../lib/mailgunClient');
+const { hash } = require("../../lib/cryptoHash");
+const { createPayment } = require("../../lib/stripePayment");
+const createReceiptText = require("../../utils/createReceiptText");
+const { sendEmail } = require("../../lib/mailgunClient");
 
 const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
   return function ({ payload, user }, responseCallback) {
@@ -12,7 +12,7 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
     dbCart.read(cartId, (err, cartData) => {
       if (err || !cartData) {
         responseCallback(404, {
-          msg: 'Shopping cart not found',
+          msg: "Shopping cart not found",
         });
         return;
       }
@@ -36,9 +36,9 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
         function (err, detail) {
           if (err) {
             responseCallback(500, {
-              msg: 'Unable to create order payments',
+              msg: "Unable to create order payments",
             });
-            logger.warning('Error creating payment', err, detail);
+            logger.warning("Error creating payment", err, detail);
             return;
           }
 
@@ -56,26 +56,26 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
             payment: {
               paymentId,
               paymentMethod,
-              status: 'successful',
+              status: "successful",
             },
           };
-          dbOrder.create(orderId, orderData, err => {
+          dbOrder.create(orderId, orderData, (err) => {
             if (err) {
               responseCallback(500, {
-                msg: 'Unable to create new order',
+                msg: "Unable to create new order",
               });
-              logger.warning('Error creating order', err);
+              logger.warning("Error creating order", err);
               return;
             }
 
             responseCallback(200, orderData);
 
             // Clear current cart after order is created successfully.
-            dbCart.delete(cartId, err => {
+            dbCart.delete(cartId, (err) => {
               if (err) {
-                logger.warning('Error clearing cart.', err);
+                logger.warning("Error clearing cart.", err);
               }
-              logger.info('Cart cleared', cartId);
+              logger.info("Cart cleared", cartId);
             });
 
             // Send receipt in email
@@ -83,19 +83,19 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
             sendEmail(
               {
                 to: email,
-                subject: 'Pizza: Order Receipt',
+                subject: "Pizza: Order Receipt",
                 text: receiptText,
               },
-              err => {
+              (err) => {
                 if (err) {
-                  logger.warning('Receipt not send' + err);
+                  logger.warning("Receipt not send" + err);
                 } else {
-                  logger.info('Receipt send');
+                  logger.info("Receipt send");
                 }
-              },
+              }
             );
           });
-        },
+        }
       );
     });
   };

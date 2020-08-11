@@ -1,0 +1,35 @@
+<form class="form-signin" id="signupForm" action="/api/users" method="POST">
+  <img class="mb-4" src="logo.png" alt="" width="72" height="72">
+  <h1 class="h3 mb-3 font-weight-normal"><%title%></h1>
+  <p><%description%></p>
+
+
+  <div class="alert alert-danger"></div>
+  <div class="alert alert-success"></div>
+    
+
+
+  <label for="email" class="sr-only">Email</label>
+  <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus value="joe@smith.com">
+
+
+  <label for="name" class="sr-only">Name</label>
+  <input type="text" id="name" name="name" class="form-control" placeholder="Name" required value="Joe Smith">
+
+
+  <label for="phone" class="sr-only">Phone</label>
+  <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone" required value="02012345678">
+
+
+  <label for="address" class="sr-only">Address</label>
+  <input type="text" id="address" name="address" class="form-control" placeholder="Address" required value="London, UK">
+
+  <label for="password" class="sr-only">Password</label>
+  <input type="password" id="password" name="password" class="form-control" placeholder="Password" required value="Passw0rd123">
+  
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+
+  <a href="/login" class="text-right">Already a member? Login</a>
+</form>
+
+<script src="/signup.js"></script>

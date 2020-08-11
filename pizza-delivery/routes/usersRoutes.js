@@ -3,30 +3,58 @@ const {
   deleteUser,
   updateUser,
   readUser,
-} = require('../handlers/users');
+  loginHandler,
+  signupHandler,
+  loggedOutHandler,
+  accountPageHandler
+} = require("../handlers/users");
 
 module.exports = [
   {
-    path: '/users',
-    method: 'POST',
-    handler: createUser,
+    path: "api/users",
+    method: "POST",
+    handler: createUser
   },
   {
-    path: '/users',
-    method: 'DELETE',
+    path: "api/users",
+    method: "DELETE",
     handler: deleteUser,
-    secure: true,
+    secure: true
   },
   {
-    path: '/users',
-    method: 'PUT',
+    path: "api/users",
+    method: "PUT",
     handler: updateUser,
-    secure: true,
+    secure: true
   },
   {
-    path: '/users',
-    method: 'GET',
+    path: "api/users",
+    method: "GET",
     handler: readUser,
-    secure: true,
+    secure: true
   },
+  {
+    path: "/login",
+    method: "GET",
+    handler: loginHandler,
+    secure: false
+  },
+  {
+    path: "/signup",
+    method: "GET",
+    handler: signupHandler,
+    secure: false
+  },
+  {
+    path: "/logged-out",
+    method: "GET",
+    handler: loggedOutHandler,
+    secure: false
+  },
+  {
+    path: "/account",
+    method: "GET",
+    handler: accountPageHandler,
+    secure: true
+  }
 ];

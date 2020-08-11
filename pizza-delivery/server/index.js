@@ -12,7 +12,7 @@ const defaultHandler = {
 
 const makeServer = function ({ routes = [], middlewares = [] }) {
   routes
-    .map(({ method, path }) => `${method}\t\t: ${path}`)
+    .map(({ method, path }) => `${method.padEnd(10, ' ')}: ${path}`)
     .forEach(info => logger.info(info));
 
   return function (req, res) {
@@ -48,10 +48,24 @@ const makeServer = function ({ routes = [], middlewares = [] }) {
       const composedHandler = composeMiddleware(middlewares);
 
       const fnNext = function () {
-        handler(requestData, function (status = 200, payload = {}) {
-          res.setHeader('Content-Type', 'application/json');
+        handler(requestData, function (
+          status = 200,
+          payload = {},
+          contentType = 'application/json'
+        ) {
+          res.setHeader('Content-Type', contentType);
           res.writeHead(status);
-          res.end(JSON.stringify(payload));
+
+          if (typeof payload === 'string') {
+            res.end(payload);
+          } else if (
+            typeof payload === 'object' &&
+            contentType === 'application/json'
+          ) {
+            res.end(JSON.stringify(payload));
+          } else {
+            res.end(payload);
+          }
 
           logger.info(`Status ${status}: ${JSON.stringify(payload)}`);
         });
