@@ -9,6 +9,7 @@ const makeSMSClient = require('./lib/smsClient');
 
 const makeServer = require('./server');
 const makeWorker = require('./worker');
+const makeCli = require('./cli');
 
 const routes = require('./routes');
 
@@ -54,3 +55,9 @@ https
   });
 
 worker.init();
+
+const cli = makeCli({});
+
+setTimeout(function () {
+  cli.init();
+}, 100);
