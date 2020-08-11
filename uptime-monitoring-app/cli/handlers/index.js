@@ -13,11 +13,11 @@ const handler = function (command, args) {
 const commands = [
   {
     command: 'help',
-    description: 'Help for cli',
+    description: 'Help for cli.',
   },
   {
     command: 'man',
-    description: 'Man page for cli',
+    description: 'Alias for help.',
   },
   {
     command: 'exit',
@@ -26,24 +26,25 @@ const commands = [
   },
   {
     command: 'stats',
-    description: 'Provides stats for application running.',
+    description:
+      'Get statistics on the underlying operating system and resource utilization.',
     handler,
   },
   {
     command: 'users',
     description:
-      'List user information of registered users. Option --id <EMAIL> provide information for specified user.',
+      'List user information of registered users. Option --userId <EMAIL> provide information for specified user.',
     handler,
   },
   {
     command: 'checks',
     description:
-      'List all info for all the checks. Option --id <ID> provides information for specified check.',
+      'Show list of all active checks in the system, including their state. Options: --up --down --id <CHECKID> Shows details for specified check id.',
     handler,
   },
   {
     command: 'logs',
-    description: 'List logs.',
+    description: 'List logs files.',
     handler,
   },
 ];
