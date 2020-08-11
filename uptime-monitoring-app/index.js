@@ -56,7 +56,7 @@ https
 
 worker.init();
 
-const cli = makeCli({});
+const cli = makeCli({ logger });
 
 setTimeout(function () {
   cli.init();
