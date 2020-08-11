@@ -2,6 +2,8 @@
  * Command Handlers
  * */
 
+const exitHandler = require('./exitHandler');
+
 // TODO: remove handler
 const handler = function (command, args) {
   console.log(`TODO: Command (${command}) not implemented yet.`);
@@ -21,7 +23,7 @@ module.exports = [
   {
     command: 'exit',
     description: 'Exit application',
-    handler,
+    handler: exitHandler,
   },
   {
     command: 'stats',
