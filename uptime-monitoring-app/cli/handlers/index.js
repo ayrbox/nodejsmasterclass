@@ -3,22 +3,21 @@
  * */
 
 const exitHandler = require('./exitHandler');
+const makeHelpHandler = require('./helpHandler');
 
 // TODO: remove handler
 const handler = function (command, args) {
   console.log(`TODO: Command (${command}) not implemented yet.`);
 };
 
-module.exports = [
+const commands = [
   {
     command: 'help',
     description: 'Help for cli',
-    handler,
   },
   {
     command: 'man',
     description: 'Man page for cli',
-    handler,
   },
   {
     command: 'exit',
@@ -48,3 +47,19 @@ module.exports = [
     handler,
   },
 ];
+
+// Special kind handle which need to read command and descripton
+// Handle function is attached to command when exporting modules
+const helpHandler = makeHelpHandler(commands);
+const HELP_COMMANDS = ['man', 'help'];
+
+module.exports = commands.map(_ => {
+  if (HELP_COMMANDS.includes(_.command)) {
+    return {
+      ..._,
+      handler: helpHandler,
+    };
+  } else {
+    return _;
+  }
+});
