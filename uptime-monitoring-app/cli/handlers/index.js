@@ -4,6 +4,7 @@
 
 const exitHandler = require('./exitHandler');
 const makeHelpHandler = require('./helpHandler');
+const statsHandler = require('./statsHandler');
 
 // TODO: remove handler
 const handler = function (command, args) {
@@ -28,7 +29,7 @@ const commands = [
     command: 'stats',
     description:
       'Get statistics on the underlying operating system and resource utilization.',
-    handler,
+    handler: statsHandler,
   },
   {
     command: 'users',
