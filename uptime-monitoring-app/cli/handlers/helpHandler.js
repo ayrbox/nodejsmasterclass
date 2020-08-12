@@ -1,18 +1,8 @@
-const SCREEN_WIDTH = process.stdout.columns;
-
-const printHorizonatalLine = function () {
-  console.log('-'.repeat(SCREEN_WIDTH));
-};
-
-const printTitle = function () {
-  printHorizonatalLine();
-  console.log('UPTIME MONITORING - MANUAL');
-  printHorizonatalLine();
-};
+const { printHorizonatalLine, printTitle } = require('../utils');
 
 const makeHelpHandler = function (commands) {
   return function () {
-    printTitle();
+    printTitle('UPTIME MONITORING - MANUAL');
     commands.forEach(({ command, description }) => {
       console.log(`${command.padEnd(15, ' ')}    ${description}`);
     });
