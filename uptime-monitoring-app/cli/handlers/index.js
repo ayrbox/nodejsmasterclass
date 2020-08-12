@@ -5,6 +5,7 @@
 const exitHandler = require('./exitHandler');
 const makeHelpHandler = require('./helpHandler');
 const statsHandler = require('./statsHandler');
+const userHandler = require('./usersHandler');
 
 // TODO: remove handler
 const handler = function (command, args) {
@@ -35,7 +36,7 @@ const commands = [
     command: 'users',
     description:
       'List user information of registered users. Option --userId <EMAIL> provide information for specified user.',
-    handler,
+    handler: userHandler,
   },
   {
     command: 'checks',
