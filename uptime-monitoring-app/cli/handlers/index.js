@@ -6,6 +6,7 @@ const exitHandler = require('./exitHandler');
 const makeHelpHandler = require('./helpHandler');
 const statsHandler = require('./statsHandler');
 const userHandler = require('./usersHandler');
+const checksHandler = require('./checksHandler');
 
 // TODO: remove handler
 const handler = function (command, args) {
@@ -42,7 +43,7 @@ const commands = [
     command: 'checks',
     description:
       'Show list of all active checks in the system, including their state. Options: --up --down --id <CHECKID> Shows details for specified check id.',
-    handler,
+    handler: checksHandler,
   },
   {
     command: 'logs',
