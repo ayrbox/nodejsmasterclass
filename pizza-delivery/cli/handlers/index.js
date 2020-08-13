@@ -1,0 +1,50 @@
+/**
+ * Command Handlers
+ * */
+
+const exitHandler = require('./exitHandler');
+const makeHelpHandler = require('./helpHandler');
+const statsHandler = require('./statsHandler');
+
+// TODO: remove handler
+const handler = function (command, args) {
+  console.log(`TODO: Command (${command}) not implemented yet.`);
+};
+
+const commands = [
+  {
+    command: 'help',
+    description: 'Help for cli.',
+  },
+  {
+    command: 'man',
+    description: 'Alias for help.',
+  },
+  {
+    command: 'exit',
+    description: 'Exit application',
+    handler: exitHandler,
+  },
+  {
+    command: 'stats',
+    description:
+      'Get statistics on the underlying operating system and resource utilization.',
+    handler: statsHandler,
+  },
+];
+
+// Special kind handle which need to read command and descripton
+// Handle function is attached to command when exporting modules
+const helpHandler = makeHelpHandler(commands);
+const HELP_COMMANDS = ['man', 'help'];
+
+module.exports = commands.map(_ => {
+  if (HELP_COMMANDS.includes(_.command)) {
+    return {
+      ..._,
+      handler: helpHandler,
+    };
+  } else {
+    return _;
+  }
+});
