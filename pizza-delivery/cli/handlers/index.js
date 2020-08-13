@@ -5,6 +5,12 @@
 const exitHandler = require('./exitHandler');
 const makeHelpHandler = require('./helpHandler');
 const statsHandler = require('./statsHandler');
+const makeMenuHandler = require('./menuHandler');
+
+const { DATADIR } = require('../../context');
+
+const makeDataHandler = require('../../lib/makeDataHandlers');
+const dbMenu = makeDataHandler(DATADIR, 'menu');
 
 // TODO: remove handler
 const handler = function (command, args) {
@@ -30,6 +36,11 @@ const commands = [
     description:
       'Get statistics on the underlying operating system and resource utilization.',
     handler: statsHandler,
+  },
+  {
+    command: 'menu',
+    description: 'List all the menu items available.',
+    handler: makeMenuHandler({ db: dbMenu }),
   },
 ];
 
