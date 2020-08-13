@@ -2,20 +2,20 @@
 
 1. handles for GUI
 
-- account/create
-- account/edit
-- account/deleted
-- session/create
-- session/deleted
-- checks/all
-- checks/create
-- checks/edit
-- checks/deleted
+- [x] account/create
+- [x] account/edit
+- [x] account/deleted
+- [x] session/create
+- [x] session/deleted
+- [x] checks/all
+- [x] checks/create
+- [x] checks/edit
+- [x] checks/deleted
 
 ## App Client
 
-- Request Client
-- Page base JS file with specific form binding
-- Get/Set Session Token
-- Hide Logout Menus
-- Renew Tokens
+- [x] Request Client
+- [x] Page base JS file with specific form binding
+- [x] Get/Set Session Token
+- [x] Hide Logout Menus
+- [x] Renew Tokens
