@@ -34,10 +34,17 @@ const displayCheckInfo = function (checkData) {
   }
 };
 
-const readChecks = function (checkId, callback) {
+const readChecks = function (checkId, checkState, callback) {
   db.read('checks', checkId, (err, data) => {
     if (!err && data) {
-      callback(data);
+      if (!checkState) {
+        callback(data);
+      }
+
+      if (data.state === checkState) {
+        callback(data);
+      }
+
       return;
     }
     callback(undefined);
@@ -45,9 +52,16 @@ const readChecks = function (checkId, callback) {
 };
 
 const checksHandler = function (_, options) {
+  let state = undefined;
+  if (options.down) {
+    state = 'down';
+  } else if (options.up) {
+    state = 'up';
+  }
+
   if (options && options.id) {
     const checkId = options.id;
-    readChecks(checkId, function (checkData) {
+    readChecks(checkId, state, function (checkData) {
       if (checkData) displayCheckInfo(checkData);
       else console.log(`Check with id "${checkId}" not found.`);
     });
@@ -67,7 +81,7 @@ const checksHandler = function (_, options) {
     }
 
     checksIds.forEach(checkId => {
-      readChecks(checkId, function (checkData) {
+      readChecks(checkId, state, function (checkData) {
         if (checkData) displayCheckInfo(checkData);
       });
     });
