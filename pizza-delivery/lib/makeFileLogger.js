@@ -116,7 +116,7 @@ const makeFileLogger = function(logPath, logFile) {
 
     readLog: function(callback) {
       fs.readFile(logFilePath, "utf8", function(err, logContent) {
-        if (err || !str) {
+        if (err || !logContent) {
           callback(new Error("Unable to read log file."));
           return;
         }
