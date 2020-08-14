@@ -7,6 +7,7 @@ const makeHelpHandler = require("./helpHandler");
 const statsHandler = require("./statsHandler");
 const makeMenuHandler = require("./menuHandler");
 const makeOrderHandler = require("./makeOrderHandler");
+const makeUserHandler = require("./makeUsersHandler");
 
 const { DATADIR, LOG_DIR } = require("../../context");
 
@@ -14,8 +15,10 @@ const makeFileLogger = require("../../lib/makeFileLogger");
 const makeDataHandler = require("../../lib/makeDataHandlers");
 const dbMenu = makeDataHandler(DATADIR, "menu");
 const dbOrder = makeDataHandler(DATADIR, "order");
+const dbUser = makeDataHandler(DATADIR, "users");
 
 const orderFileLogger = makeFileLogger(LOG_DIR, "orders");
+const userFileLogger = makeFileLogger(LOG_DIR, "users");
 
 // TODO: remove handler
 const handler = function(command, args) {
@@ -54,6 +57,15 @@ const commands = [
     handler: makeOrderHandler({
       db: dbOrder,
       fileLogger: orderFileLogger
+    })
+  },
+  {
+    command: "users",
+    description:
+      "List detail of users recently signup. Option --id <USERID> Returns detail of specified users.",
+    handler: makeUserHandler({
+      db: dbUser,
+      fileLogger: userFileLogger
     })
   }
 ];
