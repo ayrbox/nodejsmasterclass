@@ -3,7 +3,13 @@ const { createPayment } = require("../../lib/stripePayment");
 const createReceiptText = require("../../utils/createReceiptText");
 const { sendEmail } = require("../../lib/mailgunClient");
 
-const makeCheckout = function({ dbCart, dbOrder, randomString, logger }) {
+const makeCheckout = function({
+  dbCart,
+  dbOrder,
+  randomString,
+  logger,
+  fileLogger
+}) {
   return function({ payload, user }, responseCallback) {
     const { cardType, cardNo, cvvCode, expiryDate } = payload;
 
@@ -70,6 +76,13 @@ const makeCheckout = function({ dbCart, dbOrder, randomString, logger }) {
             }
 
             responseCallback(200, orderData);
+
+            fileLogger.log(JSON.stringify(orderData), function(errorLogging) {
+              if (err) {
+                logger.warning("Log error", errorLogging);
+                return;
+              }
+            });
 
             // Clear current cart after order is created successfully.
             dbCart.delete(cartId, err => {

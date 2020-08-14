@@ -97,18 +97,19 @@ const makeFileLogger = function(logPath, logFile) {
           return;
         }
 
-        fs.appendFile(fileDescriptor, str + "\n", function(err) {
-          if (!err) {
-            fs.close(fileDescriptor, function(err) {
-              if (!err) {
-                callback(false);
-              } else {
-                callback(new "Error closing file that was being appended"());
-              }
-            });
-          } else {
-            callback(new Error("Error appending to file"));
+        fs.appendFile(fileDescriptor, str + "\n", function(errorAppendFile) {
+          if (errorAppendFile) {
+            callback(new Error("Unable to append in log file."));
+            return;
           }
+
+          fs.close(fileDescriptor, function(errorClosing) {
+            if (errorClosing) {
+              callback(new "Error closing file that was being appended"());
+              return;
+            }
+            callback(false);
+          });
         });
       });
     },
