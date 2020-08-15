@@ -8,10 +8,14 @@ const checkRoutes = require("./checkRoutes");
 /* HTML Page Routes */
 const pageRoutes = require("./pageRoutes");
 
+/** Example Errors */
+const errorRoutes = require("./errorRoutes");
+
 module.exports = [
   ...pingRoutes,
   ...userRoutes,
   ...tokenRoutes,
   ...checkRoutes,
-  ...pageRoutes
+  ...pageRoutes,
+  ...errorRoutes
 ];
