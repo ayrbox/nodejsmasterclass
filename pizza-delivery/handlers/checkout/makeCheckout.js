@@ -3,8 +3,14 @@ const { createPayment } = require("../../lib/stripePayment");
 const createReceiptText = require("../../utils/createReceiptText");
 const { sendEmail } = require("../../lib/mailgunClient");
 
-const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
-  return function ({ payload, user }, responseCallback) {
+const makeCheckout = function({
+  dbCart,
+  dbOrder,
+  randomString,
+  logger,
+  fileLogger
+}) {
+  return function({ payload, user }, responseCallback) {
     const { cardType, cardNo, cvvCode, expiryDate } = payload;
 
     const cartId = `cart-${hash(user.email)}`;
@@ -12,7 +18,7 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
     dbCart.read(cartId, (err, cartData) => {
       if (err || !cartData) {
         responseCallback(404, {
-          msg: "Shopping cart not found",
+          msg: "Shopping cart not found"
         });
         return;
       }
@@ -31,12 +37,12 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
           cardType,
           cardNo,
           cvvCode,
-          expiryDate,
+          expiryDate
         },
-        function (err, detail) {
+        function(err, detail) {
           if (err) {
             responseCallback(500, {
-              msg: "Unable to create order payments",
+              msg: "Unable to create order payments"
             });
             logger.warning("Error creating payment", err, detail);
             return;
@@ -50,19 +56,20 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
               name,
               phone,
               address,
-              email,
+              email
             },
             ...cartData,
             payment: {
               paymentId,
               paymentMethod,
-              status: "successful",
+              status: "successful"
             },
+            orderCreated: Date.now()
           };
-          dbOrder.create(orderId, orderData, (err) => {
+          dbOrder.create(orderId, orderData, err => {
             if (err) {
               responseCallback(500, {
-                msg: "Unable to create new order",
+                msg: "Unable to create new order"
               });
               logger.warning("Error creating order", err);
               return;
@@ -70,8 +77,15 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
 
             responseCallback(200, orderData);
 
+            fileLogger.log(JSON.stringify(orderData), function(errorLogging) {
+              if (err) {
+                logger.warning("Log error", errorLogging);
+                return;
+              }
+            });
+
             // Clear current cart after order is created successfully.
-            dbCart.delete(cartId, (err) => {
+            dbCart.delete(cartId, err => {
               if (err) {
                 logger.warning("Error clearing cart.", err);
               }
@@ -84,9 +98,9 @@ const makeCheckout = function ({ dbCart, dbOrder, randomString, logger }) {
               {
                 to: email,
                 subject: "Pizza: Order Receipt",
-                text: receiptText,
+                text: receiptText
               },
-              (err) => {
+              err => {
                 if (err) {
                   logger.warning("Receipt not send" + err);
                 } else {

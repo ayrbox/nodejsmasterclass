@@ -1,7 +1,8 @@
 const path = require("path");
 
-const { DATADIR } = require("../../context");
+const { DATADIR, LOG_DIR } = require("../../context");
 const logger = require("../../lib/makeLogger")("handlers:users");
+const fileLogger = require("../../lib/makeFileLogger")(LOG_DIR, "users");
 
 const makeRender = require("../../lib/makeRender");
 
@@ -17,7 +18,7 @@ const makeAccountPageHandler = require("./makeAccountPageHandler");
 
 const db = makeDataHandler(DATADIR, "users");
 
-const createUser = makeCreateUser({ db, logger });
+const createUser = makeCreateUser({ db, logger, fileLogger });
 const readUser = makeReadUser({ db, logger });
 const updateUser = makeUpdateUser({ db, logger });
 const deleteUser = makeDeleteUser({ db, logger });

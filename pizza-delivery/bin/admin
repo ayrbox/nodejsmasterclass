@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const processCommand = require('../cli/processCommand');
+
+const [_, __, ...commandArgs] = process.argv;
+const commandString = commandArgs.join(' ');
+
+processCommand(commandString);
+

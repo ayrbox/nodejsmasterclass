@@ -1,7 +1,10 @@
 const path = require("path");
-const { DATADIR } = require("../../context");
+const { DATADIR, LOG_DIR } = require("../../context");
 const makeRender = require("../../lib/makeRender");
 const logger = require("../../lib/makeLogger")("handlers:cart");
+
+const fileLogger = require("../../lib/makeFileLogger")(LOG_DIR, "orders");
+
 const makeDataHandler = require("../../lib/makeDataHandlers");
 const makeRandomString = require("../../lib/makeRandomString");
 const makeCheckoutPageHandler = require("./makeCheckoutPageHandler");
@@ -24,7 +27,8 @@ const checkout = makeCheckout({
   dbCart,
   dbOrder,
   randomString,
-  logger
+  logger,
+  fileLogger
 });
 
 module.exports = {
