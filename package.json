@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "cd ./pizza-delivery && nodemon .",
-    "dev:uptime": "cd ./uptime-monitoring-app && NODE_DEBUG='app:*' nodemon ./index.js"
+    "dev:uptime": "cd ./uptime-monitoring-app && NODE_DEBUG='app:*' nodemon ./index.js",
+    "debug:uptime": "cd ./uptime-monitoring-app && NODE_DEBUG='app:*' node --inspect ."
   }
 }

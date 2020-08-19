@@ -1,9 +1,10 @@
 module.exports = [
   {
-    path: "/error",
-    method: "GET",
+    path: '/error',
+    method: 'GET',
     handler: () => {
-      throw new Error("Example Error");
-    }
-  }
+      debugger;
+      throw new Error('Example Error');
+    },
+  },
 ];
