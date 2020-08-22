@@ -1,6 +1,6 @@
-// const unit = require('../__test__/unit');
+const add = require('../__test__/add.test');
 
-const tests = { unit: undefined };
+const tests = { add };
 
 const countTest = require('./counter');
 const produceTestReport = require('./report');
@@ -10,7 +10,6 @@ const run = function () {
   var errors = [];
   var successes = 0;
   var limit = countTest(tests);
-  console.log('limit', limit);
   var counter = 0;
   for (var key in tests) {
     if (tests.hasOwnProperty(key)) {
