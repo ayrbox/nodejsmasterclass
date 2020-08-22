@@ -1,6 +1,8 @@
 const add = require('../__test__/add.test');
+const generateRandomNumber = require('../__test__/generateRandomNumber.test');
+const isPalindrome = require('../__test__/palindrome.test');
 
-const tests = { add };
+const tests = { add, generateRandomNumber, isPalindrome };
 
 const countTest = require('./counter');
 const produceTestReport = require('./report');

@@ -5,7 +5,7 @@ module.exports = function (value) {
     throw new TypeError('Value should be string.');
   }
 
-  const reverse = value.split('').join('');
+  const reverse = value.split('').reverse().join('');
 
-  return value === reverse;
+  return value.toLowerCase() === reverse.toLowerCase();
 };
