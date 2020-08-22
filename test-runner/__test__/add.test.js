@@ -28,4 +28,11 @@ unit['add: should add number with precision value'] = function (done) {
   done();
 };
 
+unit['add: throws error on string input'] = function (done) {
+  assert.throws(function () {
+    add('100', 100);
+  }, TypeError);
+  done();
+};
+
 module.exports = unit;

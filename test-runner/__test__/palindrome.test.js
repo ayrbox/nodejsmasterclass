@@ -28,4 +28,25 @@ unit['isPalindrome: should return false for "Computer"'] = function (done) {
   done();
 };
 
+unit['isPalindrome: throws error on number input'] = function (done) {
+  assert.throws(function () {
+    isPalindrome(1001);
+  }, TypeError);
+  done();
+};
+
+unit['isPalindrome: throws error on array input'] = function (done) {
+  assert.throws(function () {
+    isPalindrome(['civic', 'racecar']);
+  }, TypeError);
+  done();
+};
+
+unit['isPalindrome: throws error on array input'] = function (done) {
+  assert.throws(function () {
+    isPalindrome({ str: 'civic' });
+  }, TypeError);
+  done();
+};
+
 module.exports = unit;
