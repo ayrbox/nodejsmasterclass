@@ -1,13 +1,14 @@
 /*
- * API Tests
  *
+ * API Tests
+ * NOTE: Did not tuned to make it worked current app structure.
  */
 
 // Dependencies
 var app = require('./../index');
 var assert = require('assert');
 var http = require('http');
-var config = require('./../lib/config');
+var config = require('../config');
 
 // Holder for Tests
 var api = {};

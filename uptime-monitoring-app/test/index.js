@@ -1,7 +1,7 @@
 const unit = require('../__test__/unit');
-// const api = erquire('../__test__/api');
+const api = require('../__test__/api');
 
-const tests = { unit };
+const tests = { unit, api };
 
 const countTest = require('./makeCounter')(tests);
 const produceTestReport = require('./report');

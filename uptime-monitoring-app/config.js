@@ -22,6 +22,13 @@ const environments = {
     hashingSecret: 'thisissecr3at',
     maxChecks: 5,
   },
+  testing: {
+    envName: 'Testing environment',
+    httpPort: 4000,
+    httpsPort: 4001,
+    hashingSecret: 'thisissecr3at',
+    maxChecks: 5,
+  },
 };
 
 // export as per environment
