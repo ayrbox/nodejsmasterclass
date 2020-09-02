@@ -1,3 +1,6 @@
+const _url = require('url');
+const dns = require('dns');
+
 const makeCreateCheck = function ({ db, logger, helpers }) {
   return function (data, callback) {
     // paylod: { protocol, url, method, successCodes, timeouts }
@@ -35,33 +38,50 @@ const makeCreateCheck = function ({ db, logger, helpers }) {
           return;
         }
 
-        const checkId = helpers.createRandomString(20);
-        const checkObject = {
-          id: checkId,
-          phone,
-          protocol,
-          url,
-          method,
-          successCodes,
-          timeouts,
-        };
+        // Verify url has dns entries
+        const parsedUrl = _url.parse(`${protocol}://${url}`, true);
+        const hostName =
+          typeof parsedUrl.hostname === 'string' &&
+          parsedUrl.hostname.length > 0
+            ? parsedUrl.hostname
+            : false;
 
-        db.create('checks', checkId, checkObject, function (err) {
-          if (err) {
-            callback(500, 'Unable to store check');
+        dns.resolve(hostName, function (err, records) {
+          if (err && !records) {
+            callback(
+              400,
+              'The hostname of the URL entered did not resolve to any DNS entries.'
+            );
             return;
           }
+          const checkId = helpers.createRandomString(20);
+          const checkObject = {
+            id: checkId,
+            phone,
+            protocol,
+            url,
+            method,
+            successCodes,
+            timeouts,
+          };
 
-          userData.checks = checks || [];
-          userData.checks.push(checkId);
-
-          db.update('users', phone, userData, function (err) {
+          db.create('checks', checkId, checkObject, function (err) {
             if (err) {
-              callback(500, 'Unable to update user with checks');
+              callback(500, 'Unable to store check');
               return;
             }
 
-            callback(200, checkObject);
+            userData.checks = checks || [];
+            userData.checks.push(checkId);
+
+            db.update('users', phone, userData, function (err) {
+              if (err) {
+                callback(500, 'Unable to update user with checks');
+                return;
+              }
+
+              callback(200, checkObject);
+            });
           });
         });
       });

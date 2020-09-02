@@ -7,6 +7,7 @@ const makeHelpHandler = require('./helpHandler');
 const statsHandler = require('./statsHandler');
 const userHandler = require('./usersHandler');
 const checksHandler = require('./checksHandler');
+const demoHandler = require('./demoHandler');
 
 // TODO: remove handler
 const handler = function (command, args) {
@@ -49,6 +50,11 @@ const commands = [
     command: 'logs',
     description: 'List logs files.',
     handler,
+  },
+  {
+    command: 'demo',
+    description: 'Demo for child process to run shell command and get return',
+    handler: demoHandler,
   },
 ];
 
