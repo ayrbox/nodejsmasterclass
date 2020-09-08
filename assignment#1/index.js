@@ -28,7 +28,7 @@ const routers = [
 http
   .createServer((req, res) => {
     const parsedUrl = url.parse(req.url, true); // prase url including query string
-    const path = parsedUrl.pathname.replace(/^\/+$/g, ''); // get path from url without / at the end
+    const path = parsedUrl.pathname.replace(/^\/+|\/+$/g, ''); // get path from url without / at the end
     const method = req.method.toLowerCase(); // get http method in lowerchase
 
     // Find router that matches pathname and method
